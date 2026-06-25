@@ -11,9 +11,9 @@
         <nav>
             <div class="logo">Museum AI</div>
             <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="#">Museums</a></li>
-                <li><a href="#">AI Guide</a></li>
+                <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                <li><a href="{{ url_for('main.museums') }}">Museums</a></li>
+                <li><a href="{{ url_for('main.guide') }}">AI Guide</a></li>
             </ul>
         </nav>
     </header>

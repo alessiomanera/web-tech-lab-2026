@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Book Tickets</h2>
+    <p>Secure your spot for upcoming cultural events.</p>
+</div>
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <form style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1;">Select Museum</label>
+            <select style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: white;">
+                <option>The Grand Gallery</option>
+                <option>Modern Art Institute</option>
+                <option>National History Museum</option>
+            </select>
+        </div>
+        
+        <div>
+            <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1;">Date</label>
+            <input type="date" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: white; box-sizing: border-box;">
+        </div>
+        
+        <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Confirm Booking</button>
+    </form>
+</div>
+{% endblock %}
