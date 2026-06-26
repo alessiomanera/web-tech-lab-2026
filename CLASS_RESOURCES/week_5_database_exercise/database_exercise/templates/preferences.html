@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Update Your Dietary Preferences</h2>
+<form method="POST">
+
+    <p>Select unwanted ingredients:</p>
+
+    <!-- Loop through ingredients and create checkboxes -->
+    {% for ingredient in ingredients %}
+    <div style="margin-bottom: 8px;">
+        <label>
+            <!-- 
+            Checkbox input with conditional 'checked' attribute. 
+             All checkboxes share the same name (name="unwanted_ingredients"), 
+             so multiple selections can be captured as a list.
+             The if statement ensures that if this ingredient is already in the user's 
+             list of unwanted ingredients (current_unwanted), then the checkbox is 
+             pre-selected (checked).
+             -->
+            <input type="checkbox" name="unwanted_ingredients" value="{{ ingredient }}" {% if ingredient in
+                current_unwanted %}checked{% endif %}>
+            {{ ingredient.capitalize() }}
+        </label>
+    </div>
+    {% endfor %}
+
+    <!-- Submit button -->
+    <button type="submit">Save Preferences</button>
+</form>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- 
+Forms to login to an account or create an account 
+
+Possible "action"s are login and register.
+See app.py for the operations concerning each action.
+ -->
+<h3>Login</h3>
+
+<form method="POST" class="form-container">
+
+    <!-- This is an HTML hidden input field. Its purpose is to include additional 
+     data in the form submission that the user does not see or interact 
+     with directly.
+     When the below login form is submitted, the server receives a POST request 
+     containing:
+        action=login
+        username=... 
+        password=...
+     -->
+    <input type="hidden" name="action" value="login" />
+
+    <!-- Login by inputting username and password and submitting -->
+    <label for="login-username">Username:</label>
+    <input type="text" id="login-username" name="username" required>
+
+    <label for="login-password">Password:</label>
+    <input type="password" id="login-password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+
+<hr>
+
+<h3>Create an Account</h3>
+
+<form method="POST" class="form-container">
+    <!-- Hidden input to specify action -->
+    <input type="hidden" name="action" value="register" />
+
+    <!-- Register by inputting username and password and submitting -->
+    <label for="register-username">Username:</label>
+    <input type="text" id="register-username" name="username" required>
+
+    <label for="register-password">Password:</label>
+    <input type="password" id="register-password" name="password" required>
+
+    <button type="submit">Register</button>
+</form>
+{% endblock %}

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Play Dots-and-Boxes!</title>
+    <style>
+        body {
+            /* 
+            [display: flex] turns the <body> element into a flex container, 
+            enabling flexbox layout for its child elements.
+            [flex-direction: column;] arranges the child elements of the 
+            <body> vertically in a column, stacking them from top to bottom.
+            */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial;
+        }
+
+        /*
+        To show the current player
+        */
+        #status {
+            position: relative;
+            margin: 10px;
+            font-size: 1.5em;
+        }
+
+        /*
+        To show the dots and boxes
+        */
+        #gameContainer {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+
+        /*
+        To show the current score
+        */
+        #scores {
+            position: relative;
+            margin: 10px;
+            font-size: 1.5em;
+        }
+
+        /* Dots style */
+        .dot {
+            position: absolute;
+            background-color: black;
+            /* "Width" and "height" of the dots. 
+            With only these two, you get a box tough... */
+            width: 1em;
+            height: 1em;
+            /* To display the dots as circles, we define radius.*/
+            border-radius: 50%;
+            /* "Center" the circles at the "position" */
+            transform: translate(-25%, -25%);
+            /* Moves the dots are over the lines */
+            z-index: 2;
+        }
+
+        /* Lines style */
+        .line {
+            position: absolute;
+            /* Unlicked lines are didplayed in gray */
+            background-color: lightgray;
+            cursor: pointer;
+            /* Moves the lines are under the dots */
+            z-index: 1;
+        }
+
+        /* Horizontal lines */
+        .line-horizontal {
+            height: 8px;
+            /* We choose not to define a width for horizontal lines.
+            We will adjust this with dotSpacing variables in JS. */
+        }
+
+        /* Vertical lines */
+        .line-vertical {
+            width: 8px;
+            /* We choose not to define a height for vertical lines. 
+            We will adjust this with dotSpacing variables in JS. */
+        }
+
+        /* Properties for filling in the claimed cells */
+        .cell-fill {
+            position: absolute;
+            background-color: transparent;
+            /* Moves the filling to the background, below anything else */
+            z-index: 0;
+        }
+
+        /* Reset button styling */
+        #resetButton {
+            margin-top: 1em;
+            /* 0.5em for top and bottom, 1em for right and left*/
+            padding: 0.5em 1em;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            background-color: darkgray;
+            color: black;
+            border-radius: .5em;
+        }
+
+        #resetButton:hover {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Player-A is the one that plays the first -->
+    <div id="status">Current Player: <span id="currentPlayer">Player A (Red)</span></div>
+    <div id="gameContainer"></div>
+    <div id="scores"> Player-A: 0 - 0 :Player-B</div>
+    <button id="resetButton">Reset Game</button>
+
+    <script>
+        /*
+        gridSize is the number of horizontal or vertical lines. 
+        You will see (gridSize-1)x(gridSize-1) cells.
+        */
+        const gridSize = 4;
+        /* 
+        Here is the "length" of each line, i.e. width for horizontal ones and 
+        height for vertical ones. 
+        Note that we do not define any units, but we will append a px, when we 
+        use them in JS. 
+        */
+        const dotSpacing = 150;
+        const containerSize = dotSpacing * (gridSize - 1) + 50;
+        const gameContainerDiv = document.getElementById('gameContainer');
+
+        let currentPlayer = 'A'; // A or B
+        const playerColors = { 'A': 'red', 'B': 'blue' };
+        const scoreDiv = document.getElementById('scores');
+
+        const dots = []; // {x, y}
+        const lines = []; // {element, claimedBy, orientation, lineId}
+        const cells = []; // {row, col, lines, claimedBy, fillDiv}
+
+        // Initialize game
+        function init() {
+            // Clear container
+            gameContainerDiv.innerHTML = '';
+
+            // Reset data concerning the container
+            /*
+            In JS, setting length to 0 is a common way to clear an array efficiently. 
+            This approach is often preferred over assigning an empty array (i.e.[]) to 
+            that variable. Because setting length to 0 clears the array in place, 
+            so all references see the change.
+            */
+            dots.length = 0;
+            lines.length = 0;
+            cells.length = 0;
+            currentPlayer = 'A';
+            updateCurrentPlayerDisplay();
+            updateScores();
+
+            /*
+            Here, we populate dots array with coordinates.
+            Each dot is a pair of x and y. 
+            The x coordinate of a dot d is accessed with with d.x
+            Note that we fill up the dots array starting from the top left dot 
+            and moving right and then down. This is important when we compute indices
+            of the dots inside this array.
+            */
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    const x = c * dotSpacing + 25;
+                    const y = r * dotSpacing + 25;
+                    /*
+                    We create an object with properties x and y, and 
+                    push it to the dots array.
+                    { x, y } is shorthand for { x: x, y: y }
+                    */
+                    dots.push({ x, y });
+                }
+            }
+
+            /* 
+            Our dots array is ready. 
+            Now, we can create dots visually.
+            */
+            dots.forEach(function (d) {
+                var dotDiv = document.createElement('div');
+                dotDiv.className = 'dot';
+                /*
+                The properties (style.left, style.top) specify the exact position of the 
+                dot relative to its parent element (the container).
+                See above that the position of dot class is set to absolute.
+                */
+                dotDiv.style.left = d.x + 'px';
+                dotDiv.style.top = d.y + 'px';
+                gameContainerDiv.appendChild(dotDiv);
+            });
+
+            // Create horizontal lines
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize - 1; c++) {
+                    const start = dots[getDotIndex(r, c)];
+                    const end = dots[getDotIndex(r, c + 1)];
+                    createLine(start, end, 'horizontal', r, c);
+                }
+            }
+
+            // Create vertical lines
+            for (let c = 0; c < gridSize; c++) {
+                for (let r = 0; r < gridSize - 1; r++) {
+                    const start = dots[getDotIndex(r, c)];
+                    const end = dots[getDotIndex(r + 1, c)];
+                    createLine(start, end, 'vertical', r, c);
+                }
+            }
+
+            // Initialize cells
+            initializeCells();
+        }
+
+        function getDotIndex(row, col) {
+            return row * gridSize + col;
+        }
+
+        /*
+        createLine positions a line element between a start and an end point, 
+        either horizontally or vertically.
+        */
+        function createLine(start, end, orientation, row, col) {
+            // lineDiv element
+            const lineDiv = document.createElement('div');
+            /*
+            This sets the element's class attribute to exactly 'line'
+            */
+            lineDiv.className = 'line';
+            /* style.left and style.top properties are similar to the ones 
+            of dotDiv */
+            lineDiv.style.left = start.x + 'px';
+            lineDiv.style.top = start.y + 'px';
+            if (orientation === 'horizontal') {
+                /*
+                This adds the 'line-horizontal' class to the element's existing classes.
+                */
+                lineDiv.classList.add('line-horizontal');
+                lineDiv.style.width = dotSpacing + 'px';
+                lineDiv.style.height = '8px';
+            } else {
+                lineDiv.classList.add('line-vertical');
+                lineDiv.style.width = '8px';
+                lineDiv.style.height = dotSpacing + 'px';
+            }
+
+            // lineObj info
+            const lineId = `line_${start.x}_${start.y}_${end.x}_${end.y}`; // Note template literals, i.e. enclosed by backticks (`)
+            const lineObj = {
+                element: lineDiv,
+                claimedBy: 0,
+                orientation: orientation,
+                lineId: lineId,
+                start: start,
+                end: end
+            };
+            lines.push(lineObj);
+            gameContainerDiv.appendChild(lineDiv);
+
+            // Event handlers
+            lineDiv.addEventListener('mouseenter', () => {
+                if (lineObj.claimedBy === 0) {
+                    lineDiv.style.backgroundColor = playerColors[currentPlayer];
+                    lineDiv.style.opacity = 0.3;
+                }
+            });
+            lineDiv.addEventListener('mouseleave', () => {
+                if (lineObj.claimedBy === 0) {
+                    lineDiv.style.backgroundColor = 'lightgray';
+                    lineDiv.style.opacity = 1;
+                }
+            });
+            lineDiv.addEventListener('click', () => {
+                if (lineObj.claimedBy === 0) {
+                    claimLine(lineObj);
+                    // Let's check these functions later
+                    checkCellsForCompletion(lineObj);
+                    checkGameEnd();
+                    switchPlayer();
+                }
+            });
+        }
+
+        function claimLine(line) {
+            line.claimedBy = currentPlayer;
+            line.element.style.backgroundColor = playerColors[currentPlayer];
+            line.element.style.opacity = 1;
+        }
+
+        /*
+        Initializes the grid cells for the game.
+         
+        Each cell represents a square in the grid and is characterized by:
+         - Its row and column indices (row, col).
+         - An array of four bordering lines: top, bottom, left, and right.
+         - A 'claimedBy' property indicating which player claimed the cell (0, if unclaimed).
+         - A fillDiv for rendering purposes.
+        
+         The lines are shared between adjacent cells:
+         - The top line of a cell is the bottom line of the cell above.
+         - The left line of a cell is the right line of the cell to its left.
+         - Conversely, each line maintains a list of related cells that share it,
+           enabling easy updates when a line is claimed.
+        */
+        function initializeCells() {
+            for (let r = 0; r < gridSize - 1; r++) {
+                for (let c = 0; c < gridSize - 1; c++) {
+                    // Retrieve the four bordering lines for the current cell
+                    const topLine = getLineBetweenDots(r, c, r, c + 1);
+                    const bottomLine = getLineBetweenDots(r + 1, c, r + 1, c + 1);
+                    const leftLine = getLineBetweenDots(r, c, r + 1, c);
+                    const rightLine = getLineBetweenDots(r, c + 1, r + 1, c + 1);
+                    const cellObj = {
+                        row: r,
+                        col: c,
+                        lines: [topLine, bottomLine, leftLine, rightLine],
+                        claimedBy: 0,
+                        fillDiv: null
+                    };
+                    cells.push(cellObj);
+
+                    // Establish bidirectional relationships between the cell
+                    // and its lines
+                    [topLine, bottomLine, leftLine, rightLine].forEach(function (l) {
+                        /*
+                        For each line, we ensure that there is an array called 
+                        relatedCells. If it doesn't exist, we create one.
+                        */
+                        if (!l.relatedCells) {
+                            l.relatedCells = [];
+                        }
+                        l.relatedCells.push(cellObj);
+                    });
+
+                }
+            }
+
+            // Create fill overlays for cells
+            cells.forEach(function (cell) {
+                // Get the top-left and bottom-right dots
+                const topLeftDot = dots[getDotIndex(cell.row, cell.col)];
+                const bottomRightDot = dots[getDotIndex(cell.row + 1, cell.col + 1)];
+
+                // Calculate overlay position and size
+                const x = topLeftDot.x;
+                const y = topLeftDot.y;
+                const width = bottomRightDot.x - topLeftDot.x;
+                const height = bottomRightDot.y - topLeftDot.y;
+
+                // Create and position the overlay (i.e. fillDiv)
+                const fillDiv = document.createElement('div');
+                fillDiv.className = 'cell-fill';
+                fillDiv.style.left = x + 'px';
+                fillDiv.style.top = y + 'px';
+                fillDiv.style.width = width + 'px';
+                fillDiv.style.height = height + 'px';
+                fillDiv.style.backgroundColor = 'transparent'; // initially transparent
+                gameContainerDiv.appendChild(fillDiv);
+                cell.fillDiv = fillDiv;
+            });
+
+        }
+        /* Function to find the line object connecting two dots specified by their 
+        row and column*/
+        function getLineBetweenDots(r1, c1, r2, c2) {
+            // Retrieve the start and end dot object based on their rows and columns
+            let start = dots[getDotIndex(r1, c1)];
+            let end = dots[getDotIndex(r2, c2)];
+
+            /* Search through the array of lines to find the line connecting these 
+            twoo dots.
+            The find method in JS searches through an array and returns the first 
+            element that satisfies the condition specified by the provided function. 
+            If no element matches, it returns undefined. */
+            let line = lines.find(function (l) {
+                /* Check if the line's start and end points match the start and 
+                end dots (in either order). */
+                return (
+                    (l.start.x === start.x &&
+                        l.start.y === start.y &&
+                        l.end.x === end.x &&
+                        l.end.y === end.y)
+                    ||
+                    (l.start.x === end.x &&
+                        l.start.y === end.y &&
+                        l.end.x === start.x &&
+                        l.end.y === start.y)
+                );
+            });
+
+            // Return the found line object 
+            return line;
+        }
+
+        /*
+        You may go through each cell in the grid and check if all lines concerning 
+        that cell are claimed or not, and if they are, mark that cell completed.
+        Alternatively, you can take the last claimed line, check all cells associated 
+        with it and see whether they are completed or not.
+        Here, we do the second way.
+        */
+        function checkCellsForCompletion(line) {
+            line.relatedCells.forEach(function (cell) {
+                if (cell.claimedBy === 0 && isCellComplete(cell)) {
+                    claimCell(cell);
+                }
+            });
+        }
+
+        function isCellComplete(cell) {
+            /*
+            Note that whereas "foreach" executes a provided function on 
+            each element of an array, "every" checks whether whether all 
+            elements in the array satisfy a specific condition.
+            */
+            return cell.lines.every(function (l) {
+                return l.claimedBy !== 0;
+            });
+        }
+
+        function claimCell(cell) {
+            cell.claimedBy = currentPlayer;
+            // fill the cell's overlay
+            cell.fillDiv.style.backgroundColor = playerColors[currentPlayer];
+            cell.fillDiv.style.opacity = 0.2;
+            updateScores();
+        }
+
+        function updateScores() {
+            /*
+            The .filter() method creates a new array of cells where the 
+            claimedBy property equals 'A'.
+            An anonymous callback function takes each element c of the array 
+            cells during iteration.
+            */
+            const claimedCellsA = cells.filter(function (c) {
+                return c.claimedBy === 'A';
+            });
+            const nclaimedCellsA = claimedCellsA.length;
+
+            const claimedCellsB = cells.filter(function (c) {
+                return c.claimedBy === 'B';
+            });
+            const nclaimedCellsB = claimedCellsB.length;
+
+            scoreDiv.textContent = 'Player-A: ' + nclaimedCellsA + ' - ' + nclaimedCellsB + ' :Player-B';
+        }
+
+        function checkGameEnd() {
+            /*
+            if no lines are left to be claimed, then the game is finished.
+            */
+            const unclaimedLines = lines.filter(function (l) {
+                return l.claimedBy === 0;
+            });
+
+            if (unclaimedLines.length === 0) {
+                /* 
+                Since nclaimedCellsA/B were local to updateScores,
+                here we need to compute scores to determine the winner.
+                */
+                const claimedCellsA = cells.filter(function (c) {
+                    return c.claimedBy === 'A';
+                });
+                const nclaimedCellsA = claimedCellsA.length;
+
+                const claimedCellsB = cells.filter(function (c) {
+                    return c.claimedBy === 'B';
+                });
+                const nclaimedCellsB = claimedCellsB.length;
+
+                let message = '';
+                if (nclaimedCellsA > nclaimedCellsB) {
+                    message = 'Game finished. Congratulations Player-A!';
+                } else if (nclaimedCellsB > nclaimedCellsA) {
+                    message = 'Game finished. Congratulations Player-B!';
+                } else {
+                    message = 'Game finished. It\'s a tie!';
+                }
+                scoreDiv.textContent = message;
+            }
+        }
+
+        function switchPlayer() {
+            currentPlayer = currentPlayer === 'A' ? 'B' : 'A';
+            updateCurrentPlayerDisplay();
+        }
+
+        function updateCurrentPlayerDisplay() {
+            /*
+            Here, we have an example of template literals, which are enclosed by 
+            backticks (`). Inside these template literals, you can embed expressions
+            using ${...}. 
+            This allows you to insert variables or expressions directly into the string, 
+            making string concatenation more readable and concise.
+            */
+            document.getElementById('currentPlayer').textContent = `Player ${currentPlayer} (${playerColors[currentPlayer] === 'red' ? 'Red' : 'Blue'})`;
+        }
+
+        // Reset button handler
+        document.getElementById('resetButton').addEventListener('click', function () {
+            init();
+        });
+
+        // Initialize game on load
+        window.onload = function () {
+            init();
+        };
+
+    </script>
+</body>
+
+</html>
