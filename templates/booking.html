@@ -1,28 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Book Tickets</h2>
-    <p>Secure your spot for upcoming cultural events.</p>
+<div style="margin-bottom: 2rem; text-align: center;">
+    <h1 style="margin-bottom: 0.5rem;">Secure Your Visit</h1>
+    <p style="font-size: 1.1rem;">Instant, frictionless ticketing.</p>
 </div>
 
-<div class="card" style="max-width: 600px; margin: 0 auto;">
-    <form style="display: flex; flex-direction: column; gap: 1.5rem;">
-        <div>
-            <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1;">Select Museum</label>
-            <select style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: white;">
-                <option>The Grand Gallery</option>
-                <option>Modern Art Institute</option>
-                <option>National History Museum</option>
-            </select>
-        </div>
-        
-        <div>
-            <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1;">Date</label>
-            <input type="date" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); color: white; box-sizing: border-box;">
-        </div>
-        
-        <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Confirm Booking</button>
-    </form>
+<div class="card" style="max-width: 500px; margin: 0 auto;">
+    <div class="card-content">
+        <form id="booking-form" novalidate>
+            <div class="form-group" id="museum-group">
+                <label for="museum-select" class="form-label">Select Museum</label>
+                <select id="museum-select" name="museum" class="form-select" required aria-required="true">
+                    <option value="" disabled selected>Choose a destination...</option>
+                    <option value="grand_gallery">The Grand Gallery</option>
+                    <option value="modern_art">Modern Art Institute</option>
+                    <option value="history_museum">National History Museum</option>
+                </select>
+                <span class="error-message" id="museum-error" role="alert">Please select a museum to visit.</span>
+            </div>
+            
+            <div class="form-group" id="date-group">
+                <label for="visit-date" class="form-label">Visit Date</label>
+                <input type="date" id="visit-date" name="date" class="form-input" required aria-required="true">
+                <span class="error-message" id="date-error" role="alert">Please select a valid future date.</span>
+            </div>
+            
+            <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Confirm Booking</button>
+        </form>
+    </div>
 </div>
 {% endblock %}
