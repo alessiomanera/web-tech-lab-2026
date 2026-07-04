@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0B0F19">
     <title>Museum AI Guide</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Museum AI</div>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    
+    <header role="banner">
+        <nav aria-label="Main Navigation">
+            <a href="{{ url_for('main.home') }}" class="logo" aria-label="Museum AI Home">Museum AI</a>
             <ul class="nav-links">
                 <li><a href="{{ url_for('main.home') }}">Home</a></li>
                 <li><a href="{{ url_for('main.museums') }}">Museums</a></li>
@@ -18,14 +21,14 @@
         </nav>
     </header>
 
-    <main>
+    <main id="main-content" role="main">
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
+    <footer role="contentinfo">
         <p>&copy; 2026 Alessio Manera (905639) - Lab of Web Technologies</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </body>
 </html>

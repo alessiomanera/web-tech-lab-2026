@@ -22,7 +22,7 @@ The proposed project is a comprehensive web application designed to modernize th
 - **Data Management:** Relational database (e.g., SQLite/PostgreSQL) to store user profiles, ticket inventory, and exhibition data.
 
 ## 5. Design & User Experience
-The application will feature a premium, responsive design. Emphasis will be placed on aesthetic appeal using high-quality imagery, a harmonious color palette, and smooth micro-animations. The goal is to provide an intuitive user journey from discovery to booking.
+The application will feature a premium, responsive "Dark Mode" design, heavily informed by modern frictionless UX paradigms. Emphasis will be placed on aesthetic appeal using high-quality imagery, a harmonious color palette, and smooth micro-animations. Furthermore, the UI will prioritize strict WCAG accessibility, zero-cognitive-load checkout flows, and zero Cumulative Layout Shift (CLS) to provide a frictionless user journey from discovery to booking.
 
 ## 6. Group Structure & Roles
 **Single-person group:** Alessio Manera will be responsible for the full-stack development, including database design, backend routing, frontend implementation, and UI/UX design.
