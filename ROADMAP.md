@@ -10,16 +10,18 @@ This document outlines the step-by-step implementation plan for the Museum Ticke
 - [ ] Submit 1-page proposal to the professor.
 
 ## Phase 2: Design & UI Mockups
-- [ ] Define the color palette, typography, and core CSS variables.
-- [ ] Create wireframes/mockups for core pages: Home, Museum Listing, Ticket Booking, Profile/Recommendations.
-- [ ] Build the base HTML template (`base.html`) with header and footer.
+- [x] Define the color palette, typography, and core CSS variables.
+- [x] Create wireframes/mockups for core pages: Home, Museum Listing, Ticket Booking, Profile/Recommendations.
+- [x] Build the base HTML template (`base.html`) with header and footer.
+- [x] Ensure strict WCAG text contrast and design zero-cognitive-load checkout flows.
 
 ## Phase 3: Frontend Development (Static)
-- [ ] Develop `index.html` (Landing page with featured museums).
-- [ ] Develop `museums.html` (List/Grid view of all cultural sites).
-- [ ] Develop `booking.html` (Ticket selection interface).
-- [ ] Implement responsive Vanilla CSS styling.
-- [ ] Add basic JS interactions (modals, form validations).
+- [x] Develop `index.html` (Landing page with featured museums).
+- [x] Develop `museums.html` (List/Grid view of all cultural sites).
+- [x] Develop `booking.html` (Ticket selection interface).
+- [x] Implement responsive Vanilla CSS styling.
+- [x] Add basic JS interactions (modals, form validations).
+- [x] Implement semantic HTML for screen readers and zero CLS image rendering via aspect-ratio.
 
 ## Phase 4: Backend Setup & Database
 - [ ] Initialize Flask application (`app.py`).
@@ -31,15 +33,18 @@ This document outlines the step-by-step implementation plan for the Museum Ticke
 - [ ] Connect frontend forms to Flask endpoints (e.g., submitting a booking).
 - [ ] Implement user authentication (Login/Register).
 - [ ] Fetch and display museum data dynamically from the database.
+- [ ] Implement asynchronous, polite error handling for robust booking flows.
 
 ## Phase 6: AI Guidance & Recommendations Feature
 - [ ] Develop a simple recommendation algorithm based on user preferences.
 - [ ] (Optional) Integrate an external LLM API (like OpenAI or Gemini) for generating dynamic cultural insights.
-- [ ] Build the "AI Guide" interface on the frontend.
+- [ ] Ground the AI output strictly in institutional reference materials to prevent hallucinations.
+- [ ] Build the "AI Guide" interface on the frontend as a zero-download web overlay accessed via QR code, with no required onsite account creation.
 
 ## Phase 7: Polish, Testing, and Submission
 - [ ] Code review against guidelines (No monolithic code, DRY, proper comments).
 - [ ] Cross-browser and mobile responsive testing.
 - [ ] Write final project documentation and run instructions.
 - [ ] Create presentation/slides for the oral exam.
+- [ ] Remove extra reference folders (e.g., `CLASS_RESOURCES`) and non-essential files prior to final submission.
 - [ ] Submit project zip archive on Moodle.
