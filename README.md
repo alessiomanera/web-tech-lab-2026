@@ -33,15 +33,18 @@ Keep the project structured logically:
 - `app.py` for backend routing, keeping complex logic in separate Python modules (e.g. `/models`, `/utils`) if it grows.
 
 ### 3. Frontend Aesthetics & UI/UX
-- **Design System (70/20/10 Blend):**
-  - 70% Modern Editorial (Lots of whitespace, elegant typography, refined borders).
-  - 20% Contemporary Digital (Clean structural components, subtle border-radii).
-  - 10% Neo-Brutalist Interaction (Physical, snappy hover states, 3px active state translation).
-- **Custom 4-Color Palette:**
-  - Base: Soft Linen (`#F1EBDD`)
-  - Dark: Carbon Black (`#171717`)
-  - Primary Accent: Primary Scarlet (`#D62F24`)
-  - Secondary Accent: Steel Azure (`#174A8B`)
+- **Design System (Bauhaus Neo-Brutalism):**
+  - Pure Neo-Brutalism mixed with Bauhaus principles. Stark geometry, aggressive thick borders, hard block shadows.
+  - No border-radii (`0px`).
+  - Snappy, mechanical hover states (buttons physically press down into the page).
+- **Custom Bauhaus Palette:**
+  - Base: Pure White (`#FFFFFF`)
+  - Dark/Borders: Solid Black (`#000000`)
+  - Primary Red: `#FF3333`
+  - Primary Blue: `#0055FF`
+  - Primary Yellow: `#FFCC00`
+- **Typography:** Strictly `Inter` sans-serif for optimal starkness and readability. No serif fonts.
+- **Theme:** Exclusively Light Mode. Dark mode has been disabled to preserve the Bauhaus print aesthetic.
 - **Vanilla CSS:** Use a custom design system with CSS Variables for consistent colors and spacing.
 - **Responsiveness:** Ensure mobile-first or at least fully responsive design using Flexbox/Grid.
 - **Micro-interactions:** Add subtle hover effects, transitions, and modern design principles to make the UI feel premium and alive.

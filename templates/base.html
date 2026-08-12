@@ -6,10 +6,6 @@
     <meta name="theme-color" content="#f4f0e8">
     <title>Museum AI Guide</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script>
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    </script>
 </head>
 <body>
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
@@ -26,7 +22,6 @@
                 {% else %}
                 <li><a href="{{ url_for('auth.login') }}">Login / Register</a></li>
                 {% endif %}
-                <li><button id="theme-toggle" class="theme-btn" aria-label="Toggle Dark Mode" style="background: none; border: var(--border-width) solid var(--border-color); border-radius: var(--border-radius); cursor: pointer; padding: 0.4rem 0.6rem; font-size: 1.2rem; transition: transform var(--transition-speed); display: inline-flex; align-items: center; justify-content: center;">🌓</button></li>
             </ul>
         </nav>
     </header>
