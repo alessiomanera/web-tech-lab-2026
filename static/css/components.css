@@ -4,15 +4,17 @@
     background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-hard);
     overflow: hidden;
-    transition: transform var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     display: flex;
     flex-direction: column;
 }
 
-/* 10% Neo-Brutalist Interaction */
+/* 100% Neo-Brutalist Interaction */
 .card:hover {
-    transform: translate(3px, 3px);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px var(--border-color);
 }
 
 .card-content {
@@ -36,19 +38,21 @@
     color: #ffffff;
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-hard);
     padding: 1rem 2rem;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 800;
     cursor: pointer;
-    transition: transform var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background var(--transition-speed);
     text-decoration: none;
     display: inline-block;
     text-align: center;
 }
 
-/* 10% Neo-Brutalist Interaction (Hard press) */
+/* Neo-Brutalist Interaction (Hard press) */
 .cta-button:hover, .cta-button:active {
-    transform: translate(3px, 3px);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px var(--border-color);
     background: var(--primary-hover);
 }
 
@@ -75,16 +79,18 @@
     background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-hard);
     color: var(--text-primary);
     font-size: 1rem;
     font-family: var(--font-body);
-    transition: transform var(--transition-speed), border-color var(--transition-speed);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
 }
 
 /* Snappy interaction */
 .form-input:focus, .form-select:focus {
     outline: none;
-    transform: translate(2px, 2px);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px var(--border-color);
     border-color: var(--primary-color);
 }
 
@@ -104,7 +110,7 @@
     display: block;
 }
 
-/* Hero Section (Modern Editorial) */
+/* Hero Section (Bauhaus Neo-Brutalism) */
 .hero {
     text-align: center;
     padding: 8rem 2rem; /* Massive whitespace */
@@ -114,15 +120,9 @@
     gap: 2rem;
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius-lg);
-    background: var(--accent-color);
+    background: var(--accent-yellow); /* Yellow background for hero */
+    box-shadow: var(--box-shadow-hard);
     margin-bottom: 4rem;
-}
-
-[data-theme="dark"] .hero {
-    color: #101820; /* Keep hero text dark even in dark mode for contrast against Camel */
-}
-[data-theme="dark"] .hero .hero-subtitle {
-    color: #101820;
 }
 
 .hero-title {
@@ -148,12 +148,14 @@
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     background: var(--surface-color);
-    transition: transform var(--transition-speed);
+    box-shadow: var(--box-shadow-hard);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 /* Snappy interaction */
 .feature-card:hover {
-    transform: translate(3px, 3px);
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px 0px var(--border-color);
 }
 
 .feature-icon {

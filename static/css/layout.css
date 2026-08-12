@@ -44,6 +44,7 @@ main {
 header {
     background: var(--surface-color);
     border-bottom: var(--border-width) solid var(--border-color);
+    box-shadow: 0px 4px 0px 0px var(--border-color); /* Bottom hard shadow */
     padding: 1.5rem 5%;
     position: sticky;
     top: 0;
@@ -80,9 +81,9 @@ nav {
 .nav-links a {
     color: var(--text-primary);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 800;
     font-size: 1rem;
-    transition: color 0.2s; /* Soft fade for nav links, brutalism reserved for buttons/cards */
+    transition: none; /* No soft fades in Neo-Brutalism */
 }
 
 .nav-links a:hover, .nav-links a:focus {
