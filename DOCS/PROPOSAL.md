@@ -8,8 +8,8 @@ The proposed project is a comprehensive web application designed to modernize th
 
 ## 2. Core Functionalities
 1. **Ticket Booking System:** Users can browse available museums, select dates/times, and securely book tickets.
-2. **AI-Powered Cultural Recommendations:** Based on user preferences (art styles, historical periods, previous bookings), the application will provide tailored suggestions for upcoming exhibitions and cultural events.
-3. **Interactive Virtual Guide:** A dynamic interface that offers contextual information about specific artworks or museum sections during the visit.
+2. **AI-Powered Cultural Concierge:** Using the Gemini API and Retrieval-Augmented Generation (RAG), the application acts as a hyper-personalized guide. It dynamically tailors museum descriptions and summaries based on individual user preferences.
+3. **Conversational Discovery & Itineraries:** A zero-friction chat interface allowing users to ask for recommendations naturally (e.g., "I have 2 hours with an 8-year old, what should we see?") and receive context-aware itineraries grounded strictly in the application's database.
 
 ## 3. Target Audience
 - Tourists and locals interested in cultural exploration.

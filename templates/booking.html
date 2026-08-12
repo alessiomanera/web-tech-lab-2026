@@ -1,33 +1,75 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="margin-bottom: 2rem; text-align: center;">
-    <h1 style="margin-bottom: 0.5rem;">Secure Your Visit</h1>
-    <p style="font-size: 1.1rem;">Instant, frictionless ticketing.</p>
+<div class="mb-2 text-center">
+    <h1 class="mb-05">Secure Your Visit</h1>
+    <p class="text-lg">Instant, frictionless ticketing.</p>
 </div>
 
-<div class="card" style="max-width: 500px; margin: 0 auto;">
+<div class="card max-w-500 mx-auto">
     <div class="card-content">
+        <div id="success-message" style="display: none; text-align: center; color: var(--primary-color); margin-bottom: 1rem; font-weight: bold; font-size: 1.2rem;"></div>
+        
         <form id="booking-form" novalidate>
-            <div class="form-group" id="museum-group">
-                <label for="museum-select" class="form-label">Select Museum</label>
-                <select id="museum-select" name="museum" class="form-select" required aria-required="true">
+            <div class="form-group" id="exhibition-group">
+                <label for="exhibition-select" class="form-label">Select Exhibition</label>
+                <select id="exhibition-select" name="exhibition" class="form-select" required aria-required="true">
                     <option value="" disabled selected>Choose a destination...</option>
-                    <option value="grand_gallery">The Grand Gallery</option>
-                    <option value="modern_art">Modern Art Institute</option>
-                    <option value="history_museum">National History Museum</option>
+                    {% for exh in exhibitions %}
+                        <option value="{{ exh.id }}" {% if preselected_museum and exh.museum_id|string == preselected_museum %}selected{% endif %}>
+                            {{ exh.museum.name }} - {{ exh.title }}
+                        </option>
+                    {% endfor %}
                 </select>
-                <span class="error-message" id="museum-error" role="alert">Please select a museum to visit.</span>
+                <span class="error-message" id="exhibition-error" role="alert">Please select an exhibition to visit.</span>
             </div>
             
-            <div class="form-group" id="date-group">
-                <label for="visit-date" class="form-label">Visit Date</label>
-                <input type="date" id="visit-date" name="date" class="form-input" required aria-required="true">
-                <span class="error-message" id="date-error" role="alert">Please select a valid future date.</span>
-            </div>
-            
-            <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Confirm Booking</button>
+            <button type="submit" id="submit-btn" class="cta-button w-100 mt-1">Confirm Booking</button>
         </form>
     </div>
 </div>
+
+<script>
+document.getElementById('booking-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const select = document.getElementById('exhibition-select');
+    const error = document.getElementById('exhibition-error');
+    const success = document.getElementById('success-message');
+    const btn = document.getElementById('submit-btn');
+    
+    if (!select.value) {
+        error.style.display = 'block';
+        return;
+    }
+    
+    error.style.display = 'none';
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch("{{ url_for('main.api_book') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exhibition_id: select.value })
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('booking-form').style.display = 'none';
+            success.textContent = data.message + ' Your ticket ID is #' + data.ticket_id;
+            success.style.display = 'block';
+        } else {
+            error.textContent = data.error || 'An error occurred';
+            error.style.display = 'block';
+            btn.textContent = 'Confirm Booking';
+            btn.disabled = false;
+        }
+    } catch (err) {
+        error.textContent = 'Network error. Please try again.';
+        error.style.display = 'block';
+        btn.textContent = 'Confirm Booking';
+        btn.disabled = false;
+    }
+});
+</script>
 {% endblock %}
