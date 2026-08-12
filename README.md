@@ -33,14 +33,15 @@ Keep the project structured logically:
 - `app.py` for backend routing, keeping complex logic in separate Python modules (e.g. `/models`, `/utils`) if it grows.
 
 ### 3. Frontend Aesthetics & UI/UX
-- **Design System & Zero-Friction UX:** We rigorously follow a frictionless paradigm: zero cognitive load, semantic HTML for screen readers, and aspect-ratio image loading to eliminate Cumulative Layout Shift (CLS).
-- **Premium Dark Mode Palette:**
-  - **Background:** `#0B0F19` (Deep Slate)
-  - **Surface/Glassmorphism:** `rgba(30, 41, 59, 0.7)`
-  - **Text Primary:** `#F8FAFC`
-  - **Text Secondary:** `#94A3B8`
-  - **Primary Accent:** `#3B82F6` (Vibrant Blue)
-  - **Secondary Accent:** `#8B5CF6` (Vibrant Violet)
+- **Design System (70/20/10 Blend):**
+  - 70% Modern Editorial (Lots of whitespace, elegant typography, refined borders).
+  - 20% Contemporary Digital (Clean structural components, subtle border-radii).
+  - 10% Neo-Brutalist Interaction (Physical, snappy hover states, 3px active state translation).
+- **Custom 4-Color Palette:**
+  - Base: Soft Linen (`#F1EBDD`)
+  - Dark: Carbon Black (`#171717`)
+  - Primary Accent: Primary Scarlet (`#D62F24`)
+  - Secondary Accent: Steel Azure (`#174A8B`)
 - **Vanilla CSS:** Use a custom design system with CSS Variables for consistent colors and spacing.
 - **Responsiveness:** Ensure mobile-first or at least fully responsive design using Flexbox/Grid.
 - **Micro-interactions:** Add subtle hover effects, transitions, and modern design principles to make the UI feel premium and alive.

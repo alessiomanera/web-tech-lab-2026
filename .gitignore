@@ -29,3 +29,9 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+_PERSONAL/
+/AGENTS.md
+/agents.md
+
+# Environment variables
+.env
