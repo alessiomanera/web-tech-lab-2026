@@ -1,39 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Franklin:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap');
 
-/* 70/20/10 Blend Design System */
+/* Bauhaus Neo-Brutalism Design System */
 :root {
-    /* Color Palette (Light Mode Default) */
-    --bg-color: #F1EBDD; /* Soft Linen (60%) */
-    --surface-color: #FFFFFF; /* Pure White surface for cards */
-    --text-primary: #171717; /* Carbon Black (20%) */
-    --text-secondary: #555555;
-    --border-color: #171717; /* Carbon Black */
-    --primary-color: #D62F24; /* Primary Scarlet (10%) */
-    --primary-hover: #b0261d;
-    --accent-color: #174A8B; /* Steel Azure (10%) */
+    /* Color Palette */
+    --bg-color: #FFFFFF; /* Pure White */
+    --surface-color: #FFFFFF; /* Pure White surface */
+    --text-primary: #000000; /* Solid Black */
+    --text-secondary: #333333; /* Dark Grey */
+    --border-color: #000000; /* Solid Black */
+    
+    /* Bauhaus Primaries */
+    --primary-color: #FF3333; /* Red */
+    --primary-hover: #E60000;
+    --accent-color: #0055FF; /* Blue */
+    --accent-yellow: #FFCC00; /* Yellow */
+    
     --error-color: #d32f2f;
     --success-color: #388e3c;
     
-    /* Editorial Variables */
-    --border-width: 1px; /* Refined 1px borders */
+    /* Neo-Brutalist Variables */
+    --border-width: 3px; /* Thick borders */
+    --box-shadow-hard: 4px 4px 0px 0px var(--border-color); /* Hard block shadow */
     
     /* Typography */
-    --font-heading: 'Libre Franklin', 'Helvetica Neue', sans-serif;
+    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     
     /* Metrics */
-    --border-radius: 6px; /* Subtle contemporary rounding */
-    --border-radius-lg: 12px;
-    --transition-speed: 0.05s; /* Snappy neo-brutalist interaction */
+    --border-radius: 0px; /* Sharp corners */
+    --border-radius-lg: 0px;
+    --transition-speed: 0.1s; /* Snappy mechanical interaction */
     --max-width: 1200px;
-}
-
-/* Dark Mode Overrides */
-[data-theme="dark"] {
-    --bg-color: #171717; /* Carbon Black */
-    --surface-color: #222222; /* Slightly lighter surface */
-    --text-primary: #F1EBDD; /* Soft Linen */
-    --text-secondary: #AAAAAA;
-    --border-color: #F1EBDD; /* Soft Linen */
-    /* Primary and Accent remain the same */
 }

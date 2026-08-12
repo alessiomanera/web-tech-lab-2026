@@ -14,18 +14,18 @@
 - **CSS:** MUST be split into logical files (`variables.css`, `layout.css`, `components.css`) and imported into a main stylesheet. No inline styles.
 - **JavaScript:** Keep scripts modular and focused (e.g., `api.js`, `ui.js`).
 
-## 3. UI/UX & Aesthetics (70/20/10 Blend)
+## 3. UI/UX & Aesthetics (Bauhaus Neo-Brutalism)
 - **Design System:** 
-  - 70% Modern Editorial (Lots of whitespace, elegant typography, refined borders, clean and sophisticated layout).
-  - 20% Contemporary Digital (Slight modern web polish, clean structural components).
-  - 10% Neo-Brutalist Interaction (Physical, snappy hover and active states on buttons and interactive elements).
-- **Color Palette (Custom 4-Color):**
-  - Base: Soft Linen (`#F1EBDD`)
-  - Dark: Carbon Black (`#171717`)
-  - Primary Accent: Primary Scarlet (`#D62F24`)
-  - Secondary Accent: Steel Azure (`#174A8B`)
-- **Theme Toggle:** Must include a Light/Dark mode toggle switch that persists state via `localStorage`.
-- **Micro-interactions:** Snappy, neo-brutalist "press" effects.
+  - Pure Neo-Brutalism meets Bauhaus. Stark white backgrounds, aggressive thick black borders (`3px`), hard offset black shadows (`4px 4px 0px 0px #000`), zero border radii.
+- **Color Palette (Bauhaus Primaries):**
+  - Base/Background: Pure White (`#FFFFFF`)
+  - Border/Text: Solid Black (`#000000`)
+  - Primary Red: `#FF3333`
+  - Primary Blue: `#0055FF`
+  - Primary Yellow: `#FFCC00`
+- **Typography:** Strictly `Inter` (sans-serif) across all elements. Heavy weights (800/900) for headings.
+- **Theme Toggle:** NO DARK MODE. Bauhaus relies on the stark white contrast.
+- **Micro-interactions:** Snappy, neo-brutalist "press" effects. Buttons should physically depress (`translate(4px, 4px)`) and lose their shadow on active/hover to simulate a mechanical click.
 - **Responsiveness:** Ensure mobile-first or fully responsive design using Flexbox/Grid.
 
 ## 4. Git Workflow
