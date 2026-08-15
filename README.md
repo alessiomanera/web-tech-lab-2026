@@ -45,10 +45,10 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 ```text
 web-tech-lab-2026/
 ├── app.py                 # Application factory and entry point
-├── models.py              # SQLAlchemy database models (User, Museum, Exhibition, Ticket)
-├── routes.py              # Main Blueprint: page routes and API endpoints (/api/book, /api/chat)
+├── models.py              # SQLAlchemy database models (User, Museum, Experience, Booking)
+├── routes.py              # Main Blueprint: page routes and API endpoints (/api/book, /api/chat, /api/feedback)
 ├── auth.py                # Authentication Blueprint: registration, login, logout, @login_required
-├── seed.py                # Database population script with sample museums and exhibitions
+├── seed.py                # Database population script with Top 20 Curated Italian Cultural Experiences
 ├── requirements.txt       # Python package dependencies
 ├── .env.example           # Template for environment variables (GEMINI_API_KEY, FLASK_SECRET_KEY)
 ├── DOCS/
@@ -60,19 +60,22 @@ web-tech-lab-2026/
 ├── static/
 │   ├── css/
 │   │   ├── style.css      # Master stylesheet aggregator
-│   │   ├── variables.css  # CSS custom properties (colors, borders, shadows, spacing)
-│   │   ├── layout.css     # Grid and Flexbox responsive layout containers
-│   │   ├── components.css # Neubrutalist UI components (cards, buttons, forms, alerts)
+│   │   ├── variables.css  # CSS custom properties (colors, borders, shadows, spacing, cursors)
+│   │   ├── layout.css     # Grid and Flexbox responsive layout containers & custom cursors
+│   │   ├── components.css # Neubrutalist UI components (cards, buttons, forms, alerts, wizard)
 │   │   └── utilities.css  # Utility classes
 │   ├── js/
-│   │   └── main.js        # Asynchronous form handlers and UI interactions
-│   └── images/            # Static image assets
+│   │   ├── main.js        # Global JavaScript utilities and dynamic SVG cursor injection
+│   │   └── bookingWizard.js # 4-step wizard state machine and dynamic addon price calculations
+│   └── images/            # Static image assets & custom SVG cursors (cursor.svg, cursor-pointer.svg)
 └── templates/
     ├── base.html          # Master Jinja2 layout with navigation and alerts
-    ├── index.html         # Hero landing page and feature highlights
-    ├── museums.html       # Museum & cultural site catalog grid
-    ├── booking.html       # Exhibition ticket selection and reservation interface
-    ├── guide.html         # AI Cultural Concierge conversational chat interface
+    ├── index.html         # Landing page with 3-step value workflow & trending packages
+    ├── experiences.html   # Full 20-Experience catalog with search & city filter pills
+    ├── experience_detail.html # Deep-dive view for individual experiences
+    ├── booking.html       # 4-step frictionless booking wizard
+    ├── guide.html         # AI Cultural Concierge conversational chat view with taste memory
+    ├── profile.html       # User dashboard: active digital passes, visit review loop, taste profile
     ├── login.html         # User login form
     └── register.html      # User registration form with cultural preferences selector
 ```
