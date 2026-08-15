@@ -37,3 +37,8 @@
 - **Untracked Course Resources:** Class exercises, lectures, and bulk reference files must remain in `_CLASS_RESOURCES/` (git-ignored). Only the official PDF references required for project citation (`AY2025_2026_project_guide.pdf`, `AY2024_2025_project_outlines.pdf`) are maintained in `DOCS/`.
 - **Single Source of Truth Documentation:** Only keep one authoritative version of documentation in `DOCS/` (`Project_Analysis_Report.md`, `Competitor_Analysis.md`).
 - **Immutable Project Proposal:** `DOCS/PROJECT_PROPOSAL.md` represents the final, immutable proposal submitted to the professor and must remain untouched once finalized.
+
+## 6. Anti-Reinvention & Design System Fidelity
+- **Check Existing Components First:** Never reinvent utilities, components, or UI patterns. Always check and build upon existing CSS rules (`variables.css`, `layout.css`, `components.css`, `utilities.css`) and modular JS patterns.
+- **Strict Neubrutalism Reference:** Adhere strictly to the design system patterns at https://neubrutalism.com/ (stark high-contrast white `#FFFFFF`, `3px` solid black borders, `4px 4px 0px 0px #000` drop-shadows, zero `0px` border-radius, and mechanical click state transitions).
+- **Authorized Tech Stack Only:** Strictly follow the course project guide: HTML5 (Jinja2), Vanilla CSS3, Vanilla JavaScript (ES6+), Python 3 with Flask, SQLite via Flask-SQLAlchemy, and Google Gemini API (`google-generativeai`).
