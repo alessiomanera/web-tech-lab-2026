@@ -65,20 +65,23 @@ The course evaluation consists of two complementary components (both graded out 
 ```text
 web-tech-lab-2026/
 ├── app.py                 # Application factory (create_app())
-├── models.py              # SQLAlchemy models: User, Museum, Exhibition, Ticket
-├── routes.py              # Main routes and API handlers (/api/book, /api/chat)
+├── models.py              # SQLAlchemy models: User, Museum, Experience, Booking
+├── routes.py              # Main routes and API handlers (/api/book, /api/chat, /api/feedback)
 ├── auth.py                # Authentication routes (/register, /login, /logout) and @login_required
-├── seed.py                # Database seeding script with cultural sites
+├── seed.py                # Database seeding script with Top 20 Curated Italian Experiences
 ├── requirements.txt       # Dependencies: Flask, Flask-SQLAlchemy, python-dotenv, google-generativeai
 ├── static/                # Modular CSS and client-side JS
 │   ├── css/               # variables.css, layout.css, components.css, utilities.css, style.css
-│   └── js/                # main.js (asynchronous UI logic)
+│   ├── images/            # cursor.svg, cursor-pointer.svg
+│   └── js/                # main.js (global utilities), bookingWizard.js (4-step wizard)
 └── templates/             # Jinja2 templates extending base.html
     ├── base.html          # Global navigation, alerts, and footer
-    ├── index.html         # Landing page
-    ├── museums.html       # Museum catalog grid
-    ├── booking.html       # Ticket reservation interface
-    ├── guide.html         # AI Concierge conversational chat view
+    ├── index.html         # Landing page with 3-step value workflow & trending packages
+    ├── experiences.html   # Full 20-Experience catalog with search & city filter pills
+    ├── experience_detail.html # Deep-dive view for individual experiences
+    ├── booking.html       # 4-step frictionless booking wizard
+    ├── guide.html         # AI Concierge conversational chat view with taste memory
+    ├── profile.html       # User dashboard: active digital passes, visit review loop, taste profile
     ├── login.html         # Login interface
     └── register.html      # Registration with preference tags
 ```
