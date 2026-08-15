@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}My Experiences &amp; Cultural Taste Profile{% endblock %}
+
+{% block content %}
+<div class="mb-2">
+    <span class="badge badge-blue">User Account Dashboard</span>
+    <h1 class="mb-05 mt-0" style="font-size: 2.6rem;">My Experiences</h1>
+    <p class="text-lg" style="margin: 0;">
+        Welcome back, <strong>{{ user.name }}</strong> ({{ user.email }}). Manage your reserved passes, submit visit reviews, and inspect your AI taste memory.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2.5rem; margin-top: 2rem;">
+    <!-- Left Column: Active Passes & Past Bookings -->
+    <div>
+        <h2 style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 1.25rem; border-bottom: var(--border-width) solid var(--border-color); padding-bottom: 0.5rem;">
+            Your Bookings &amp; Digital Passes
+        </h2>
+
+        {% if bookings %}
+            {% for b in bookings %}
+            <article class="card mb-2" style="background: #FFFFFF;" aria-labelledby="booking-code-{{ b.id }}">
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span class="badge badge-yellow" id="booking-code-{{ b.id }}">{{ b.booking_code }}</span>
+                        <span class="badge {% if b.status == 'Confirmed' %}badge-blue{% else %}badge-white{% endif %}">
+                            {{ b.status }}
+                        </span>
+                    </div>
+
+                    <h3 style="font-size: 1.25rem; text-transform: uppercase; margin: 0 0 0.5rem 0;">
+                        {{ b.experience.title }}
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.9rem; margin-bottom: 1rem; background: #FAFAFA; border: 2px solid #000; padding: 0.85rem;">
+                        <div>
+                            <span style="color: var(--text-secondary); display: block;">City:</span>
+                            <strong>{{ b.experience.city }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-secondary); display: block;">Visit Date:</span>
+                            <strong>{{ b.visit_date.strftime('%Y-%m-%d') }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-secondary); display: block;">Time Slot:</span>
+                            <strong>{{ b.time_slot }}</strong>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-secondary); display: block;">Party Size:</span>
+                            <strong>{{ b.guests_count }} Guest(s)</strong>
+                        </div>
+                    </div>
+
+                    <!-- Add-ons breakdown if any -->
+                    {% if b.selected_addons %}
+                    <div style="margin-bottom: 1rem; font-size: 0.85rem;">
+                        <span style="font-weight: 800; text-transform: uppercase;">Selected Add-ons:</span>
+                        <ul style="margin: 0.25rem 0 0 1.2rem; padding: 0;">
+                            {% for a in b.selected_addons %}
+                            <li>{{ a.name }} (+€{{ "%.2f"|format(a.price) }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: var(--border-width) solid var(--border-color); padding-top: 0.75rem;">
+                        <span style="font-size: 1.15rem; font-weight: 900;">Total: €{{ "%.2f"|format(b.total_price) }}</span>
+                    </div>
+
+                    <!-- Feedback / Rating Section -->
+                    <div style="margin-top: 1.25rem; border-top: 1px dashed #CCC; padding-top: 1rem;">
+                        {% if b.feedback_rating %}
+                        <div style="background: #EBF2FF; border: 2px solid var(--accent-color); padding: 0.75rem;">
+                            <span style="font-weight: 800; color: var(--accent-color);">Your Review:</span>
+                            <span style="color: #FF9900; font-size: 1.1rem;">
+                                {% for i in range(b.feedback_rating) %}★{% endfor %}
+                            </span>
+                            <p style="margin: 0.35rem 0 0 0; font-size: 0.85rem;">"{{ b.feedback_text }}"</p>
+                        </div>
+                        {% else %}
+                        <details style="cursor: pointer;">
+                            <summary style="font-weight: 800; font-size: 0.9rem; text-transform: uppercase; color: var(--primary-color);">
+                                + Rate this Experience
+                            </summary>
+                            <form class="feedback-form mt-1" data-booking-id="{{ b.id }}" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <label style="font-size: 0.85rem; font-weight: 700;">Rating:</label>
+                                    <select name="rating" class="form-select" style="padding: 0.4rem; font-size: 0.85rem;" required>
+                                        <option value="5">★★★★★ (5 - Outstanding)</option>
+                                        <option value="4">★★★★☆ (4 - Great)</option>
+                                        <option value="3">★★★☆☆ (3 - Good)</option>
+                                        <option value="2">★★☆☆☆ (2 - Average)</option>
+                                        <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    </select>
+                                </div>
+                                <textarea name="comment" class="form-textarea" placeholder="Share what you loved about this cultural journey..." rows="2" style="font-size: 0.85rem;"></textarea>
+                                <button type="submit" class="cta-button" style="padding: 0.5rem; font-size: 0.8rem; align-self: flex-start;">
+                                    Submit Feedback
+                                </button>
+                            </form>
+                        </details>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div style="background: #FFFFFF; border: var(--border-width) solid var(--border-color); box-shadow: var(--box-shadow-hard); padding: 2.5rem; text-align: center;">
+                <h3 style="text-transform: uppercase; margin-top: 0;">No Passes Booked Yet</h3>
+                <p style="font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    Ready for your next cultural adventure? Explore our 20 curated Italian packages.
+                </p>
+                <a href="{{ url_for('main.experiences') }}" class="cta-button">
+                    Explore 20 Experiences &rarr;
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Column: Cultural Taste Profile -->
+    <div>
+        <div class="memory-side-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border-width) solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.2rem; text-transform: uppercase; margin: 0;">
+                    Cultural Taste Profile
+                </h2>
+                <span class="badge badge-yellow">AI Learned</span>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+                This Markdown memory profile is continuously updated as you chat with our AI Concierge. It tailors recommendations to your exact interests.
+            </p>
+
+            <div style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1.25rem; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                {% if user.preferences %}
+                    {{ user.preferences|replace('\n', '<br>')|safe }}
+                {% else %}
+                    <p style="font-style: italic; color: var(--text-secondary); margin: 0;">
+                        No taste profile recorded yet. Chat with the Concierge to build your personalized profile!
+                    </p>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100" style="padding: 0.75rem; font-size: 0.85rem;">
+                    Chat with Concierge &rarr;
+                </a>
+                <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100" style="padding: 0.6rem; font-size: 0.8rem;">
+                    Reset Taste Profile
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Feedback form submission
+    document.querySelectorAll('.feedback-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bookingId = form.getAttribute('data-booking-id');
+            const rating = form.querySelector('[name="rating"]').value;
+            const comment = form.querySelector('[name="comment"]').value;
+            const btn = form.querySelector('button[type="submit"]');
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                const res = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: bookingId, rating, comment })
+                });
+
+                if (res.ok) {
+                    alert('Thank you for reviewing your visit!');
+                    window.location.reload();
+                } else {
+                    alert('Could not submit feedback.');
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Feedback';
+                }
+            } catch (err) {
+                alert('Network error.');
+                btn.disabled = false;
+                btn.textContent = 'Submit Feedback';
+            }
+        });
+    });
+
+    // Reset profile memory
+    const resetBtn = document.getElementById('profile-reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to clear your AI Taste Profile?')) return;
+            const res = await fetch('/api/profile/reset-memory', { method: 'POST' });
+            if (res.ok) {
+                window.location.reload();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

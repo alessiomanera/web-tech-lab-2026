@@ -56,22 +56,23 @@ This document serves as the master source of truth and historical tracking timel
 
 ---
 
-## Phase 3: Frontend Templates & Client-Side Scripts (Static / Jinja2)
+## Phase 3: Frontend Templates & Client-Side Scripts (Experience Economy UI)
 - [x] **Base Layout Template (`templates/base.html`)**
   - [x] Establish HTML5 semantic structure (`<header>`, `<nav>`, `<main>`, `<footer>`).
-  - [x] Implement dynamic navigation bar with conditional Auth states (Login/Register vs. Profile/Logout).
+  - [x] User-centric navigation: `Home`, `Explore Experiences`, `Tailor Experience (AI)`, `Book Now`, `My Experiences`.
   - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
-- [x] **Core Page Templates**
-  - [x] `templates/index.html`: Landing page with hero banner, feature breakdown, and call-to-action buttons.
-  - [x] `templates/museums.html`: Grid catalog displaying cultural venues with location, description, and action buttons.
-  - [x] `templates/booking.html`: Ticket selection interface with exhibition pickers, date selections, and checkout card.
-  - [x] `templates/guide.html`: Interactive AI Cultural Concierge chat interface with message stream and prompt suggestions.
-  - [x] `templates/login.html`: Neubrutalist login form with email/password validation.
-  - [x] `templates/register.html`: Registration form with cultural preference tagging selector.
-- [x] **Client-Side Interactions (`static/js/main.js`)**
-  - [x] Form submission handlers and client-side validation helpers.
-  - [x] Toast notification and asynchronous response feedback.
-  - [x] Responsive mobile menu toggle handler.
+- [x] **Experience Economy Page Templates**
+  - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
+  - [x] `templates/experiences.html`: Full 20-Experience catalog with search bar and city/theme filter pills.
+  - [x] `templates/experience_detail.html`: Deep-dive view with full itinerary, included perks, and customizable add-ons.
+  - [x] `templates/booking.html`: 4-step wizard (Package & Add-ons $\rightarrow$ Date & Slot $\rightarrow$ Summary $\rightarrow$ Digital Pass).
+  - [x] `templates/guide.html`: AI Cultural Concierge with grounded RAG, in-chat booking cards, and live Markdown taste memory panel.
+  - [x] `templates/profile.html`: User dashboard with active digital passes, visit review/feedback loops, and taste memory inspector.
+  - [x] `templates/login.html` & `templates/register.html`: Neubrutalist authentication forms.
+- [x] **Client-Side Interactions (`static/js/main.js`, `static/js/bookingWizard.js`)**
+  - [x] 4-step wizard state machine and dynamic addon price calculations.
+  - [x] Time-slot selection and date bounding (today to +90 days).
+  - [x] Asynchronous feedback and review submission handlers.
 
 ---
 
@@ -82,13 +83,13 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Register Blueprints (`main_bp` in `routes.py`, `auth_bp` in `auth.py`).
   - [x] Auto-create database tables on startup within app context.
 - [x] **Relational Database Schema Definition (`models.py`)**
-  - [x] `User` model: `id`, `name`, `email` (unique), `password_hash`, `preferences`, one-to-many relationship with `Ticket`.
-  - [x] `Museum` model: `id`, `name`, `description`, `location`, `image_url`, one-to-many relationship with `Exhibition`.
-  - [x] `Exhibition` model: `id`, `museum_id` (foreign key), `title`, `start_date`, `end_date`, relationship with `Ticket`.
-  - [x] `Ticket` model: `id`, `user_id` (foreign key), `exhibition_id` (foreign key), `booking_date`, `status`.
+  - [x] `User` model: `id`, `name`, `email` (unique), `password_hash`, `preferences` (Markdown Taste Memory).
+  - [x] `Museum` model: `id`, `name`, `description`, `location`, `city`, `image_url`.
+  - [x] `Experience` model: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`.
+  - [x] `Booking` model: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
-  - [x] Populate SQLite database with authentic Italian cultural venues (e.g., Uffizi Gallery, Colosseum Archaeological Park, Doge's Palace, Museo Egizio).
-  - [x] Populate corresponding exhibitions and dates.
+  - [x] Populate SQLite database with **Top 20 Curated Italian Cultural Experiences** across 9 major cities (Florence, Rome, Venice, Milan, Turin, Naples, Verona, Palermo, Bologna).
+  - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
 
 ---
 
@@ -96,24 +97,25 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **User Authentication & Session Management (`auth.py`)**
   - [x] Registration handler (`/register` POST) with secure password hashing via `werkzeug.security.generate_password_hash`.
   - [x] Login handler (`/login` POST) with password verification via `check_password_hash`.
-  - [x] Session establishment (`session['user_id']`) and logout handler (`/logout`) that clears session state.
-  - [x] Route protection via `@login_required` decorator for authenticated views (`/booking`, `/guide`).
+  - [x] Session establishment (`session['user_id']`) and logout handler (`/logout`).
+  - [x] Route protection via `@login_required` decorator (`/booking`, `/concierge`, `/profile`).
 - [x] **Dynamic Catalog & Booking Workflows (`routes.py`)**
-  - [x] Query and inject dynamic `Museum` records into `museums.html`.
-  - [x] Query dynamic `Exhibition` records into `booking.html` with support for URL query preselection (`?museum_id=X`).
-  - [x] Asynchronous booking endpoint (`POST /api/book`): validate user session, create `Ticket` record in SQLite, and return JSON status.
+  - [x] Query and render 20 experiences with search and city filter on `/experiences`.
+  - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X`).
+  - [x] Asynchronous booking endpoint (`POST /api/book`): validate session, compute total with add-ons, issue `EXP-2026-XXXX` reference pass.
+  - [x] Feedback submission endpoint (`POST /api/feedback`).
 
 ---
 
 ## Phase 6: AI Cultural Concierge & Grounded RAG Feature
 - [x] **Gemini API Integration & Grounding Workflow**
   - [x] Configure Google Generative AI SDK (`google-generativeai`) with secure `GEMINI_API_KEY`.
-  - [x] Implement lightweight RAG (Retrieval-Augmented Generation): query SQLite `Museum` and `Exhibition` tables and inject fresh catalog context into the Gemini system prompt.
-  - [x] Restrict AI responses strictly to grounded database facts to eliminate hallucinations.
-- [x] **Conversational Interface & Session Memory (`routes.py`, `templates/guide.html`)**
-  - [x] Implement chat API endpoint (`POST /api/chat`) with session-based rolling history window (capped to prevent cookie size overflow).
-  - [x] Build asynchronous chat UI with animated typing indicators, instant message appending, and error fallbacks.
-  - [x] Dynamically personalize recommendations based on stored user `preferences`.
+  - [x] Ground system prompt directly on the 20 SQLite experiences to eliminate hallucinations.
+  - [x] In-chat actionable booking card triggers (`[RECOMMEND: id=X, title="Y", city="Z", price=W]`).
+- [x] **Dynamic Markdown Taste Memory Pipeline (`routes.py`, `templates/guide.html`)**
+  - [x] Background preference extraction: automatically updates `User.preferences` as structured Markdown in SQLite after each conversation.
+  - [x] Live Taste Memory side panel in chat view and user dashboard (`/profile`).
+  - [x] Option to reset/refine taste memory on demand (`POST /api/profile/reset-memory`).
 
 ---
 
@@ -141,7 +143,7 @@ This document serves as the master source of truth and historical tracking timel
   - [ ] Ensure all dependencies are locked in `requirements.txt`.
 - [ ] **Oral Exam Presentation Preparation (6 Points Academic Evaluation)**
   - [ ] Structure presentation outline emphasizing project purpose, technical architecture, strengths, and limitations.
-  - [ ] Prepare live demonstration walkthrough (User Registration -> Museum Browsing -> AI Concierge Recommendation -> Ticket Booking).
+  - [ ] Prepare live demonstration walkthrough (Discover Experience $\rightarrow$ 4-Step Booking $\rightarrow$ AI Concierge Recommendation & Memory $\rightarrow$ Review Feedback).
   - [ ] Document potential future enhancements (e.g., QR-code digital ticket generation, calendar sync).
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
