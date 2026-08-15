@@ -1,6 +1,0 @@
-Under/database_exercise, run
-python3 -m venv venv_db_example  
-
-source venv_db_example/bin/activate
-
-Pip3 install Flask

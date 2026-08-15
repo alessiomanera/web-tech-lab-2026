@@ -16,7 +16,7 @@
 
 ## 3. UI/UX & Aesthetics (Bauhaus Neo-Brutalism)
 - **Design System:** 
-  - Pure Neo-Brutalism meets Bauhaus. Stark white backgrounds, aggressive thick black borders (`3px`), hard offset black shadows (`4px 4px 0px 0px #000`), zero border radii.
+  - Pure Neo-Brutalism meets Bauhaus (https://neubrutalism.com/). Stark white backgrounds, aggressive thick black borders (`3px`), hard offset black shadows (`4px 4px 0px 0px #000`), zero border radii (`0px`).
 - **Color Palette (Bauhaus Primaries):**
   - Base/Background: Pure White (`#FFFFFF`)
   - Border/Text: Solid Black (`#000000`)
@@ -30,3 +30,10 @@
 
 ## 4. Git Workflow
 > **CRITICAL RULE**: Always stay on the `testing` branch for development. Do NOT commit directly to `main`. When features are ready, they must be merged into `main` via Pull Requests.
+
+## 5. Repository Cleanliness & Privacy (Professor-Ready Standard)
+- **Pristine Codebase:** The entire repository must remain clean, tidy, and presentation-ready at all times for sharing with the professor.
+- **No Personal Notes in Git:** Never commit personal comments, rough working notes, private links, or scratch files to Git. All private notes and links MUST reside exclusively in the `_PERSONAL/` folder (which is git-ignored).
+- **Untracked Course Resources:** Class exercises, lectures, and bulk reference files must remain in `_CLASS_RESOURCES/` (git-ignored). Only the official PDF references required for project citation (`AY2025_2026_project_guide.pdf`, `AY2024_2025_project_outlines.pdf`) are maintained in `DOCS/`.
+- **Single Source of Truth Documentation:** Only keep one authoritative version of documentation in `DOCS/` (`Project_Analysis_Report.md`, `Competitor_Analysis.md`).
+- **Immutable Project Proposal:** `DOCS/PROJECT_PROPOSAL.md` represents the final, immutable proposal submitted to the professor and must remain untouched once finalized.
