@@ -1,99 +1,93 @@
-# Comprehensive Project, Exam, and Resources Reference
+# Comprehensive Project, Exam, and Technical Reference
 
 > [!NOTE]
-> This document provides a complete, unified analysis of the Museum Ticketing & AI Guide project. It merges the official course guidelines, exam rules, project structure analysis, and available class resources into a single master reference document for AI assistants (like Claude) to understand the project's context, constraints, and architecture.
+> This document provides a complete, unified analysis of the **Museum Ticketing & AI Guide** project. It merges the official course guidelines, exam rules, project architecture, Neubrutalism design principles, and available class resources into a master reference document.
+
+---
 
 ## 1. Project & Group Details
-- **Course:** Lab of Web Technologies (a.a. 2025-26)
-- **Author:** Alessio Manera
+- **Course:** Lab of Web Technologies (a.a. 2025–26)
+- **Author:** Alessio Manera (Student ID: 905639)
 - **Group:** Group-11 (Single-person group confirmed by Professor Yucel)
-- **Target Session:** September 2026
-- **Project Topic:** Museum Booking and Info Web App
-- **Goal:** A web application for booking tickets to cultural sites, augmented with an AI-powered cultural recommendation system.
-- **Core Functionalities:** Streamlining ticket purchasing and providing tailored cultural suggestions.
-
-## 2. Exam Structure & General Rules
-- **Grade Breakdown:** The exam is 50% written and 50% project/oral. Both are graded out of 30+1 points, and a minimum of 18 points in each is required to pass.
-- **Prerequisite:** You absolutely cannot take the written or oral exam without first passing "Introduction to Coding and Data Management".
-- **Written Exam Format:** Based strictly on the course slides, consisting of exactly 5 multiple-choice questions and 3 open-ended questions (as per the professor's email). A sample exam is available on Moodle for practice.
-- **Academic Year Limit:** Both the written and oral exams must be passed within the same academic year. Because September is the last session of the academic year, failing or missing one part means you will lose any retained grades and must redo both parts the following year.
-
-### Timelines & Required Steps
-*(Deadlines count backwards from the official September exam date once it is announced).*
-- **4 weeks before the exam:** Submit group members. *(Completed: Registered as Group-11)*.
-- **3 weeks before the exam:** Submit the 1-page project proposal (initial draft) on Moodle.
-- **2 weeks before the exam:** Receive feedback from the professor. If revisions are requested, the proposal must be revised and resubmitted.
-- **1 week before the exam:** Submit the final project archive (.zip, .tar.gz) on Moodle. It must include a document with the project's description, run instructions, and role contributions. Submissions after the deadline will not be considered.
-- **Exam Day (Oral Presentation):** Deliver a brief presentation discussing the web application, emphasizing its purpose, features, strengths, and potential limitations.
+- **Target Exam Session:** September 2026
+- **Project Topic:** Museum Booking and AI Cultural Guide Web Application
+- **Core Objectives:** Streamlining cultural site ticket booking and providing grounded AI recommendations.
 
 ---
 
-## 3. Architecture & Project Requirements
+## 2. Exam Structure & Academic Grading Rules
 
-### Technical Stack & Constraints
-- **Required Technologies:** HTML (structure and content), CSS (presentation), JavaScript (dynamic behavior), and Python with the Flask framework (web server management).
-- **Architecture Requirement:** The project must contain several static and dynamic web pages, managed by a web server capable of handling different kinds of HTTP requests.
-- **Frontend:** HTML5 (Jinja2 templates), Vanilla CSS (custom design system, no Tailwind), Vanilla JavaScript.
-- **Backend:** Python 3 with Flask.
-- **Database:** SQLite via Flask-SQLAlchemy.
+### Grade Breakdown (30+1 Scale)
+The course evaluation consists of two complementary components (both graded out of 30+1, minimum 18 points required in each):
+1. **Written Exam (50%):** 5 multiple-choice questions + 3 open-ended questions based strictly on the course lecture slides.
+2. **Project & Oral Exam (50%):** Technical evaluation and project presentation evaluated across the following areas:
+   - **Code Quality (6 points):** Clean, modular, well-commented, comprehensively documented, secure, and aligned with the proposal.
+   - **Collaboration & Group Structure (6 points):** Clearly defined roles, knowledge sharing, and domain responsibility.
+   - **Project Presentation (6 points):** Clear explanation of project purpose, features, strengths, and limitations.
+   - **Knowledge of Course Contents (6 points):** Effective incorporation and mastery of technologies covered in class (HTML, CSS, JS, Flask, SQLite).
+   - **Innovation & Creativity (2 points):** Originality of the idea and problem-solving approaches (e.g., RAG AI concierge).
+   - **User Experience & Interface Design (2 points):** Usability, accessibility (WCAG), Neubrutalism design quality, and responsiveness.
+   - **Deployment & Maintenance (2 points):** Clear run instructions and future architectural maintainability.
 
-### Source Code Organization
-The project follows a standard, modular Flask application structure:
+### Academic Deadlines Workflow (Countdown to Exam)
+- **4 weeks prior to exam:** Submit group member list (`zeynep.yucel@unive.it`). *(Completed: Group-11)*.
+- **3 weeks prior to exam:** Submit 1-page proposal draft on Moodle (`DOCS/PROJECT_PROPOSAL.md`).
+- **2 weeks prior to exam:** Receive feedback and adjust proposal if required.
+- **1 week prior to exam:** Submit final project archive (`.zip`) on Moodle containing source code and documentation.
+- **Exam Day:** Brief oral presentation and live application walkthrough.
+
+---
+
+## 3. Architecture & Technical Stack
+
+### Core Technologies
+- **Frontend:** HTML5 (semantic Jinja2 templates), Vanilla CSS3 (custom Neubrutalism design tokens), Vanilla JavaScript (ES6+ for asynchronous REST requests).
+- **Backend:** Python 3 with the Flask framework (modular Blueprints).
+- **Database:** SQLite managed via Flask-SQLAlchemy (`models.py`).
+- **External Services:** Google Gemini API (`gemini-1.5-flash`) for AI recommendation generation.
+
+### Design System: Neubrutalism ([neubrutalism.com](https://neubrutalism.com/))
+- **Aesthetic Principles:** High contrast, raw geometry, and zero cognitive friction.
+- **Visual Tokens:**
+  - Base Background: Pure White (`#FFFFFF`)
+  - Borders: Heavy `3px solid #000000`
+  - Shadows: Hard offset `4px 4px 0px 0px #000000` (zero blur)
+  - Corner Radii: Strictly `0px`
+  - Accent Colors: Bauhaus Primary Red (`#FF3333`), Blue (`#0055FF`), Yellow (`#FFCC00`)
+- **Typography:** `Inter` sans-serif with heavy weights (800/900) for titles and progressive text-wrap enhancements.
+- **Micro-interactions:** Snappy mechanical button depress (`transform: translate(4px, 4px)`) on click.
+- **Theme:** Exclusively Light Mode.
+
+---
+
+## 4. Source Code Organization & Modules
+
 ```text
-Web_Tech_Lab_2026/
-├── app.py                 # Application factory and entry point
-├── models.py              # SQLAlchemy database models
-├── routes.py              # Flask blueprints and route definitions
-├── requirements.txt       # Python dependencies
-├── static/                # Static assets
-│   ├── css/               # Vanilla CSS files (to be organized by layout/components)
-│   ├── js/                # Client-side JavaScript
-│   └── images/            # Image assets
-└── templates/             # HTML templates (Jinja2)
-    ├── base.html          # Master layout template
+web-tech-lab-2026/
+├── app.py                 # Application factory (create_app())
+├── models.py              # SQLAlchemy models: User, Museum, Exhibition, Ticket
+├── routes.py              # Main routes and API handlers (/api/book, /api/chat)
+├── auth.py                # Authentication routes (/register, /login, /logout) and @login_required
+├── seed.py                # Database seeding script with cultural sites
+├── requirements.txt       # Dependencies: Flask, Flask-SQLAlchemy, python-dotenv, google-generativeai
+├── static/                # Modular CSS and client-side JS
+│   ├── css/               # variables.css, layout.css, components.css, utilities.css, style.css
+│   └── js/                # main.js (asynchronous UI logic)
+└── templates/             # Jinja2 templates extending base.html
+    ├── base.html          # Global navigation, alerts, and footer
     ├── index.html         # Landing page
-    ├── museums.html       # Museum listing view
-    └── booking.html       # Ticket booking interface
+    ├── museums.html       # Museum catalog grid
+    ├── booking.html       # Ticket reservation interface
+    ├── guide.html         # AI Concierge conversational chat view
+    ├── login.html         # Login interface
+    └── register.html      # Registration with preference tags
 ```
 
-### Core Modules Analysis
-- **`app.py`**: Implements the Application Factory pattern (`create_app()`). Configures the SQLite database (`app.db`), initializes SQLAlchemy, registers the `main_bp` blueprint, and automatically creates tables. 
-- **`models.py`**: Defines the relational database schema (`User`, `Museum`, `Exhibition`, `Ticket`). The `User` model includes a `preferences` field (JSON/text) for the AI recommendation engine.
-- **`routes.py`**: Utilizes Flask Blueprints to manage routing cleanly (`/`, `/museums`, `/booking`, `/guide`).
-
-### Design & Coding Constraints
-> [!IMPORTANT]
-> The `README.md` strictly enforces specific best practices:
-> - **No Monolithic Code**: Extract logic into reusable functions/modules. CSS must be split logically (variables, layout, components). HTML must use Jinja2 inheritance.
-> - **Aesthetics**: Build a premium application using a custom design system, modern typography, responsive Flexbox/Grid, and micro-interactions.
-> - **AI Integration**: The backend will handle an AI recommendation algorithm based on the `preferences` column in the `User` model, potentially leveraging an external LLM API.
-
 ---
 
-## 4. Class Resources Analysis
-The `CLASS_RESOURCES` directory contains official course materials, lecture slides, and weekly practical exercises to guide the development process.
+## 5. Course Documentation & Reference Mapping
 
-### Course Documents & Guidelines
-- **`AY2025_2026_project_guide.pdf`**: The most relevant guide for the current academic year (2025-2026). Contains formatting, submission, and grading criteria.
-- **`all_merged_slides_web_tech_2026.pdf`**: A comprehensive, 11MB file containing all lecture slides. This is the primary reference for the written exam and technical approaches taught in class.
-- **`AY2024_2025_project_outlines.pdf`**: Previous year's project outlines, for historical context.
-
-### Weekly Exercises & Solutions
-The folder contains a structured progression of lab exercises corresponding to the course syllabus:
-- **`week_2_HTML_exercise/` & `week_2_HTML_exercise_solution/`**: Foundational HTML structure.
-- **`week_3_css_exercise_solution/`**: Styling exercises (Vanilla CSS).
-- **`week_4_flask_examples/` & `week_4_js_execise_solution/`**: Backend development with Flask and client-side interactions with JavaScript.
-- **`week_5_database_exercise/`**: Examples covering database integration using Flask and databases.
-
-> [!TIP]
-> When implementing specific features (e.g., database models, Flask routing, CSS layouts), refer back to these `week_X` folders to ensure the code style aligns with what the professor has taught.
-
----
-
-## 5. Current Status & Next Steps
-According to `ROADMAP.md`, Phase 1 (Foundation) is complete. 
-
-**Immediate Next Steps (Phase 2 & 3):**
-1. Define the color palette and core CSS variables in `/static/css/`.
-2. Build out the frontend HTML structure in `/templates/` using the established `base.html` layout.
-3. Implement responsive Vanilla CSS styling and basic JS interactions before moving on to connecting dynamic forms to the Flask backend (Phase 5).
+Official university materials and course guidelines used to validate technical alignment:
+- **`DOCS/AY2025_2026_project_guide.pdf`**: Official requirements, submission rules, and grading breakdown.
+- **`DOCS/AY2024_2025_project_outlines.pdf`**: Historical topics and project scope reference.
+- **`_CLASS_RESOURCES/` (untracked/local)**: Lecture slides (`all_merged_slides_web_tech_2026.pdf`) and weekly practical lab exercises (`week_2` through `week_5`).
