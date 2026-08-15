@@ -31,4 +31,8 @@
     --border-radius-lg: 0px;
     --transition-speed: 0.1s; /* Snappy mechanical interaction */
     --max-width: 1200px;
+
+    /* Custom SVG Cursors */
+    --cursor-default: url('/static/images/cursor.svg') 2 2, auto;
+    --cursor-pointer: url('/static/images/cursor-pointer.svg') 14 2, pointer;
 }

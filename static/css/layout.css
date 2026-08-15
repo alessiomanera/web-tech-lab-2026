@@ -9,7 +9,20 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Typography Hierarchy (Modern Editorial & Contemporary) */
+/* Custom Cursors (Matching am-portfolio) */
+@media (pointer: fine) {
+    body, html {
+        cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto);
+    }
+
+    a, button, [role="button"], input, select, textarea, summary, .cursor-pointer, label, 
+    .cta-button, .filter-pill, .time-slot-pill, .addon-choice-card, .quick-chip, 
+    .wizard-step-node, details summary, .badge {
+        cursor: var(--cursor-pointer, url('/static/images/cursor-pointer.svg') 14 2, pointer) !important;
+    }
+}
+
+/* Typographic Hierarchy (Progressive balance & pretty) */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
     margin-top: 0;
@@ -17,12 +30,18 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 800;
     letter-spacing: -0.03em;
+    text-wrap: balance;
 }
 
 h1 { font-size: 3.5rem; text-transform: uppercase; }
 h2 { font-size: 2.5rem; }
 h3 { font-size: 1.75rem; }
-p { color: var(--text-secondary); line-height: 1.6; font-size: 1.1rem; }
+p { 
+    color: var(--text-secondary); 
+    line-height: 1.6; 
+    font-size: 1.1rem;
+    text-wrap: pretty;
+}
 
 /* Layouts */
 main {
@@ -92,7 +111,7 @@ nav {
 }
 
 .nav-links a:focus-visible {
-    border-bottom: 1px solid var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
 }
 
 /* Footer */
@@ -104,6 +123,34 @@ footer {
     color: var(--text-primary);
     margin-top: auto;
     font-size: 0.9rem;
+}
+
+/* Brutalist Global Scrollbar with Cursor Preservation */
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: #FFFFFF;
+    border-left: 2px solid #000000;
+    cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto) !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #000000;
+    border: 3px solid #FFFFFF;
+    cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+    cursor: var(--cursor-pointer, url('/static/images/cursor-pointer.svg') 14 2, pointer) !important;
+}
+
+* {
+    scrollbar-width: auto;
+    scrollbar-color: #000000 #FFFFFF;
 }
 
 @media (max-width: 768px) {
