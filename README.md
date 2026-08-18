@@ -49,7 +49,7 @@ web-tech-lab-2026/
 ├── schema.sql             # SQL database definition (tables for users, museums, experiences, tickets, etc.)
 ├── routes.py              # Main Blueprint: page routes and API endpoints (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication Blueprint: registration, login, logout, @login_required
-├── seed.py                # Database population script with Top 20 Curated Italian Cultural Experiences
+├── seed.py                # Database population script with Top 12 Curated Italian Cultural Experiences
 ├── requirements.txt       # Python package dependencies
 ├── .env.example           # Template for environment variables (GEMINI_API_KEY, FLASK_SECRET_KEY)
 ├── DOCS/

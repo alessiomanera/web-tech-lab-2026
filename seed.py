@@ -3,7 +3,7 @@ seed.py
 -------
 Database seeding script.
 Drops all existing tables and populates the SQLite database with
-the Top 20 Curated Italian Cultural Experiences, museums, exhibitions,
+the Top 12 Curated Italian Cultural Experiences, museums, exhibitions,
 and sample user profiles. Uses raw sqlite3 with parameterized queries.
 """
 import json
@@ -94,7 +94,7 @@ def seed_db():
         print(f"Added {len(museums_data)} baseline museums.")
 
         # ---------------------------------------------------------
-        # 2. Populate the Top 20 Curated Italian Experiences
+        # 2. Populate the Top 12 Curated Italian Experiences
         # ---------------------------------------------------------
         standard_addons = json.dumps([
             {"id": "audio", "name": "Spatial Audio Guide (Smartphone App)", "price": 5.0},
@@ -251,102 +251,6 @@ def seed_db():
              "One of the world's most important classical antiquity museums, housing the colossal marbles discovered in the Baths of Caracalla and the delicate mosaics rescued from the ruins of Pompeii and Herculaneum.",
              "Alexander Mosaic from House of the Faun, Farnese Bull colossal marble, Farnese Hercules, Roman bronze statues.",
              "/static/images/experiences/exp-12-naples-mann.jpg"),
-            # 13. Verona - Arena
-            (2, "Roman Arena & Opera Legends Sunset Tour",
-             "Explore the 2,000-year-old pink marble Roman amphitheater that transforms into the world's most prestigious open-air opera stage.",
-             "Verona", "Roman Heritage & Opera", 90, 16.0, "Open Air Wonder", 0,
-             json.dumps(["Priority Arena di Verona Entry",
-                         "Climb to Upper Tier Panorama",
-                         "Opera Set Design Exhibition",
-                         "Verona Historic Center Audio Trail"]),
-             standard_addons,
-             "Older than the Colosseum in Rome, Verona's pristine Roman Arena offers breathtaking vistas across the Adige River and Piazza Bra, showcasing how ancient gladiatorial arenas evolve into temples of music.",
-             "Ancient Roman internal arches, Arena summit sunset view, Scenographic opera exhibits.",
-             "/static/images/experiences/exp-13-verona-arena.jpg"),
-            # 14. Palermo - Palazzo dei Normanni
-            (1, "Norman Palace & Palatine Chapel Gold Mosaics",
-             "Witness the dazzling convergence of Byzantine, Arab, and Norman craftsmanship in Sicily's most glittering royal chapel.",
-             "Palermo", "Byzantine & Arab-Norman", 90, 19.0, "Golden Mosaics", 0,
-             json.dumps(["Full Royal Palace & Cappella Palatina Entry",
-                         "Royal Apartments of the Kings of Sicily",
-                         "Subtropical Royal Gardens Access",
-                         "Arab-Norman Architectural Symbol Guide"]),
-             standard_addons,
-             "A breathtaking gem of multicultural medieval Europe. Marvel at ceiling-to-floor 24-karat gold mosaics depicting Christ Pantocrator, intricate Islamic muqarnas wooden ceilings, and centuries of Norman royal history.",
-             "Christ Pantocrator gold dome mosaic, Islamic carved wooden ceiling, Roger II royal bedroom, Romanesque arches.",
-             "/static/images/experiences/exp-14-palermo-norman-palace.jpg"),
-            # 15. Bologna - Archiginnasio
-            (4, "Medieval Towers, Anatomical Theater & University Lore",
-             "Explore Europe's oldest university, the wooden 17th-century Anatomical dissection theater, and 6,000 student heraldic coats of arms.",
-             "Bologna", "Medieval & Science History", 90, 15.0, "Secret University", 0,
-             json.dumps(["Archiginnasio Palace & Anatomical Theater Entry",
-                         "Stabat Mater Historic Lecture Hall",
-                         "Bologna Porticoes Walking Guide",
-                         "Heraldic Library Highlights"]),
-             standard_addons,
-             "Discover the birthplace of modern European higher learning. Step inside the fragrant cedar-wood Anatomical Theater where Galileo's contemporaries dissected human cadavers by candlelight beneath statues of ancient physicians.",
-             "Carved wooden Anatomical Theater (1637), Spellati statues, 6,000 student coats of arms, Stabat Mater hall.",
-             "/static/images/experiences/exp-15-bologna-archiginnasio.jpg"),
-            # 16. Turin - Musei Reali
-            (4, "Royal Palace of Savoy & The Armory of Kings",
-             "Step into royal opulence with glittering state rooms, one of the world's greatest equestrian armories, and Leonardo da Vinci's self-portrait.",
-             "Turin", "Royal Splendor & Armory", 150, 22.0, "Royal Court", 0,
-             json.dumps(["Palazzo Reale State Apartments Access",
-                         "Royal Armory (Armeria Reale)",
-                         "Sabauda Picture Gallery",
-                         "Royal Gardens of Andre Le Notre"]),
-             standard_addons,
-             "Turin was the first capital of unified Italy and the seat of the House of Savoy. Tour the Throne Room, mirror galleries, and the astounding Royal Armory featuring knightly armor forged by medieval armorers.",
-             "Armeria Reale knight equestrian gallery, Royal Throne Room, Holy Shroud Chapel architecture, Sabauda Gallery.",
-             "/static/images/experiences/exp-16-turin-musei-reali.jpg"),
-            # 17. Florence - Bargello
-            (1, "Bargello Sculpture Treasury & Donatello's Bronze",
-             "The fortress palace housing Donatello's bronze David, Michelangelo's early Bacchus, and Renaissance decorative arts.",
-             "Florence", "Renaissance Sculpture", 90, 18.0, "Sculpture Haven", 0,
-             json.dumps(["Full Bargello National Museum Entry",
-                         "Donatello & Verrocchio Sculptures Hall",
-                         "Medici Ivory & Jewelry Collection",
-                         "Medieval Courtyard & Prison Walk"]),
-             standard_addons,
-             "Often overshadowed by the Uffizi, the Bargello is the world's most intimate museum of Renaissance three-dimensional art. Set within a 13th-century fortress, it showcases the masterpieces that sparked the Florentine revolution.",
-             "Donatello's Bronze David (1440), Michelangelo's Bacchus, Giambologna's Flying Mercury, Brunelleschi vs Ghiberti competition panels.",
-             "/static/images/experiences/exp-17-florence-bargello.jpg"),
-            # 18. Milan - Museo del Novecento
-            (5, "Futurism, Boccioni & 20th Century Pioneers",
-             "Witness the energetic revolution of Italian modernism with Fontana's glowing neon and front-row Duomo terrace views.",
-             "Milan", "Modern & Contemporary", 90, 15.0, "Duomo View", 0,
-             json.dumps(["Museo del Novecento Permanent Collection Entry",
-                         "Lucio Fontana Spatial Neon Room",
-                         "Futurism Gallery (Balla, Boccioni, Severini)",
-                         "Duomo di Milano Panoramic Terrace Access"]),
-             standard_addons,
-             "Located right inside Piazza del Duomo, this dynamic museum traces Italy's 20th-century artistic vanguard: Futurism, Metaphysical painting, Spatialism, and Arte Povera, topped off by an unforgettable viewpoint facing the Duomo spires.",
-             "Umberto Boccioni's Unique Forms of Continuity in Space, Pellizza da Volpedo's Il Quarto Stato, Lucio Fontana neon ceiling.",
-             "/static/images/experiences/exp-18-milan-museo-novecento.jpg"),
-            # 19. Venice - Museo Correr
-            (3, "Correr Museum & Napoleonic Royal Rooms",
-             "Discover the art, naval conquests, and daily life of Venetian Doges across Empress Sisi's neoclassical imperial apartments.",
-             "Venice", "Venetian History & Art", 100, 25.0, "St. Mark's Square", 0,
-             json.dumps(["Museo Correr Full Entry",
-                         "Imperial Apartments of Empress Elisabeth (Sisi)",
-                         "Canova Marble Sculpture Gallery",
-                         "Venetian Navigational Instruments & Coins Collection"]),
-             standard_addons,
-             "Commanding the western end of Piazza San Marco, the Correr Museum reveals Venice beyond the canals: its naval supremacy, Doge election ballots, coin mints, and stunning Canova statues inside neoclassical ballrooms.",
-             "Antonio Canova's Daedalus and Icarus, Empress Sisi's boudoir, Antonello da Messina's Pieta, Venetian globes.",
-             "/static/images/experiences/exp-19-venice-museo-correr.jpg"),
-            # 20. Rome - Musei Capitolini
-            (2, "Capitoline Museums & The Foundations of Rome",
-             "Explore the world's oldest public museum atop the Capitoline Hill, home to the She-Wolf, Dying Gaul, and Marcus Aurelius bronze.",
-             "Rome", "Ancient Classical", 120, 22.0, "Oldest Museum", 0,
-             json.dumps(["Full Capitoline Museums & Tabularium Entry",
-                         "Overlook of the Roman Forum from Ancient Archives",
-                         "Marcus Aurelius Original Gilded Equestrian Bronze",
-                         "Lupa Capitolina Bronze Gallery"]),
-             standard_addons,
-             "Founded in 1471 by Pope Sixtus IV, the Capitoline Museums sit on Michelangelo's famous piazza. Walk through underground tunnels connecting the palaces and gaze out over the entire Roman Forum from the ancient Tabularium.",
-             "Lupa Capitolina (Capitoline She-Wolf), The Dying Gaul, Colossus of Constantine marble fragments, Tabularium Forum View.",
-             "/static/images/experiences/exp-20-rome-musei-capitolini.jpg"),
         ]
 
         db.executemany(
@@ -396,7 +300,7 @@ def seed_db():
         )
 
         db.commit()
-        print("Database successfully seeded with Top 20 Experiences and demo user!")
+        print("Database successfully seeded with Top 12 Experiences and demo user!")
 
 
 if __name__ == '__main__':

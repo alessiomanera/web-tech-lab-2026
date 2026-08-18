@@ -89,7 +89,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Table `experiences`: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`, `museum_id`.
   - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
-  - [x] Populate SQLite database with **Top 20 Curated Italian Cultural Experiences** across 9 major cities (Florence, Rome, Venice, Milan, Turin, Naples, Verona, Palermo, Bologna).
+  - [x] Populate SQLite database with **Top 12 Curated Italian Cultural Experiences** across 6 major art cities (Florence, Rome, Venice, Milan, Turin, Naples).
   - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
 
 ---
@@ -101,7 +101,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Session establishment (`session['user_id']`) and logout handler (`/logout`).
   - [x] Route protection via `@login_required` decorator (`/booking`, `/concierge`, `/profile`).
 - [x] **Dynamic Catalog & Booking Workflows (`routes.py`)**
-  - [x] Query and render 20 experiences with search and city filter on `/experiences`.
+  - [x] Query and render 12 experiences with search and city filter on `/experiences`.
   - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X` or `?museum_id=Y`).
   - [x] Booking submission handler (`POST /booking`): validate input server-side, compute total with add-ons, insert row in `tickets`, and show a real digital confirmation pass.
   - [x] Feedback submission endpoint (`POST /api/feedback`).
@@ -111,7 +111,7 @@ This document serves as the master source of truth and historical tracking timel
 ## Phase 6: AI Cultural Concierge & Grounded RAG Feature
 - [x] **Gemini API Integration & Grounding Workflow**
   - [x] Configure Google Generative AI SDK (`google-generativeai`) with secure `GEMINI_API_KEY`.
-  - [x] Ground system prompt directly on the 20 SQLite experiences to eliminate hallucinations.
+  - [x] Ground system prompt directly on the 12 SQLite experiences to eliminate hallucinations.
   - [x] In-chat actionable booking card triggers (`[RECOMMEND: id=X, title="Y", city="Z", price=W]`).
 - [x] **Dynamic Markdown Taste Memory Pipeline (`routes.py`, `templates/guide.html`)**
   - [x] Background preference extraction: automatically updates `preferences` column in `users` table as structured Markdown after each conversation.
@@ -135,9 +135,9 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Verify keyboard navigation and screen-reader accessibility.
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
-  - [x] Individually inspect each of the 20 cultural experience entries in `seed.py` and the SQLite database.
-  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 20 experiences (`/static/images/museums/` and `/static/images/experiences/`).
-  - [x] Cross-check all 20 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
+  - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
+  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
 
 ---
 
