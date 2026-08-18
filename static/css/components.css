@@ -502,10 +502,22 @@
 /* In-Chat Actionable Experience Card */
 .chat-exp-card {
     background: #FFFFFF;
-    border: 2px solid #000000;
+    border: var(--border-width) solid #000000;
     box-shadow: 3px 3px 0px 0px #000000;
-    padding: 0.85rem;
+    padding: 1rem;
+    margin: 0.85rem 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.chat-exp-card .cta-button {
+    box-sizing: border-box;
+    width: 100%;
     margin-top: 0.75rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    display: flex;
 }
 
 .memory-side-card {

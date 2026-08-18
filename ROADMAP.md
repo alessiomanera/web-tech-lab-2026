@@ -148,8 +148,9 @@ This document serves as the master source of truth and historical tracking timel
   - [ ] Ensure all dependencies are locked in `requirements.txt`.
 - [ ] **Oral Exam Presentation Preparation (6 Points Academic Evaluation)**
   - [ ] Structure presentation outline emphasizing project purpose, technical architecture, strengths, and limitations.
-  - [ ] Prepare live demonstration walkthrough (Discover Experience $\rightarrow$ 4-Step Booking $\rightarrow$ AI Concierge Recommendation & Memory $\rightarrow$ Review Feedback).
-  - [ ] Document potential future enhancements (e.g., QR-code digital ticket generation, calendar sync).
+  - [ ] Document potential future enhancements:
+    - [ ] **Curated Color Palette Reduction & Light/Dark Theme Architecture:** Simplify the multi-color primary palette (reducing simultaneous red, blue, yellow) down to a strict monochrome base (`#FFFFFF` / `#000000`) with a single refined accent, and implement a high-contrast Neubrutalist Light/Dark theme toggle.
+    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and calendar sync integration.
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
   - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.

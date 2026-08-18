@@ -143,10 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="chat-exp-card">
                 <div class="flex-between-center mb-05">
                     <span class="badge badge-yellow">${city}</span>
-                    <strong class="font-bold-lg">€${parseFloat(price).toFixed(2)}</strong>
+                    <span class="font-bold-lg">€${parseFloat(price).toFixed(2)}</span>
                 </div>
-                <strong class="card-heading d-block mb-1">${title}</strong>
-                <a href="/booking?exp_id=${id}" class="cta-button w-100 cta-button-xs">
+                <div class="card-heading d-block mb-1 font-bold">${title}</div>
+                <a href="/booking?exp_id=${id}" class="cta-button w-100">
                     Book This Package &rarr;
                 </a>
             </div>`;
