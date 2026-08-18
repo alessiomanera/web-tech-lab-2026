@@ -468,12 +468,27 @@
     align-self: flex-end;
     background: #000000;
     color: #FFFFFF;
+    border: var(--border-width) solid #000000;
+    box-shadow: 4px 4px 0px 0px var(--accent-yellow);
+}
+
+.chat-msg-user p,
+.chat-msg-user span,
+.chat-msg-user div {
+    color: #FFFFFF !important;
 }
 
 .chat-msg-model {
     align-self: flex-start;
     background: #FFFFFF;
     color: #000000;
+    border: var(--border-width) solid #000000;
+    box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.chat-msg-model p,
+.chat-msg-model span {
+    color: #000000 !important;
 }
 
 .chat-input-bar {
@@ -592,11 +607,18 @@
 }
 
 .text-primary-color {
-    color: var(--primary-color);
+    color: var(--primary-hover);
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+.text-primary-color:hover {
+    color: #000000;
 }
 
 .text-accent-color {
     color: var(--accent-color);
+    font-weight: 800;
 }
 
 /* Hero actions & Section styles */
@@ -1244,19 +1266,21 @@
 }
 
 .msg-header-model {
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     font-size: 0.75rem;
-    color: var(--primary-color);
+    color: var(--accent-color) !important;
     margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
 }
 
 .msg-header-user {
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     font-size: 0.75rem;
-    color: #AAA;
+    color: var(--accent-yellow) !important;
     margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
 }
 
 .chips-container {
