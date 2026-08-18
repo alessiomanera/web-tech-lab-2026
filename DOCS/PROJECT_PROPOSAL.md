@@ -18,7 +18,7 @@ The proposed project is a full-stack web application designed to modernize the c
 ### 3. System Modules
 
 - **Module 1 — User Authentication & Cultural Profiling:** Secure user registration and login (using Flask session management and Werkzeug password hashing), account dashboard, and dynamic cultural taste memory tracking.
-- **Module 2 — Experience & Museum Catalog Directory:** Dynamic catalog presenting 20 curated Italian cultural experiences and baseline museums, detailing venues, themes, durations, pricing, and highlights with real-time relational querying.
+- **Module 2 — Experience & Museum Catalog Directory:** Dynamic catalog presenting 12 curated Italian cultural experiences and baseline museums, detailing venues, themes, durations, pricing, and highlights with real-time relational querying.
 - **Module 3 — 4-Step Ticketing & Reservation Engine:** Frictionless booking wizard featuring package selection, customizable add-ons (Audio Guides, Docents, VIP Fast-Track), dedicated visit date and time-slot selection, instant digital pass generation, and post-visit rating/feedback submissions.
 - **Module 4 — Grounded AI Cultural Concierge:** Conversational discovery interface powered by the Google Gemini API, utilizing Retrieval-Augmented Generation (RAG) grounded strictly in SQLite catalog data to eliminate hallucinations, trigger actionable in-chat booking cards, and continuously refine user taste profiles.
 

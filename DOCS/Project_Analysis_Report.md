@@ -69,7 +69,7 @@ web-tech-lab-2026/
 ├── schema.sql             # SQL database definition (users, museums, experiences, tickets)
 ├── routes.py              # Main routes and API handlers (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication routes (/register, /login, /logout) and @login_required
-├── seed.py                # Database seeding script with Top 20 Curated Italian Experiences
+├── seed.py                # Database seeding script with Top 12 Curated Italian Experiences
 ├── requirements.txt       # Dependencies: Flask, python-dotenv, google-generativeai
 ├── static/                # Modular CSS and client-side JS
 │   ├── css/               # variables.css, layout.css, components.css, utilities.css, style.css
