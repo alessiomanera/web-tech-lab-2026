@@ -58,7 +58,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
 - [x] **Experience Economy Page Templates**
   - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
-  - [x] `templates/experiences.html`: Full 12-Experience catalog with search bar and city/theme filter pills.
+  - [x] `templates/experiences.html`: Full 12-Experience catalog with search bar, city/theme filter pills, and Standard/Compact view switcher with `localStorage` persistence.
   - [x] `templates/experience_detail.html`: Deep-dive view with full itinerary, included perks, and customizable add-ons.
   - [x] `templates/booking.html`: 4-step wizard (Package & Add-ons $\rightarrow$ Date & Slot $\rightarrow$ Summary $\rightarrow$ Digital Pass).
   - [x] `templates/guide.html`: AI Cultural Concierge with grounded RAG, in-chat booking cards, and live Markdown taste memory panel.
