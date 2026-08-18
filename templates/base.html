@@ -15,22 +15,24 @@
     
     <header role="banner">
         <nav aria-label="Main Navigation">
-            <a href="{{ url_for('main.home') }}" class="logo" aria-label="Italy Culture Home">
-                ITALY<span>EXPERIENCE</span>
+            <a href="{{ url_for('main.home') }}" class="logo" aria-label="Italy Experience Home">
+                <span class="logo-tag">ITALY</span><span class="logo-accent">EXPERIENCE</span>
             </a>
             <ul class="nav-links">
-                <li><a href="{{ url_for('main.home') }}">Home</a></li>
-                <li><a href="{{ url_for('main.experiences') }}">Explore Experiences</a></li>
-                <li><a href="{{ url_for('main.museums') }}">Explore Museums</a></li>
-                <li><a href="{{ url_for('main.concierge') }}">Tailor Experience (AI)</a></li>
-                <li><a href="{{ url_for('main.booking') }}">Book Now</a></li>
-                {% if session.get('user_id') %}
-                <li><a href="{{ url_for('main.profile') }}" class="nav-highlight">My Experiences</a></li>
-                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-                {% else %}
-                <li><a href="{{ url_for('auth.login') }}" class="badge badge-yellow">Sign In / Join</a></li>
-                {% endif %}
+                <li><a href="{{ url_for('main.home') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('main.experiences') }}" class="nav-link">Experiences</a></li>
+                <li><a href="{{ url_for('main.museums') }}" class="nav-link">Museums</a></li>
+                <li><a href="{{ url_for('main.concierge') }}" class="nav-link nav-ai-link"><span class="ai-sparkle">&#10022;</span> AI Concierge</a></li>
+                <li><a href="{{ url_for('main.booking') }}" class="nav-link">Book Now</a></li>
             </ul>
+            <div class="nav-actions">
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('main.profile') }}" class="nav-cta nav-cta-blue">My Account</a>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link nav-logout">Logout</a>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-cta nav-cta-yellow">Sign In / Join &rarr;</a>
+                {% endif %}
+            </div>
         </nav>
     </header>
 
