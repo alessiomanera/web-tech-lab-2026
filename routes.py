@@ -40,6 +40,86 @@ def _parse_json_column(value, default=None):
         return default
 
 
+def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=1, selected_addons=None):
+    """
+    Validates booking parameters and inserts a new Ticket record in SQLite.
+    Returns (ticket_dict, None) on success, or (None, error_message) on failure.
+    """
+    # Server-side validation
+    if not exp_id or not visit_date_str or not time_slot:
+        return None, 'Please select an experience, visit date, and time slot.'
+
+    try:
+        guests_count = int(guests_count)
+        if guests_count < 1 or guests_count > 6:
+            return None, 'Guest count must be between 1 and 6.'
+    except (ValueError, TypeError):
+        return None, 'Invalid guest count.'
+
+    try:
+        exp_id_int = int(exp_id)
+    except (ValueError, TypeError):
+        return None, 'Selected experience not found.'
+
+    exp_row = db.execute(
+        "SELECT * FROM experiences WHERE id = ?", (exp_id_int,)
+    ).fetchone()
+    if not exp_row:
+        return None, 'Selected experience not found.'
+    exp = _exp_row_to_dict(exp_row)
+
+    try:
+        visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
+        if visit_date < datetime.now().date():
+            return None, 'Visit date cannot be in the past.'
+    except (ValueError, TypeError):
+        return None, 'Invalid date format. Expected YYYY-MM-DD.'
+
+    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
+    if time_slot not in valid_slots:
+        return None, 'Invalid time slot selected.'
+
+    # Handle selected_addons if passed as JSON string or list
+    if isinstance(selected_addons, str):
+        try:
+            addons_list = json.loads(selected_addons)
+        except Exception:
+            addons_list = []
+    elif isinstance(selected_addons, list):
+        addons_list = selected_addons
+    else:
+        addons_list = []
+
+    # Calculate total price
+    base_total = exp['base_price'] * guests_count
+    addons_total = sum(float(a.get('price', 0)) for a in addons_list if isinstance(a, dict)) * guests_count
+    total_price = base_total + addons_total
+
+    booking_code = generate_booking_code()
+    addons_json_str = json.dumps(addons_list)
+
+    db.execute(
+        """INSERT INTO tickets
+           (booking_code, user_id, experience_id, visit_date, time_slot,
+            guests_count, selected_addons_json, total_price, status)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (booking_code, user_id, exp['id'], visit_date_str,
+         time_slot, guests_count, addons_json_str,
+         total_price, 'Confirmed')
+    )
+    db.commit()
+
+    # Fetch the inserted ticket for return
+    ticket_row = db.execute(
+        """SELECT t.*, e.title AS experience_title, e.city AS experience_city
+           FROM tickets t
+           JOIN experiences e ON t.experience_id = e.id
+           WHERE t.booking_code = ?""", (booking_code,)
+    ).fetchone()
+
+    return dict(ticket_row), None
+
+
 # -----------------------------------------------------------------------------
 # 1. Page Navigation Routes
 # -----------------------------------------------------------------------------
@@ -163,68 +243,25 @@ def booking():
         guests_count = request.form.get('guests_count', 1)
         selected_addons_json = request.form.get('selected_addons_json', '[]')
 
-        # Server-side validation
-        if not exp_id or not visit_date_str or not time_slot:
-            error = 'Please select an experience, visit date, and time slot.'
-        else:
+        if exp_id:
             try:
-                guests_count = int(guests_count)
-                if guests_count < 1 or guests_count > 6:
-                    error = 'Guest count must be between 1 and 6.'
-            except (ValueError, TypeError):
-                error = 'Invalid guest count.'
-
-            if not error:
                 exp_row = db.execute(
-                    "SELECT * FROM experiences WHERE id = ?", (exp_id,)
+                    "SELECT * FROM experiences WHERE id = ?", (int(exp_id),)
                 ).fetchone()
-                if not exp_row:
-                    error = 'Selected experience not found.'
-                else:
-                    exp = _exp_row_to_dict(exp_row)
-                    selected_exp = exp
-                    try:
-                        visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
-                        if visit_date < datetime.now().date():
-                            error = 'Visit date cannot be in the past.'
-                    except ValueError:
-                        error = 'Invalid date format. Expected YYYY-MM-DD.'
+                if exp_row:
+                    selected_exp = _exp_row_to_dict(exp_row)
+            except (ValueError, TypeError):
+                pass
 
-                    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
-                    if time_slot not in valid_slots:
-                        error = 'Invalid time slot selected.'
-
-            if not error:
-                # Calculate total price
-                try:
-                    selected_addons = json.loads(selected_addons_json)
-                except Exception:
-                    selected_addons = []
-                base_total = exp['base_price'] * guests_count
-                addons_total = sum(float(a.get('price', 0)) for a in selected_addons) * guests_count
-                total_price = base_total + addons_total
-
-                booking_code = generate_booking_code()
-
-                db.execute(
-                    """INSERT INTO tickets
-                       (booking_code, user_id, experience_id, visit_date, time_slot,
-                        guests_count, selected_addons_json, total_price, status)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                    (booking_code, session['user_id'], exp['id'], visit_date_str,
-                     time_slot, guests_count, selected_addons_json,
-                     total_price, 'Confirmed')
-                )
-                db.commit()
-
-                # Fetch the inserted ticket for the success view
-                ticket_row = db.execute(
-                    """SELECT t.*, e.title AS experience_title, e.city AS experience_city
-                       FROM tickets t
-                       JOIN experiences e ON t.experience_id = e.id
-                       WHERE t.booking_code = ?""", (booking_code,)
-                ).fetchone()
-                ticket = dict(ticket_row)
+        ticket, error = create_booking(
+            db=db,
+            user_id=session['user_id'],
+            exp_id=exp_id,
+            visit_date_str=visit_date_str,
+            time_slot=time_slot,
+            guests_count=guests_count,
+            selected_addons=selected_addons_json
+        )
     else:
         preselected_id = request.args.get('exp_id')
         preselected_museum_id = request.args.get('museum_id')
@@ -386,66 +423,30 @@ def api_book():
     guests_count = data.get('guests_count', 1)
     selected_addons = data.get('selected_addons', [])
 
-    # Server-side validation
-    if not exp_id or not visit_date_str or not time_slot:
-        return jsonify({'error': 'Please select an experience, visit date, and time slot.'}), 400
-
-    try:
-        guests_count = int(guests_count)
-        if guests_count < 1 or guests_count > 6:
-            return jsonify({'error': 'Guest count must be between 1 and 6.'}), 400
-    except (ValueError, TypeError):
-        return jsonify({'error': 'Invalid guest count.'}), 400
-
     db = get_db()
-    exp = db.execute(
-        "SELECT * FROM experiences WHERE id = ?", (exp_id,)
-    ).fetchone()
-
-    if not exp:
-        return jsonify({'error': 'Selected experience not found.'}), 404
-
-    try:
-        visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
-    except ValueError:
-        return jsonify({'error': 'Invalid date format. Expected YYYY-MM-DD.'}), 400
-
-    # Validate date is not in the past
-    if visit_date < datetime.now().date():
-        return jsonify({'error': 'Visit date cannot be in the past.'}), 400
-
-    # Validate time slot
-    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
-    if time_slot not in valid_slots:
-        return jsonify({'error': 'Invalid time slot selected.'}), 400
-
-    # Calculate total price
-    base_total = exp['base_price'] * guests_count
-    addons_total = sum(float(a.get('price', 0)) for a in selected_addons) * guests_count
-    total_price = base_total + addons_total
-
-    booking_code = generate_booking_code()
-
-    db.execute(
-        """INSERT INTO tickets
-           (booking_code, user_id, experience_id, visit_date, time_slot,
-            guests_count, selected_addons_json, total_price, status)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (booking_code, session['user_id'], exp['id'], visit_date_str,
-         time_slot, guests_count, json.dumps(selected_addons),
-         total_price, 'Confirmed')
+    ticket, error = create_booking(
+        db=db,
+        user_id=session['user_id'],
+        exp_id=exp_id,
+        visit_date_str=visit_date_str,
+        time_slot=time_slot,
+        guests_count=guests_count,
+        selected_addons=selected_addons
     )
-    db.commit()
+
+    if error:
+        status_code = 404 if error == 'Selected experience not found.' else 400
+        return jsonify({'error': error}), status_code
 
     return jsonify({
         'success': True,
         'message': 'Experience booked successfully!',
-        'booking_code': booking_code,
-        'total_price': f"€{total_price:.2f}",
-        'experience_title': exp['title'],
-        'city': exp['city'],
-        'visit_date': visit_date_str,
-        'time_slot': time_slot
+        'booking_code': ticket['booking_code'],
+        'total_price': f"€{ticket['total_price']:.2f}",
+        'experience_title': ticket['experience_title'],
+        'city': ticket['experience_city'],
+        'visit_date': ticket['visit_date'],
+        'time_slot': ticket['time_slot']
     })
 
 
@@ -484,9 +485,14 @@ def api_feedback():
     return jsonify({'success': True, 'message': 'Thank you for your feedback!'})
 
 
+# NOTE: Grounding Scope Limitation
+# The AI Concierge grounds exclusively on the `experiences` table (the 12 curated bookable packages).
+# It does NOT ground on the `museums` or `exhibitions` tables, nor does it maintain live venue
+# logistics (e.g., general opening hours, street addresses, or physical museum accessibility).
+# It is designed specifically to match visitor preferences to curated experience packages.
 def _call_gemini_concierge(user_message, current_profile, all_experiences, api_key):
     """
-    Calls Google Gemini API with Grounded RAG context from the SQLite catalog.
+    Calls Google Gemini API with Grounded RAG context from the SQLite experiences catalog.
     Extracts response text and updated Markdown taste profile.
     """
     import google.generativeai as genai

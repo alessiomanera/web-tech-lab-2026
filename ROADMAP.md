@@ -46,7 +46,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
   - [x] Build main CSS aggregator (`static/css/style.css`).
 - [x] **Accessibility & Performance Standards**
-  - [x] Ensure WCAG AAA contrast ratio across all text and interactive elements.
+  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text and buttons).
   - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).
 
 ---
