@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Hard Neubrutalist Drop Shadow -->
+  <rect x="8" y="8" width="52" height="52" fill="#000000" />
+  
+  <!-- Main Neubrutalist Card Surface (High-Contrast Cyber Yellow) -->
+  <rect x="4" y="4" width="52" height="52" fill="#FFCC00" stroke="#000000" stroke-width="4" />
+  
+  <!-- Classical Cultural Temple Pediment -->
+  <polygon points="12,24 30,12 48,24" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="miter" />
+  
+  <!-- Temple Architrave Beam -->
+  <rect x="12" y="24" width="36" height="4" fill="#000000" />
+  
+  <!-- 3 Classical Columns -->
+  <rect x="15" y="28" width="5" height="15" fill="#FFFFFF" stroke="#000000" stroke-width="2.5" />
+  <rect x="27.5" y="28" width="5" height="15" fill="#FFFFFF" stroke="#000000" stroke-width="2.5" />
+  <rect x="40" y="28" width="5" height="15" fill="#FFFFFF" stroke="#000000" stroke-width="2.5" />
+  
+  <!-- Temple Base Plinth -->
+  <rect x="11" y="43" width="38" height="5" fill="#FFFFFF" stroke="#000000" stroke-width="3" />
+  
+  <!-- AI Concierge Sparkle / Star Indicator -->
+  <path d="M48,8 L49.5,14 L55.5,15.5 L49.5,17 L48,23 L46.5,17 L40.5,15.5 L46.5,14 Z" fill="#FF3333" stroke="#000000" stroke-width="2" />
+</svg>
