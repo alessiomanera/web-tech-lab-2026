@@ -18,7 +18,7 @@ from database import get_db
 
 def seed_db():
     """
-    Initializes the database schema and loads 20 rich Italian cultural experiences
+    Initializes the database schema and loads 12 rich Italian cultural experiences
     with durations, transparent base pricing, included perks, and customizable add-ons.
     """
     app = create_app()

@@ -48,7 +48,7 @@
             <div class="form-group">
                 <label for="exp-select" class="form-label">1. Choose Cultural Experience Package</label>
                 <select id="exp-select" class="form-select" required>
-                    <option value="" disabled {% if not selected_exp %}selected{% endif %}>Select an experience from the 20 available...</option>
+                    <option value="" disabled {% if not selected_exp %}selected{% endif %}>Select an experience from the 12 available...</option>
                     {% for exp in experiences %}
                     <option value="{{ exp.id }}" 
                             data-price="{{ exp.base_price }}" 
