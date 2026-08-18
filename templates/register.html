@@ -12,7 +12,7 @@
             {% if messages %}
                 <div class="mb-1">
                 {% for message in messages %}
-                    <div class="error-message" style="display: block; text-align: center;">{{ message }}</div>
+                    <div class="error-message d-block text-center-block">{{ message }}</div>
                 {% endfor %}
                 </div>
             {% endif %}
@@ -37,14 +37,14 @@
             <div class="form-group">
                 <label for="preferences" class="form-label">Cultural Preferences (Optional)</label>
                 <input type="text" id="preferences" name="preferences" class="form-input" placeholder="e.g., Renaissance art, modern history, interactive">
-                <small style="color: var(--text-secondary); margin-top: 0.25rem;">Used by our AI concierge to tailor your experience.</small>
+                <small class="form-helper-text">Used by our AI concierge to tailor your experience.</small>
             </div>
             
             <button type="submit" class="cta-button w-100 mt-1">Register</button>
         </form>
         
         <p class="text-center mt-1">
-            Already have an account? <a href="{{ url_for('auth.login') }}" style="color: var(--primary-color);">Log in here</a>
+            Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary-color">Log in here</a>
         </p>
     </div>
 </div>

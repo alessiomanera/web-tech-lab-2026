@@ -49,3 +49,5 @@
 .box-border { box-sizing: border-box; }
 .flex-grow-1 { flex-grow: 1; }
 .text-lg { font-size: 1.1rem; }
+.d-block { display: block; }
+.text-center-block { text-align: center; }

@@ -4,74 +4,74 @@
 
 {% block content %}
 <div class="mb-2">
-    <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-bottom: 1.5rem;">
+    <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline cta-button-back">
         &larr; Back to All Experiences
     </a>
 </div>
 
-<div class="card max-w-800 mx-auto" style="background: #FFFFFF;">
-    <img src="{{ exp.image_url }}" alt="{{ exp.title }}" style="width: 100%; height: 360px; object-fit: cover; border-bottom: var(--border-width) solid var(--border-color);">
+<div class="card max-w-800 mx-auto bg-white">
+    <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="detail-hero-img">
     
-    <div class="card-content" style="padding: 2.5rem;">
+    <div class="card-content card-content-lg">
         <div class="experience-header-meta">
-            <span class="badge badge-blue" style="font-size: 0.9rem;">{{ exp.city }}</span>
+            <span class="badge badge-blue badge-md">{{ exp.city }}</span>
             {% if exp.badge %}
-            <span class="badge badge-yellow" style="font-size: 0.9rem;">{{ exp.badge }}</span>
+            <span class="badge badge-yellow badge-md">{{ exp.badge }}</span>
             {% endif %}
         </div>
 
-        <h1 style="font-size: 2.2rem; text-transform: uppercase; margin: 0 0 0.75rem 0;">{{ exp.title }}</h1>
-        <span style="font-size: 0.95rem; font-weight: 800; text-transform: uppercase; color: var(--primary-color); display: block; margin-bottom: 1.25rem;">
+        <h1 class="title-large-margin">{{ exp.title }}</h1>
+        <span class="meta-theme-duration">
             Theme: {{ exp.theme }} &bull; Duration: {{ exp.duration_minutes }} Minutes
         </span>
 
-        <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-primary); margin-bottom: 2rem;">
+        <p class="description-text">
             {{ exp.description }}
         </p>
 
         <!-- Highlights Box -->
         {% if exp.highlights %}
-        <div style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1.5rem; margin-bottom: 2rem;">
-            <h3 style="font-size: 1.1rem; text-transform: uppercase; margin-top: 0; margin-bottom: 0.5rem;">
+        <div class="highlights-box">
+            <h3 class="highlights-title">
                 Curated Highlights
             </h3>
-            <p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">{{ exp.highlights }}</p>
+            <p class="highlights-text">{{ exp.highlights }}</p>
         </div>
         {% endif %}
 
         <!-- Included Items -->
-        <h3 style="font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.75rem;">
+        <h3 class="heading-uppercase-md">
             What is Included in This Package:
         </h3>
-        <ul class="experience-perks-list" style="margin-bottom: 2rem;">
+        <ul class="experience-perks-list mb-2rem">
             {% for item in exp.included_items %}
-            <li style="font-size: 0.95rem;">{{ item }}</li>
+            <li class="font-md">{{ item }}</li>
             {% endfor %}
         </ul>
 
         <!-- Available Add-ons Preview -->
         {% if exp.available_addons %}
-        <h3 style="font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.75rem;">
+        <h3 class="heading-uppercase-md">
             Customizable Add-ons (Selectable at Booking):
         </h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
+        <div class="addons-preview-grid">
             {% for addon in exp.available_addons %}
-            <div style="border: 2px solid #000; padding: 0.85rem; background: #FAFAFA;">
-                <strong style="display: block; font-size: 0.95rem;">{{ addon.name }}</strong>
-                <span style="color: var(--primary-color); font-weight: 800; font-size: 0.9rem;">+€{{ "%.2f"|format(addon.price) }}</span>
+            <div class="addon-preview-box">
+                <strong class="addon-name">{{ addon.name }}</strong>
+                <span class="addon-price">+€{{ "%.2f"|format(addon.price) }}</span>
             </div>
             {% endfor %}
         </div>
         {% endif %}
 
         <!-- Bottom Action Bar -->
-        <div style="border-top: var(--border-width) solid var(--border-color); padding-top: 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div class="detail-action-bar">
             <div>
-                <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); display: block;">Base Price</span>
-                <span class="experience-price-tag" style="font-size: 2rem;">€{{ "%.2f"|format(exp.base_price) }}</span>
+                <span class="label-micro">Base Price</span>
+                <span class="experience-price-tag price-tag-large">€{{ "%.2f"|format(exp.base_price) }}</span>
             </div>
 
-            <div style="display: flex; gap: 1rem;">
+            <div class="card-actions">
                 <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-outline">
                     Ask Concierge (AI)
                 </a>

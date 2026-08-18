@@ -3,13 +3,15 @@ auth.py
 -------
 Authentication blueprint managing user registration, login, logout, and session state.
 Includes a decorator `login_required` to protect restricted routes.
+Uses raw sqlite3 with parameterized queries for all database access.
 """
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-from models import db, User
+from database import get_db
 
 auth_bp = Blueprint('auth', __name__)
+
 
 def login_required(f):
     """
@@ -23,6 +25,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     """
@@ -35,26 +38,34 @@ def register():
         password = request.form.get('password')
         preferences = request.form.get('preferences')
 
+        db = get_db()
+
         # Check if user exists
-        user = User.query.filter_by(email=email).first()
-        if user:
+        existing = db.execute(
+            "SELECT id FROM users WHERE email = ?", (email,)
+        ).fetchone()
+
+        if existing:
             flash('Email address already exists')
             return redirect(url_for('auth.register'))
 
-        new_user = User(
-            name=name,
-            email=email,
-            password_hash=generate_password_hash(password),
-            preferences=preferences
+        db.execute(
+            "INSERT INTO users (name, email, password_hash, preferences) VALUES (?, ?, ?, ?)",
+            (name, email, generate_password_hash(password), preferences)
         )
-        db.session.add(new_user)
-        db.session.commit()
+        db.commit()
+
+        # Retrieve the new user's id to log them in
+        new_user = db.execute(
+            "SELECT id FROM users WHERE email = ?", (email,)
+        ).fetchone()
 
         # Log them in automatically
-        session['user_id'] = new_user.id
+        session['user_id'] = new_user['id']
         return redirect(url_for('main.home'))
 
     return render_template('register.html')
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,15 +77,20 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = User.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password_hash, password):
+        db = get_db()
+        user = db.execute(
+            "SELECT * FROM users WHERE email = ?", (email,)
+        ).fetchone()
+
+        if not user or not check_password_hash(user['password_hash'], password):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login'))
 
-        session['user_id'] = user.id
+        session['user_id'] = user['id']
         return redirect(url_for('main.home'))
 
     return render_template('login.html')
+
 
 @auth_bp.route('/logout')
 def logout():

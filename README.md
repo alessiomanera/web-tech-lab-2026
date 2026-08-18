@@ -15,9 +15,9 @@ A full-stack web application designed for discovering and booking tickets to mus
 
 ## Technical Stack & Architecture
 
-- **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom design system), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI updates).
+- **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom design system loaded directly), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI updates).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
-- **Database & ORM:** SQLite managed via Flask-SQLAlchemy (`models.py`).
+- **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
 - **AI Engine:** Google Gemini API (`gemini-1.5-flash`) via the `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the SQLite catalog.
 
 ---
@@ -45,8 +45,9 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 ```text
 web-tech-lab-2026/
 ├── app.py                 # Application factory and entry point
-├── models.py              # SQLAlchemy database models (User, Museum, Experience, Booking)
-├── routes.py              # Main Blueprint: page routes and API endpoints (/api/book, /api/chat, /api/feedback)
+├── database.py            # SQLite connection context manager & initialization
+├── schema.sql             # SQL database definition (tables for users, museums, experiences, tickets, etc.)
+├── routes.py              # Main Blueprint: page routes and API endpoints (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication Blueprint: registration, login, logout, @login_required
 ├── seed.py                # Database population script with Top 20 Curated Italian Cultural Experiences
 ├── requirements.txt       # Python package dependencies
@@ -59,13 +60,15 @@ web-tech-lab-2026/
 │   └── Project_Analysis_Report.md # Course guidelines and technical reference
 ├── static/
 │   ├── css/
-│   │   ├── style.css      # Master stylesheet aggregator
+│   │   ├── style.css      # Master stylesheet aggregator (retained for fallback)
 │   │   ├── variables.css  # CSS custom properties (colors, borders, shadows, spacing, cursors)
 │   │   ├── layout.css     # Grid and Flexbox responsive layout containers & custom cursors
 │   │   ├── components.css # Neubrutalist UI components (cards, buttons, forms, alerts, wizard)
 │   │   └── utilities.css  # Utility classes
 │   ├── js/
-│   │   ├── main.js        # Global JavaScript utilities and dynamic SVG cursor injection
+│   │   ├── main.js        # Global JavaScript coordinator
+│   │   ├── api.js         # API integration helpers (chat, feedback, reset taste profile)
+│   │   ├── ui.js          # Cursor injection and tactile UI state actions
 │   │   └── bookingWizard.js # 4-step wizard state machine and dynamic addon price calculations
 │   └── images/            # Static image assets & custom SVG cursors (cursor.svg, cursor-pointer.svg)
 └── templates/

@@ -6,7 +6,7 @@
 ## 1. Project Boundaries & Architecture
 - **No Monolithic Code:** Do not create massive files. Break logic down into smaller, modular files.
 - **Backend (Python/Flask):** Keep `app.py` clean. Route definitions should use Blueprints (e.g., `routes.py`, `auth.py`). Complex logic should go into `/models`, `/utils`, etc.
-- **Database:** SQLite via Flask-SQLAlchemy.
+- **Database:** SQLite via raw standard library `sqlite3` (no ORM).
 - **Frontend Framework:** Vanilla JS, Vanilla CSS, and HTML with Jinja2. Do NOT use frontend frameworks like React, Vue, or CSS frameworks like Tailwind unless explicitly requested.
 
 ## 2. Modularity & DRY
@@ -41,4 +41,4 @@
 ## 6. Anti-Reinvention & Design System Fidelity
 - **Check Existing Components First:** Never reinvent utilities, components, or UI patterns. Always check and build upon existing CSS rules (`variables.css`, `layout.css`, `components.css`, `utilities.css`) and modular JS patterns.
 - **Strict Neubrutalism Reference:** Adhere strictly to the design system patterns at https://neubrutalism.com/ (stark high-contrast white `#FFFFFF`, `3px` solid black borders, `4px 4px 0px 0px #000` drop-shadows, zero `0px` border-radius, and mechanical click state transitions).
-- **Authorized Tech Stack Only:** Strictly follow the course project guide: HTML5 (Jinja2), Vanilla CSS3, Vanilla JavaScript (ES6+), Python 3 with Flask, SQLite via Flask-SQLAlchemy, and Google Gemini API (`google-generativeai`).
+- **Authorized Tech Stack Only:** Strictly follow the course project guide: HTML5 (Jinja2), Vanilla CSS3, Vanilla JavaScript (ES6+), Python 3 with Flask, SQLite via raw standard library `sqlite3` (no ORM), and Google Gemini API (`google-generativeai`).
