@@ -18,7 +18,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom design system loaded directly), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI updates).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
 - **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine:** Google Gemini API (`gemini-3.7-flash`, configurable via `GEMINI_MODEL`) via the `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the SQLite catalog.
+- **AI Engine (Module 4):** Google Gemini API (`gemini-3.7-flash`, configurable via `GEMINI_MODEL`) via the `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog. The AI concierge specifically recommends bookable experiences and does not have grounded data for general museum logistics (such as opening hours or street addresses).
 
 ---
 
@@ -36,7 +36,7 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 - **Typography:** Strictly `Inter` (sans-serif) across all elements, with heavy font weights (800/900) for section headings and balanced typographic text-wrapping.
 - **Tactile Micro-interactions:** Mechanical button press effect (`transform: translate(4px, 4px)` with shadow collapse on click/active).
 - **Theme:** Strictly Light Mode to preserve stark contrast and print aesthetic.
-- **Accessibility:** Strict WCAG AAA contrast compliance and zero Cumulative Layout Shift (CLS).
+- **Accessibility:** Strict WCAG AA contrast compliance across all interactive elements (with AAA on body text) and zero Cumulative Layout Shift (CLS).
 
 ---
 
@@ -74,7 +74,7 @@ web-tech-lab-2026/
 └── templates/
     ├── base.html          # Master Jinja2 layout with navigation and alerts
     ├── index.html         # Landing page with 3-step value workflow & trending packages
-    ├── experiences.html   # Full 20-Experience catalog with search & city filter pills
+    ├── experiences.html   # Full 12-Experience catalog with search & city filter pills
     ├── experience_detail.html # Deep-dive view for individual experiences
     ├── booking.html       # 4-step frictionless booking wizard
     ├── guide.html         # AI Cultural Concierge conversational chat view with taste memory
