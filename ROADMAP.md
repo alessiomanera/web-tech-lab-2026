@@ -125,15 +125,15 @@ This document serves as the master source of truth and historical tracking timel
   - [ ] Verify adherence to DRY principles across Python blueprints, Jinja2 templates, and CSS stylesheets.
   - [ ] Add comprehensive docstrings and inline comments across all functions and route handlers.
   - [ ] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
-- [ ] **Security & Error Handling Verification**
-  - [ ] Verify SQL injection protection via SQLAlchemy parameterized queries.
-  - [ ] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
-  - [ ] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
-  - [ ] Implement custom HTTP error pages (`404.html`, `500.html`).
-- [ ] **Cross-Device & Responsive Usability Testing**
-  - [ ] Validate responsive layout on desktop, tablet, and mobile viewports.
-  - [ ] Verify keyboard navigation and screen-reader accessibility.
-  - [ ] Verify zero visual regressions or layout shifts during dynamic interactions.
+- [x] **Security & Error Handling Verification**
+  - [x] Verify SQL injection protection via raw SQLite3 parameterized queries.
+  - [x] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
+  - [x] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
+  - [x] Implement custom HTTP error pages (`400.html`, `404.html`, `500.html`).
+- [x] **Cross-Device & Responsive Usability Testing**
+  - [x] Validate responsive layout on desktop, tablet, and mobile viewports.
+  - [x] Verify keyboard navigation and screen-reader accessibility.
+  - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 
 ---
 
