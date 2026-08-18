@@ -313,6 +313,28 @@ def profile():
 
 
 # -----------------------------------------------------------------------------
+# Error Page Preview Routes (for direct verification & testing)
+# -----------------------------------------------------------------------------
+
+@main_bp.route('/400')
+def preview_400():
+    """Renders the custom 400 Bad Request error page."""
+    return render_template('400.html'), 400
+
+
+@main_bp.route('/404')
+def preview_404():
+    """Renders the custom 404 Not Found error page."""
+    return render_template('404.html'), 404
+
+
+@main_bp.route('/500')
+def preview_500():
+    """Renders the custom 500 Internal Server Error page."""
+    return render_template('500.html'), 500
+
+
+# -----------------------------------------------------------------------------
 # 2. REST API Endpoints
 # -----------------------------------------------------------------------------
 
