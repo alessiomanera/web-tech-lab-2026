@@ -2,8 +2,9 @@
 routes.py
 ---------
 Main routing blueprint for the Museum & Cultural Experience platform.
-Handles page rendering for Home, Explore Experiences, 4-Step Booking Wizard,
+Handles page rendering for Home, Explore Experiences, Museums, 4-Step Booking Wizard,
 the AI Cultural Concierge, User Profile Dashboard, and asynchronous REST APIs.
+Uses raw sqlite3 with parameterized queries for all database access.
 """
 import os
 import random
@@ -12,16 +13,32 @@ import json
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
 from auth import login_required
-from models import db, Museum, Exhibition, Experience, Booking, User
-import google.generativeai as genai
+from database import get_db
+
+# TODO: Re-enable Gemini API integration once an API key is configured.
+# import google.generativeai as genai
 
 main_bp = Blueprint('main', __name__)
+
 
 def generate_booking_code():
     """Generates a memorable unique booking reference code, e.g., EXP-2026-A91F."""
     chars = string.ascii_uppercase + string.digits
     suffix = ''.join(random.choices(chars, k=4))
     return f"EXP-2026-{suffix}"
+
+
+def _parse_json_column(value, default=None):
+    """Safely parses a JSON text column, returning the default on failure."""
+    if default is None:
+        default = []
+    if not value:
+        return default
+    try:
+        return json.loads(value)
+    except (json.JSONDecodeError, TypeError):
+        return default
+
 
 # -----------------------------------------------------------------------------
 # 1. Page Navigation Routes
@@ -33,10 +50,17 @@ def home():
     Renders the main cultural portal landing page.
     Displays hero section, 3-step value workflow, and top featured experiences.
     """
-    featured_experiences = Experience.query.filter_by(is_featured=True).limit(4).all()
-    if not featured_experiences:
-        featured_experiences = Experience.query.limit(4).all()
-    return render_template('index.html', featured=featured_experiences)
+    db = get_db()
+    featured = db.execute(
+        "SELECT * FROM experiences WHERE is_featured = 1 LIMIT 4"
+    ).fetchall()
+
+    if not featured:
+        featured = db.execute("SELECT * FROM experiences LIMIT 4").fetchall()
+
+    # Wrap rows so templates can access JSON-parsed properties
+    featured_list = [_exp_row_to_dict(row) for row in featured]
+    return render_template('index.html', featured=featured_list)
 
 
 @main_bp.route('/experiences')
@@ -49,26 +73,30 @@ def experiences():
     theme_filter = request.args.get('theme')
     search_query = request.args.get('q')
 
-    query = Experience.query
+    db = get_db()
+
+    query = "SELECT * FROM experiences WHERE 1=1"
+    params = []
 
     if city_filter and city_filter.lower() != 'all':
-        query = query.filter(Experience.city.ilike(f"%{city_filter}%"))
+        query += " AND city LIKE ?"
+        params.append(f"%{city_filter}%")
 
     if theme_filter and theme_filter.lower() != 'all':
-        query = query.filter(Experience.theme.ilike(f"%{theme_filter}%"))
+        query += " AND theme LIKE ?"
+        params.append(f"%{theme_filter}%")
 
     if search_query:
-        query = query.filter(
-            (Experience.title.ilike(f"%{search_query}%")) |
-            (Experience.city.ilike(f"%{search_query}%")) |
-            (Experience.description.ilike(f"%{search_query}%"))
-        )
+        query += " AND (title LIKE ? OR city LIKE ? OR description LIKE ?)"
+        params.extend([f"%{search_query}%"] * 3)
 
-    all_experiences = query.all()
-    
-    # Get distinct cities and themes for filter pills
-    cities = ['All', 'Florence', 'Rome', 'Venice', 'Milan', 'Turin', 'Naples', 'Verona', 'Palermo', 'Bologna']
-    
+    rows = db.execute(query, params).fetchall()
+    all_experiences = [_exp_row_to_dict(row) for row in rows]
+
+    # Get distinct cities for filter pills
+    cities = ['All', 'Florence', 'Rome', 'Venice', 'Milan', 'Turin',
+              'Naples', 'Verona', 'Palermo', 'Bologna']
+
     return render_template(
         'experiences.html',
         experiences=all_experiences,
@@ -83,34 +111,149 @@ def experience_detail(exp_id):
     """
     Renders a detailed page for a single cultural experience.
     """
-    exp = Experience.query.get_or_404(exp_id)
+    db = get_db()
+    row = db.execute(
+        "SELECT * FROM experiences WHERE id = ?", (exp_id,)
+    ).fetchone()
+
+    if row is None:
+        return "Experience not found", 404
+
+    exp = _exp_row_to_dict(row)
     return render_template('experience_detail.html', exp=exp)
 
 
-@main_bp.route('/booking')
+@main_bp.route('/museums')
+def museums():
+    """
+    Renders the museum catalog page.
+    Queries the museums table and passes results to the template.
+    """
+    db = get_db()
+    rows = db.execute("SELECT * FROM museums").fetchall()
+    museums_list = [dict(row) for row in rows]
+    return render_template('museums.html', museums=museums_list)
+
+
+@main_bp.route('/booking', methods=['GET', 'POST'])
 @login_required
 def booking():
     """
     Renders the 4-step Frictionless Booking Wizard.
     Pre-selects experience if passed via ?exp_id=X.
+    Also handles POST submissions for the booking form.
     """
-    preselected_id = request.args.get('exp_id')
-    all_experiences = Experience.query.all()
-    
-    selected_exp = None
-    if preselected_id:
-        try:
-            selected_exp = Experience.query.get(int(preselected_id))
-        except (ValueError, TypeError):
-            selected_exp = None
+    db = get_db()
 
-    user = User.query.get(session['user_id'])
-    
+    rows = db.execute("SELECT * FROM experiences").fetchall()
+    all_experiences = [_exp_row_to_dict(row) for row in rows]
+
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
+
+    selected_exp = None
+    ticket = None
+    error = None
+
+    if request.method == 'POST':
+        exp_id = request.form.get('experience_id')
+        visit_date_str = request.form.get('visit_date')
+        time_slot = request.form.get('time_slot')
+        guests_count = request.form.get('guests_count', 1)
+        selected_addons_json = request.form.get('selected_addons_json', '[]')
+
+        # Server-side validation
+        if not exp_id or not visit_date_str or not time_slot:
+            error = 'Please select an experience, visit date, and time slot.'
+        else:
+            try:
+                guests_count = int(guests_count)
+                if guests_count < 1 or guests_count > 6:
+                    error = 'Guest count must be between 1 and 6.'
+            except (ValueError, TypeError):
+                error = 'Invalid guest count.'
+
+            if not error:
+                exp_row = db.execute(
+                    "SELECT * FROM experiences WHERE id = ?", (exp_id,)
+                ).fetchone()
+                if not exp_row:
+                    error = 'Selected experience not found.'
+                else:
+                    exp = _exp_row_to_dict(exp_row)
+                    selected_exp = exp
+                    try:
+                        visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
+                        if visit_date < datetime.now().date():
+                            error = 'Visit date cannot be in the past.'
+                    except ValueError:
+                        error = 'Invalid date format. Expected YYYY-MM-DD.'
+
+                    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
+                    if time_slot not in valid_slots:
+                        error = 'Invalid time slot selected.'
+
+            if not error:
+                # Calculate total price
+                try:
+                    selected_addons = json.loads(selected_addons_json)
+                except Exception:
+                    selected_addons = []
+                base_total = exp['base_price'] * guests_count
+                addons_total = sum(float(a.get('price', 0)) for a in selected_addons) * guests_count
+                total_price = base_total + addons_total
+
+                booking_code = generate_booking_code()
+
+                db.execute(
+                    """INSERT INTO tickets
+                       (booking_code, user_id, experience_id, visit_date, time_slot,
+                        guests_count, selected_addons_json, total_price, status)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (booking_code, session['user_id'], exp['id'], visit_date_str,
+                     time_slot, guests_count, selected_addons_json,
+                     total_price, 'Confirmed')
+                )
+                db.commit()
+
+                # Fetch the inserted ticket for the success view
+                ticket_row = db.execute(
+                    """SELECT t.*, e.title AS experience_title, e.city AS experience_city
+                       FROM tickets t
+                       JOIN experiences e ON t.experience_id = e.id
+                       WHERE t.booking_code = ?""", (booking_code,)
+                ).fetchone()
+                ticket = dict(ticket_row)
+    else:
+        preselected_id = request.args.get('exp_id')
+        preselected_museum_id = request.args.get('museum_id')
+        if preselected_id:
+            try:
+                sel_row = db.execute(
+                    "SELECT * FROM experiences WHERE id = ?", (int(preselected_id),)
+                ).fetchone()
+                if sel_row:
+                    selected_exp = _exp_row_to_dict(sel_row)
+            except (ValueError, TypeError):
+                selected_exp = None
+        elif preselected_museum_id:
+            try:
+                sel_row = db.execute(
+                    "SELECT * FROM experiences WHERE museum_id = ? LIMIT 1", (int(preselected_museum_id),)
+                ).fetchone()
+                if sel_row:
+                    selected_exp = _exp_row_to_dict(sel_row)
+            except (ValueError, TypeError):
+                selected_exp = None
+
     return render_template(
         'booking.html',
         experiences=all_experiences,
         selected_exp=selected_exp,
-        user=user
+        user=user,
+        ticket=ticket,
+        error=error
     )
 
 
@@ -121,7 +264,11 @@ def concierge():
     Renders the AI Cultural Concierge interactive chat interface.
     Loads the user's live Markdown Cultural Taste Profile from SQLite.
     """
-    user = User.query.get(session['user_id'])
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
+
     if 'chat_history' not in session:
         session['chat_history'] = []
 
@@ -133,10 +280,6 @@ def concierge():
 def guide_redirect():
     return redirect(url_for('main.concierge'))
 
-@main_bp.route('/museums')
-def museums_redirect():
-    return redirect(url_for('main.experiences'))
-
 
 @main_bp.route('/profile')
 @login_required
@@ -145,10 +288,28 @@ def profile():
     Renders the user account dashboard with active digital passes,
     past visit history, review submission forms, and the live Cultural Taste Profile.
     """
-    user = User.query.get(session['user_id'])
-    bookings = Booking.query.filter_by(user_id=user.id).order_by(Booking.booking_date.desc()).all()
-    
-    return render_template('profile.html', user=user, bookings=bookings)
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
+
+    bookings = db.execute(
+        """SELECT t.*, e.title AS experience_title, e.city AS experience_city,
+                  e.image_url AS experience_image_url, e.base_price,
+                  e.duration_minutes, e.available_addons_json
+           FROM tickets t
+           JOIN experiences e ON t.experience_id = e.id
+           WHERE t.user_id = ?
+           ORDER BY t.booking_date DESC""",
+        (session['user_id'],)
+    ).fetchall()
+
+    bookings_list = []
+    for row in bookings:
+        d = dict(row)
+        d['selected_addons'] = _parse_json_column(d.get('selected_addons_json'))
+        bookings_list.append(d)
+    return render_template('profile.html', user=user, bookings=bookings_list)
 
 
 # -----------------------------------------------------------------------------
@@ -161,19 +322,31 @@ def api_book():
     """
     API endpoint for confirming a cultural booking.
     Receives experience_id, visit_date, time_slot, guests_count, and selected_addons.
-    Calculates total price, creates Booking record in SQLite, and returns confirmation.
+    Calculates total price, inserts a Ticket row in SQLite, and returns confirmation.
     """
     data = request.get_json() or {}
     exp_id = data.get('experience_id')
     visit_date_str = data.get('visit_date')
     time_slot = data.get('time_slot')
-    guests_count = int(data.get('guests_count', 1))
+    guests_count = data.get('guests_count', 1)
     selected_addons = data.get('selected_addons', [])
 
+    # Server-side validation
     if not exp_id or not visit_date_str or not time_slot:
         return jsonify({'error': 'Please select an experience, visit date, and time slot.'}), 400
 
-    exp = Experience.query.get(exp_id)
+    try:
+        guests_count = int(guests_count)
+        if guests_count < 1 or guests_count > 6:
+            return jsonify({'error': 'Guest count must be between 1 and 6.'}), 400
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid guest count.'}), 400
+
+    db = get_db()
+    exp = db.execute(
+        "SELECT * FROM experiences WHERE id = ?", (exp_id,)
+    ).fetchone()
+
     if not exp:
         return jsonify({'error': 'Selected experience not found.'}), 404
 
@@ -182,35 +355,40 @@ def api_book():
     except ValueError:
         return jsonify({'error': 'Invalid date format. Expected YYYY-MM-DD.'}), 400
 
+    # Validate date is not in the past
+    if visit_date < datetime.now().date():
+        return jsonify({'error': 'Visit date cannot be in the past.'}), 400
+
+    # Validate time slot
+    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
+    if time_slot not in valid_slots:
+        return jsonify({'error': 'Invalid time slot selected.'}), 400
+
     # Calculate total price
-    base_total = exp.base_price * guests_count
+    base_total = exp['base_price'] * guests_count
     addons_total = sum(float(a.get('price', 0)) for a in selected_addons) * guests_count
     total_price = base_total + addons_total
 
     booking_code = generate_booking_code()
 
-    new_booking = Booking(
-        booking_code=booking_code,
-        user_id=session['user_id'],
-        experience_id=exp.id,
-        visit_date=visit_date,
-        time_slot=time_slot,
-        guests_count=guests_count,
-        selected_addons_json=json.dumps(selected_addons),
-        total_price=total_price,
-        status='Confirmed'
+    db.execute(
+        """INSERT INTO tickets
+           (booking_code, user_id, experience_id, visit_date, time_slot,
+            guests_count, selected_addons_json, total_price, status)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (booking_code, session['user_id'], exp['id'], visit_date_str,
+         time_slot, guests_count, json.dumps(selected_addons),
+         total_price, 'Confirmed')
     )
-
-    db.session.add(new_booking)
-    db.session.commit()
+    db.commit()
 
     return jsonify({
         'success': True,
         'message': 'Experience booked successfully!',
         'booking_code': booking_code,
         'total_price': f"€{total_price:.2f}",
-        'experience_title': exp.title,
-        'city': exp.city,
+        'experience_title': exp['title'],
+        'city': exp['city'],
         'visit_date': visit_date_str,
         'time_slot': time_slot
     })
@@ -230,14 +408,23 @@ def api_feedback():
     if not booking_id or not rating:
         return jsonify({'error': 'Missing booking ID or rating.'}), 400
 
-    booking_record = Booking.query.filter_by(id=booking_id, user_id=session['user_id']).first()
-    if not booking_record:
+    db = get_db()
+    ticket = db.execute(
+        "SELECT * FROM tickets WHERE id = ? AND user_id = ?",
+        (booking_id, session['user_id'])
+    ).fetchone()
+
+    if not ticket:
         return jsonify({'error': 'Booking not found.'}), 404
 
-    booking_record.feedback_rating = int(rating)
-    booking_record.feedback_text = comment
-    booking_record.feedback_date = datetime.utcnow()
-    db.session.commit()
+    db.execute(
+        """UPDATE tickets
+           SET feedback_rating = ?, feedback_text = ?, feedback_date = ?
+           WHERE id = ? AND user_id = ?""",
+        (int(rating), comment, datetime.utcnow().isoformat(),
+         booking_id, session['user_id'])
+    )
+    db.commit()
 
     return jsonify({'success': True, 'message': 'Thank you for your feedback!'})
 
@@ -247,8 +434,11 @@ def api_feedback():
 def api_chat():
     """
     AI Cultural Concierge endpoint.
-    Performs grounded RAG querying SQLite catalog of 20 experiences + user's current Markdown taste profile.
-    Extracts new visitor preferences in background and updates User.preferences in SQLite.
+    Performs grounded RAG querying the SQLite catalog of 20 experiences
+    plus the user's current Markdown taste profile.
+
+    TODO: Connect to the real Gemini API once an API key is configured.
+    Currently uses a local keyword-matching fallback.
     """
     data = request.get_json() or {}
     user_message = data.get('message', '').strip()
@@ -256,34 +446,13 @@ def api_chat():
     if not user_message:
         return jsonify({'error': 'Please enter a message.'}), 400
 
-    user = User.query.get(session['user_id'])
-    all_experiences = Experience.query.all()
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
 
-    # Build Grounded Catalog Context
-    catalog_context = "AVAILABLE PRE-CONFIGURED CULTURAL EXPERIENCES (ITALY):\n"
-    for exp in all_experiences:
-        catalog_context += (
-            f"- [ID: {exp.id}] {exp.title} in {exp.city} (Theme: {exp.theme}, Duration: {exp.duration_minutes}m, "
-            f"Base Price: €{exp.base_price:.2f}, Badge: '{exp.badge}'). Highlights: {exp.highlights}\n"
-        )
-
-    user_profile_context = user.preferences or "No prior taste profile recorded."
-
-    system_instruction = f"""You are the AI Cultural Concierge for Italy's premier cultural experience platform.
-Your mission is to understand visitor tastes, recommend the best pre-configured cultural packages from our database, and assist in tailoring their itinerary.
-
-{catalog_context}
-
-CURRENT VISITOR CULTURAL TASTE PROFILE:
-{user_profile_context}
-
-RULES:
-1. Ground your recommendations strictly in the experiences listed above.
-2. Be sophisticated, warmly hospitable, and concise.
-3. Whenever you recommend a specific experience, include a special actionable card trigger on its own line in this exact format:
-[RECOMMEND: id=X, title="Title", city="City", price=Price]
-4. Do not invent non-existent packages or ticket prices.
-"""
+    all_exp_rows = db.execute("SELECT * FROM experiences").fetchall()
+    all_experiences = [_exp_row_to_dict(row) for row in all_exp_rows]
 
     api_key = os.environ.get("GEMINI_API_KEY")
 
@@ -292,76 +461,81 @@ RULES:
         # Smart local concierge matching
         matched_exp = None
         for exp in all_experiences:
-            if exp.city.lower() in user_message.lower() or exp.theme.lower() in user_message.lower():
+            if (exp['city'].lower() in user_message.lower() or
+                    exp['theme'].lower() in user_message.lower()):
                 matched_exp = exp
                 break
-        if not matched_exp:
+        if not matched_exp and all_experiences:
             matched_exp = all_experiences[0]
 
-        ai_response_text = (
-            f"Welcome! Based on your interest, I highly recommend exploring **{matched_exp.title}** in {matched_exp.city}.\n\n"
-            f"It offers a {matched_exp.duration_minutes}-minute curated journey covering {matched_exp.highlights}.\n\n"
-            f"[RECOMMEND: id={matched_exp.id}, title=\"{matched_exp.title}\", city=\"{matched_exp.city}\", price={matched_exp.base_price:.2f}]\n\n"
-            f"Would you like me to customize this with an expert docent or audio guide?"
-        )
+        if matched_exp:
+            ai_response_text = (
+                f"Welcome! Based on your interest, I highly recommend exploring "
+                f"**{matched_exp['title']}** in {matched_exp['city']}.\n\n"
+                f"It offers a {matched_exp['duration_minutes']}-minute curated journey "
+                f"covering {matched_exp['highlights']}.\n\n"
+                f"[RECOMMEND: id={matched_exp['id']}, title=\"{matched_exp['title']}\", "
+                f"city=\"{matched_exp['city']}\", price={matched_exp['base_price']:.2f}]\n\n"
+                f"Would you like me to customize this with an expert docent or audio guide?"
+            )
+        else:
+            ai_response_text = (
+                "Welcome! I'm your AI Cultural Concierge. Ask me about Italian cultural "
+                "experiences — try mentioning a city like Florence or Rome, or a theme "
+                "like Renaissance or Baroque."
+            )
 
         # Update sample preference
         if "florence" in user_message.lower() or "renaissance" in user_message.lower():
-            user.preferences = """### Cultural Taste Profile
+            new_prefs = """### Cultural Taste Profile
 - **Primary Interests:** Renaissance Masterpieces & Florentine Architecture
 - **Visit Pacing:** Dense & Curated (2 hours)
 - **Group Style:** Partner / Solo exploration
 - **Preferred Perks:** Skip-The-Line Access, Audio Guide
 - **Favorite Cities:** Florence, Rome"""
-            db.session.commit()
+            db.execute(
+                "UPDATE users SET preferences = ? WHERE id = ?",
+                (new_prefs, session['user_id'])
+            )
+            db.commit()
+            # Re-fetch updated preferences
+            user = db.execute(
+                "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+            ).fetchone()
 
-        return jsonify({'response': ai_response_text, 'updated_profile': user.preferences})
+        return jsonify({
+            'response': ai_response_text,
+            'updated_profile': user['preferences']
+        })
 
-    # Official Gemini API Execution
-    try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            system_instruction=system_instruction
-        )
-
-        history = session.get('chat_history', [])
-        chat = model.start_chat(history=history)
-        response = chat.send_message(user_message)
-        ai_text = response.text
-
-        # Update session chat history
-        history.append({'role': 'user', 'parts': [user_message]})
-        history.append({'role': 'model', 'parts': [ai_text]})
-        session['chat_history'] = history[-10:] # Keep last 10 messages
-        session.modified = True
-
-        # Background Memory Extraction Pipeline
-        try:
-            memory_extractor_prompt = f"""Based on this user message: "{user_message}" and existing profile:
-"{user_profile_context}"
-Summarize the user's ongoing art/cultural tastes into a concise Markdown profile (Interests, Pacing, Group Style, Perks, Favorite Cities).
-Output ONLY the Markdown block starting with '### Cultural Taste Profile'."""
-            memory_model = genai.GenerativeModel('gemini-1.5-flash')
-            mem_res = memory_model.generate_content(memory_extractor_prompt)
-            if mem_res.text and "### Cultural Taste Profile" in mem_res.text:
-                user.preferences = mem_res.text.strip()
-                db.session.commit()
-        except Exception as mem_err:
-            print(f"Memory extraction non-critical error: {mem_err}")
-
-        return jsonify({'response': ai_text, 'updated_profile': user.preferences})
-
-    except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return jsonify({'error': 'The Concierge is temporarily unavailable.'}), 500
+    # TODO: Official Gemini API execution path
+    # When the API key is configured, uncomment and implement the Gemini integration.
+    return jsonify({'error': 'AI Concierge is not yet configured (no API key).'}), 503
 
 
 @main_bp.route('/api/profile/reset-memory', methods=['POST'])
 @login_required
 def api_reset_memory():
     """Resets the user's AI Cultural Taste Profile to default."""
-    user = User.query.get(session['user_id'])
-    user.preferences = None
-    db.session.commit()
+    db = get_db()
+    db.execute(
+        "UPDATE users SET preferences = NULL WHERE id = ?",
+        (session['user_id'],)
+    )
+    db.commit()
     return jsonify({'success': True, 'message': 'Taste profile reset successfully.'})
+
+
+# -----------------------------------------------------------------------------
+# 3. Row-to-Dict Helpers (for JSON column parsing)
+# -----------------------------------------------------------------------------
+
+def _exp_row_to_dict(row):
+    """
+    Converts a sqlite3.Row from the experiences table into a dict
+    with parsed JSON columns (included_items, available_addons) for template use.
+    """
+    d = dict(row)
+    d['included_items'] = _parse_json_column(d.get('included_items_json'))
+    d['available_addons'] = _parse_json_column(d.get('available_addons_json'))
+    return d

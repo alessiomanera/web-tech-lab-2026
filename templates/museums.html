@@ -9,18 +9,18 @@
 <div class="grid-auto">
     {% for museum in museums %}
     <div class="card">
-        <img src="{{ museum.image_url }}" alt="{{ museum.name }}" class="aspect-video" style="object-fit: cover;">
+        <img src="{{ museum.image_url }}" alt="{{ museum.name }}" class="aspect-video">
         <div class="card-content">
             <h3 class="card-title">{{ museum.name }}</h3>
             <p class="flex-grow-1 mt-0">{{ museum.description }}</p>
-            <div style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 1rem;">
+            <div class="card-meta">
                 📍 {{ museum.location }}
             </div>
             <a href="{{ url_for('main.booking', museum_id=museum.id) }}" class="cta-button w-100 box-border" aria-label="Book tickets for {{ museum.name }}">Book Tickets</a>
         </div>
     </div>
     {% else %}
-    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+    <div class="card card-empty">
         <div class="card-content">
             <h3 class="card-title">Check back soon!</h3>
             <p>No museums have been added to the database yet.</p>

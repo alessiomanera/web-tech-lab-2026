@@ -10,16 +10,16 @@
     <p class="hero-subtitle">
         Say goodbye to fragmented museum tickets and generic tours. Discover 20 curated Italian cultural packages with priority access, custom add-ons, and an intelligent AI Concierge that learns your taste.
     </p>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem;">
+    <div class="hero-actions">
         <a href="{{ url_for('main.experiences') }}" class="cta-button">Explore 20 Experiences</a>
         <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue">Talk to AI Concierge</a>
     </div>
 </section>
 
 <!-- 3-Step Experience Flow -->
-<section aria-labelledby="how-it-works-heading" style="margin-bottom: 4.5rem;">
+<section aria-labelledby="how-it-works-heading" class="section-space">
     <div class="text-center mb-2">
-        <h2 id="how-it-works-heading" style="font-size: 2.2rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+        <h2 id="how-it-works-heading" class="section-title">
             How It Works
         </h2>
         <p class="text-lg">Friction-free culture from inspiration to digital pass.</p>
@@ -29,26 +29,26 @@
         <!-- Step 1 -->
         <div class="step-box">
             <div class="step-num-pill">1</div>
-            <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; text-transform: uppercase;">1. Explore or Tailor</h3>
-            <p style="font-size: 0.95rem; line-height: 1.5; margin: 0;">
+            <h3 class="step-title">1. Explore or Tailor</h3>
+            <p class="step-description">
                 Browse 20 pre-configured cultural packages or chat with our <strong>AI Concierge</strong> to create a custom itinerary grounded in real catalog data.
             </p>
         </div>
 
         <!-- Step 2 -->
         <div class="step-box">
-            <div class="step-num-pill" style="background: var(--accent-color);">2</div>
-            <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; text-transform: uppercase;">2. Frictionless Booking</h3>
-            <p style="font-size: 0.95rem; line-height: 1.5; margin: 0;">
+            <div class="step-num-pill step-num-blue">2</div>
+            <h3 class="step-title">2. Frictionless Booking</h3>
+            <p class="step-description">
                 Select your preferred date, dedicated time slot, and customizable add-ons (Audio Guides, Expert Docents, VIP Fast-Track) in our 4-step wizard.
             </p>
         </div>
 
         <!-- Step 3 -->
         <div class="step-box">
-            <div class="step-num-pill" style="background: var(--accent-yellow); color: #000;">3</div>
-            <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem; text-transform: uppercase;">3. Enjoy &amp; Evolve</h3>
-            <p style="font-size: 0.95rem; line-height: 1.5; margin: 0;">
+            <div class="step-num-pill step-num-yellow">3</div>
+            <h3 class="step-title">3. Enjoy &amp; Evolve</h3>
+            <p class="step-description">
                 Access your instant digital pass, enjoy your curated visit, leave feedback, and watch your <strong>Cultural Taste Profile</strong> grow smarter.
             </p>
         </div>
@@ -57,14 +57,14 @@
 
 <!-- Featured Experiences Grid -->
 <section aria-labelledby="featured-heading">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="section-header">
         <div>
             <span class="badge badge-blue">Handpicked Highlights</span>
-            <h2 id="featured-heading" style="font-size: 2.2rem; text-transform: uppercase; margin: 0.5rem 0 0 0;">
+            <h2 id="featured-heading" class="section-header-title">
                 Trending Packages
             </h2>
         </div>
-        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
+        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline cta-button-sm">
             View All 20 Experiences &rarr;
         </a>
     </div>
@@ -81,24 +81,24 @@
                     {% endif %}
                 </div>
                 
-                <h3 id="exp-title-{{ exp.id }}" class="card-title" style="font-size: 1.2rem; min-height: 2.8rem;">
+                <h3 id="exp-title-{{ exp.id }}" class="card-title card-title-sm">
                     {{ exp.title }}
                 </h3>
                 
-                <p style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1rem; color: var(--text-secondary); flex-grow: 1;">
+                <p class="card-description">
                     {{ exp.tagline }}
                 </p>
 
-                <div style="border-top: var(--border-width) solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div class="card-footer">
                     <div>
-                        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); display: block;">From</span>
+                        <span class="label-micro">From</span>
                         <span class="experience-price-tag">€{{ "%.2f"|format(exp.base_price) }}</span>
                     </div>
                     <span class="experience-duration">{{ exp.duration_minutes }} Min</span>
                 </div>
 
-                <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
-                    <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button w-100" style="padding: 0.75rem 1rem; font-size: 0.85rem;">
+                <div class="card-actions">
+                    <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button w-100 cta-button-md">
                         Book Package
                     </a>
                 </div>

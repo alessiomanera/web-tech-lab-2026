@@ -5,206 +5,220 @@
 {% block content %}
 <div class="mb-2 text-center">
     <span class="badge badge-yellow">Frictionless 4-Step Booking</span>
-    <h1 class="mb-05 mt-0" style="font-size: 2.6rem;">Book Your Experience</h1>
-    <p class="text-lg" style="margin: 0;">Instant reserved time-slots with customized add-ons.</p>
+    <h1 class="mb-05 mt-0 title-large">Book Your Experience</h1>
+    <p class="text-lg">Instant reserved time-slots with customized add-ons.</p>
 </div>
 
-<div class="card max-w-800 mx-auto" style="padding: 2rem;">
-    <!-- Wizard Progress Indicator -->
-    <nav class="wizard-progress" aria-label="Booking Steps">
-        <div class="wizard-step-node active" id="node-1">
-            <div class="wizard-step-badge">1</div>
-            <span>Package &amp; Add-ons</span>
-        </div>
-        <div class="wizard-step-node" id="node-2">
-            <div class="wizard-step-badge">2</div>
-            <span>Date &amp; Slot</span>
-        </div>
-        <div class="wizard-step-node" id="node-3">
-            <div class="wizard-step-badge">3</div>
-            <span>Review Summary</span>
-        </div>
-        <div class="wizard-step-node" id="node-4">
-            <div class="wizard-step-badge">4</div>
-            <span>Digital Pass</span>
-        </div>
-    </nav>
-
-    <!-- STEP 1: Package & Add-ons -->
-    <div class="wizard-panel active" id="panel-1">
-        <div class="form-group">
-            <label for="exp-select" class="form-label">1. Choose Cultural Experience Package</label>
-            <select id="exp-select" class="form-select" required>
-                <option value="" disabled {% if not selected_exp %}selected{% endif %}>Select an experience from the 20 available...</option>
-                {% for exp in experiences %}
-                <option value="{{ exp.id }}" 
-                        data-price="{{ exp.base_price }}" 
-                        data-city="{{ exp.city }}"
-                        data-duration="{{ exp.duration_minutes }}"
-                        data-addons='{{ exp.available_addons_json }}'
-                        {% if selected_exp and selected_exp.id == exp.id %}selected{% endif %}>
-                    [{{ exp.city }}] {{ exp.title }} — €{{ "%.2f"|format(exp.base_price) }} ({{ exp.duration_minutes }}m)
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div id="experience-preview-box" style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1.25rem; margin-bottom: 1.5rem; display: {% if selected_exp %}block{% else %}none{% endif %};">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <strong id="preview-title" style="font-size: 1.1rem; text-transform: uppercase;">{{ selected_exp.title if selected_exp else '' }}</strong>
-                <span class="badge badge-blue" id="preview-city">{{ selected_exp.city if selected_exp else '' }}</span>
-            </div>
-            <p id="preview-desc" style="font-size: 0.9rem; margin: 0.5rem 0 0 0; color: var(--text-secondary);">
-                {{ selected_exp.tagline if selected_exp else '' }}
-            </p>
-        </div>
-
-        <!-- Customizable Addons -->
-        <div class="form-group">
-            <label class="form-label">2. Select Optional Add-ons</label>
-            <div id="addons-container">
-                <!-- Addons injected dynamically via JavaScript -->
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: var(--border-width) solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
-            <div>
-                <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary);">Estimated Price</span>
-                <div id="step1-price" style="font-size: 1.5rem; font-weight: 900;">€0.00</div>
-            </div>
-            <button type="button" id="btn-to-step2" class="cta-button">Continue to Date &amp; Slot &rarr;</button>
-        </div>
+<div class="card card-wizard max-w-800 mx-auto">
+    {% if error %}
+    <div class="error-message d-block text-center-block mb-1">
+        {{ error }}
     </div>
+    {% endif %}
 
-    <!-- STEP 2: Date & Time-Slot -->
-    <div class="wizard-panel" id="panel-2">
-        <div class="form-group">
-            <label for="visit-date" class="form-label">1. Select Visit Date</label>
-            <input type="date" id="visit-date" class="form-input" required>
-        </div>
+    <form id="booking-form" method="POST" action="{{ url_for('main.booking') }}">
+        <input type="hidden" name="experience_id" id="hidden-experience-id" value="{{ selected_exp.id if selected_exp else '' }}">
+        <input type="hidden" name="visit_date" id="hidden-visit-date">
+        <input type="hidden" name="time_slot" id="hidden-time-slot" value="09:30 - 11:00">
+        <input type="hidden" name="guests_count" id="hidden-guests-count" value="1">
+        <input type="hidden" name="selected_addons_json" id="hidden-selected-addons-json" value="[]">
 
-        <div class="form-group">
-            <label for="guests-count" class="form-label">2. Number of Guests (Party Size)</label>
-            <select id="guests-count" class="form-select">
-                <option value="1" selected>1 Guest (Individual Pass)</option>
-                <option value="2">2 Guests (Couple / Duo)</option>
-                <option value="3">3 Guests (Small Group)</option>
-                <option value="4">4 Guests (Family / Friends)</option>
-                <option value="5">5 Guests (Group Pass)</option>
-                <option value="6">6 Guests (Maximum Group)</option>
-            </select>
-        </div>
+        <!-- Wizard Progress Indicator -->
+        <nav class="wizard-progress" aria-label="Booking Steps">
+            <div class="wizard-step-node {% if not ticket %}active{% else %}completed{% endif %}" id="node-1">
+                <div class="wizard-step-badge">1</div>
+                <span>Package &amp; Add-ons</span>
+            </div>
+            <div class="wizard-step-node {% if ticket %}completed{% endif %}" id="node-2">
+                <div class="wizard-step-badge">2</div>
+                <span>Date &amp; Slot</span>
+            </div>
+            <div class="wizard-step-node {% if ticket %}completed{% endif %}" id="node-3">
+                <div class="wizard-step-badge">3</div>
+                <span>Review Summary</span>
+            </div>
+            <div class="wizard-step-node {% if ticket %}active{% endif %}" id="node-4">
+                <div class="wizard-step-badge">4</div>
+                <span>Digital Pass</span>
+            </div>
+        </nav>
 
-        <div class="form-group">
-            <label class="form-label">3. Dedicated Time Slot</label>
-            <div class="time-slot-grid" id="time-slots-container">
-                <div class="time-slot-pill active" data-slot="09:30 - 11:00">09:30 - 11:00</div>
-                <div class="time-slot-pill" data-slot="11:30 - 13:00">11:30 - 13:00</div>
-                <div class="time-slot-pill" data-slot="14:30 - 16:00">14:30 - 16:00</div>
-                <div class="time-slot-pill" data-slot="16:30 - 18:00">16:30 - 18:00</div>
+        <!-- STEP 1: Package & Add-ons -->
+        <div class="wizard-panel {% if not ticket %}active{% endif %}" id="panel-1">
+            <div class="form-group">
+                <label for="exp-select" class="form-label">1. Choose Cultural Experience Package</label>
+                <select id="exp-select" class="form-select" required>
+                    <option value="" disabled {% if not selected_exp %}selected{% endif %}>Select an experience from the 20 available...</option>
+                    {% for exp in experiences %}
+                    <option value="{{ exp.id }}" 
+                            data-price="{{ exp.base_price }}" 
+                            data-city="{{ exp.city }}"
+                            data-duration="{{ exp.duration_minutes }}"
+                            data-addons='{{ exp.available_addons_json }}'
+                            {% if selected_exp and selected_exp.id == exp.id %}selected{% endif %}>
+                        [{{ exp.city }}] {{ exp.title }} — €{{ "%.2f"|format(exp.base_price) }} ({{ exp.duration_minutes }}m)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="experience-preview-box" class="preview-box" style="display: {% if selected_exp %}block{% else %}none{% endif %};">
+                <div class="flex-between-center">
+                    <strong id="preview-title" class="text-uppercase-lg">{{ selected_exp.title if selected_exp else '' }}</strong>
+                    <span class="badge badge-blue" id="preview-city">{{ selected_exp.city if selected_exp else '' }}</span>
+                </div>
+                <p id="preview-desc" class="preview-description">
+                    {{ selected_exp.tagline if selected_exp else '' }}
+                </p>
+            </div>
+
+            <!-- Customizable Addons -->
+            <div class="form-group">
+                <label class="form-label">2. Select Optional Add-ons</label>
+                <div id="addons-container">
+                    <!-- Addons injected dynamically via JavaScript -->
+                </div>
+            </div>
+
+            <div class="wizard-footer">
+                <div>
+                    <span class="label-micro">Estimated Price</span>
+                    <div id="step1-price" class="text-price-large">€0.00</div>
+                </div>
+                <button type="button" id="btn-to-step2" class="cta-button">Continue to Date &amp; Slot &rarr;</button>
             </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: var(--border-width) solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
-            <button type="button" id="btn-back-to-step1" class="cta-button cta-button-outline">&larr; Back</button>
-            <button type="button" id="btn-to-step3" class="cta-button">Review Summary &rarr;</button>
-        </div>
-    </div>
-
-    <!-- STEP 3: Review & Summary -->
-    <div class="wizard-panel" id="panel-3">
-        <h3 style="font-size: 1.3rem; text-transform: uppercase; margin-bottom: 1.25rem;">Booking Summary</h3>
-        
-        <div style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #CCC; padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
-                <strong id="summary-exp-title">Experience</strong>
-                <span id="summary-exp-city" class="badge">City</span>
+        <!-- STEP 2: Date & Time-Slot -->
+        <div class="wizard-panel" id="panel-2">
+            <div class="form-group">
+                <label for="visit-date" class="form-label">1. Select Visit Date</label>
+                <input type="date" id="visit-date" class="form-input" required>
             </div>
+
+            <div class="form-group">
+                <label for="guests-count" class="form-label">2. Number of Guests (Party Size)</label>
+                <select id="guests-count" class="form-select">
+                    <option value="1" selected>1 Guest (Individual Pass)</option>
+                    <option value="2">2 Guests (Couple / Duo)</option>
+                    <option value="3">3 Guests (Small Group)</option>
+                    <option value="4">4 Guests (Family / Friends)</option>
+                    <option value="5">5 Guests (Group Pass)</option>
+                    <option value="6">6 Guests (Maximum Group)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">3. Dedicated Time Slot</label>
+                <div class="time-slot-grid" id="time-slots-container">
+                    <div class="time-slot-pill active" data-slot="09:30 - 11:00">09:30 - 11:00</div>
+                    <div class="time-slot-pill" data-slot="11:30 - 13:00">11:30 - 13:00</div>
+                    <div class="time-slot-pill" data-slot="14:30 - 16:00">14:30 - 16:00</div>
+                    <div class="time-slot-pill" data-slot="16:30 - 18:00">16:30 - 18:00</div>
+                </div>
+            </div>
+
+            <div class="wizard-footer">
+                <button type="button" id="btn-back-to-step1" class="cta-button cta-button-outline">&larr; Back</button>
+                <button type="button" id="btn-to-step3" class="cta-button">Review Summary &rarr;</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Review & Summary -->
+        <div class="wizard-panel" id="panel-3">
+            <h3 class="summary-title">Booking Summary</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; font-size: 0.95rem;">
-                <div>
-                    <span style="color: var(--text-secondary); display: block;">Visit Date:</span>
-                    <strong id="summary-date">YYYY-MM-DD</strong>
+            <div class="summary-box">
+                <div class="summary-header">
+                    <strong id="summary-exp-title">Experience</strong>
+                    <span id="summary-exp-city" class="badge">City</span>
                 </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block;">Time Slot:</span>
-                    <strong id="summary-slot">09:30 - 11:00</strong>
+                
+                <div class="summary-grid">
+                    <div>
+                        <span class="text-secondary-block">Visit Date:</span>
+                        <strong id="summary-date">YYYY-MM-DD</strong>
+                    </div>
+                    <div>
+                        <span class="text-secondary-block">Time Slot:</span>
+                        <strong id="summary-slot">09:30 - 11:00</strong>
+                    </div>
+                    <div>
+                        <span class="text-secondary-block">Guests:</span>
+                        <strong id="summary-guests">1 Guest</strong>
+                    </div>
+                    <div>
+                        <span class="text-secondary-block">Add-ons:</span>
+                        <strong id="summary-addons">None</strong>
+                    </div>
                 </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block;">Guests:</span>
-                    <strong id="summary-guests">1 Guest</strong>
-                </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block;">Add-ons:</span>
-                    <strong id="summary-addons">None</strong>
+
+                <div class="flex-between-center wizard-footer">
+                    <span class="text-uppercase-lg font-weight-800">Total Payable</span>
+                    <span id="summary-total-price" class="summary-total-price-val">€0.00</span>
                 </div>
             </div>
 
-            <div style="border-top: var(--border-width) solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 1.1rem; font-weight: 800; text-transform: uppercase;">Total Payable</span>
-                <span id="summary-total-price" style="font-size: 1.75rem; font-weight: 900; color: var(--primary-color);">€0.00</span>
-            </div>
-        </div>
+            <div id="booking-error-msg" class="error-message mb-1"></div>
 
-        <div id="booking-error-msg" class="error-message mb-1" style="font-weight: 800; font-size: 1rem;"></div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button type="button" id="btn-back-to-step2" class="cta-button cta-button-outline">&larr; Back</button>
-            <button type="button" id="btn-confirm-booking" class="cta-button" style="background: var(--success-color);">
-                Confirm &amp; Issue Pass &rarr;
-            </button>
-        </div>
-    </div>
-
-    <!-- STEP 4: Confirmed Digital Pass -->
-    <div class="wizard-panel" id="panel-4">
-        <div class="digital-pass-card">
-            <div class="pass-header">
-                <div>
-                    <span class="badge badge-yellow">Official Digital Pass</span>
-                    <h3 id="pass-exp-title" style="margin: 0.5rem 0 0 0; font-size: 1.25rem; text-transform: uppercase;">Experience</h3>
-                </div>
-                <div class="pass-code-pill" id="pass-code">EXP-2026-XXXX</div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; font-size: 0.95rem; margin-bottom: 1.5rem;">
-                <div>
-                    <span style="color: var(--text-secondary); display: block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Destination</span>
-                    <strong id="pass-city">Florence</strong>
-                </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Visit Date</span>
-                    <strong id="pass-date">2026-09-10</strong>
-                </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Reserved Slot</span>
-                    <strong id="pass-slot">10:00 - 11:30</strong>
-                </div>
-                <div>
-                    <span style="color: var(--text-secondary); display: block; font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Total Paid</span>
-                    <strong id="pass-price">€26.00</strong>
-                </div>
-            </div>
-
-            <!-- Visual Barcode / QR placeholder in Neubrutalism -->
-            <div style="background: #000000; color: #FFFFFF; padding: 1rem; text-align: center; font-family: monospace; font-size: 1.1rem; letter-spacing: 0.2em; margin-bottom: 1.5rem;">
-                ||| | |||| || ||| ||||||| | ||
-            </div>
-
-            <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin: 0 0 1.5rem 0;">
-                Show this digital pass or reference code upon entry for priority fast-track access.
-            </p>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                <a href="{{ url_for('main.profile') }}" class="cta-button cta-button-outline" style="font-size: 0.85rem;">
-                    My Experiences Hub
-                </a>
-                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue" style="font-size: 0.85rem;">
-                    Ask Concierge for Tips
-                </a>
+            <div class="flex-between-center">
+                <button type="button" id="btn-back-to-step2" class="cta-button cta-button-outline">&larr; Back</button>
+                <button type="button" id="btn-confirm-booking" class="cta-button btn-success">
+                    Confirm &amp; Issue Pass &rarr;
+                </button>
             </div>
         </div>
-    </div>
+
+        <!-- STEP 4: Confirmed Digital Pass -->
+        <div class="wizard-panel {% if ticket %}active{% endif %}" id="panel-4">
+            <div class="digital-pass-card">
+                <div class="pass-header">
+                    <div>
+                        <span class="badge badge-yellow">Official Digital Pass</span>
+                        <h3 id="pass-exp-title" class="mb-05 mt-05 text-uppercase-lg">{{ ticket.experience_title if ticket else 'Experience' }}</h3>
+                    </div>
+                    <div class="pass-code-pill" id="pass-code">{{ ticket.booking_code if ticket else 'EXP-2026-XXXX' }}</div>
+                </div>
+
+                <div class="pass-grid">
+                    <div>
+                        <span class="pass-label">Destination</span>
+                        <strong id="pass-city">{{ ticket.experience_city if ticket else 'Florence' }}</strong>
+                    </div>
+                    <div>
+                        <span class="pass-label">Visit Date</span>
+                        <strong id="pass-date">{{ ticket.visit_date if ticket else '2026-09-10' }}</strong>
+                    </div>
+                    <div>
+                        <span class="pass-label">Reserved Slot</span>
+                        <strong id="pass-slot">{{ ticket.time_slot if ticket else '10:00 - 11:30' }}</strong>
+                    </div>
+                    <div>
+                        <span class="pass-label">Total Paid</span>
+                        <strong id="pass-price">€{{ "%.2f"|format(ticket.total_price) if ticket else '26.00' }}</strong>
+                    </div>
+                </div>
+
+                <!-- Visual Barcode / QR placeholder in Neubrutalism -->
+                <div class="pass-barcode">
+                    ||| | |||| || ||| ||||||| | ||
+                </div>
+
+                <p class="pass-footer-text">
+                    Show this digital pass or reference code upon entry for priority fast-track access.
+                </p>
+
+                <div class="grid-2-col">
+                    <a href="{{ url_for('main.profile') }}" class="cta-button cta-button-outline cta-button-xs">
+                        My Experiences Hub
+                    </a>
+                    <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue cta-button-xs">
+                        Ask Concierge for Tips
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 <script src="{{ url_for('static', filename='js/bookingWizard.js') }}" defer></script>

@@ -5,36 +5,35 @@
 {% block content %}
 <div class="mb-2">
     <span class="badge badge-yellow">Italy Cultural Catalog</span>
-    <h1 class="mb-05 mt-0" style="font-size: 2.8rem;">Explore Experiences</h1>
-    <p class="text-lg" style="margin: 0; max-width: 750px;">
+    <h1 class="mb-05 mt-0 title-large">Explore Experiences</h1>
+    <p class="text-lg subtitle-wide">
         Browse 20 curated Italian cultural packages designed for depth, convenience, and priority access. Filter by city or search by art period.
     </p>
 </div>
 
 <!-- Search & City Filter Bar -->
-<div style="background: #FFFFFF; border: var(--border-width) solid var(--border-color); box-shadow: var(--box-shadow-hard); padding: 1.5rem; margin-bottom: 2.5rem;">
+<div class="search-filter-card">
     <!-- Search Form -->
-    <form method="GET" action="{{ url_for('main.experiences') }}" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <input type="text" name="q" value="{{ search_query }}" placeholder="Search by museum, artist, or theme (e.g. Botticelli, Colosseum, Baroque)..." class="form-input" style="flex: 1; min-width: 260px;">
+    <form method="GET" action="{{ url_for('main.experiences') }}" class="search-form-row">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search by museum, artist, or theme (e.g. Botticelli, Colosseum, Baroque)..." class="form-input search-input">
         {% if selected_city and selected_city != 'All' %}
         <input type="hidden" name="city" value="{{ selected_city }}">
         {% endif %}
-        <button type="submit" class="cta-button" style="padding: 0.85rem 1.5rem;">Search</button>
+        <button type="submit" class="cta-button cta-button-search">Search</button>
         {% if search_query or (selected_city and selected_city != 'All') %}
-        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline" style="padding: 0.85rem 1.25rem;">Reset</a>
+        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline cta-button-reset">Reset</a>
         {% endif %}
     </form>
 
     <!-- City Filter Pills -->
     <div>
-        <span style="font-size: 0.85rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.75rem;">
+        <span class="filter-label">
             Filter by Destination:
         </span>
-        <div class="filter-pills-bar" style="margin-bottom: 0;">
+        <div class="filter-pills-bar mb-0">
             {% for city in cities %}
             <a href="{{ url_for('main.experiences', city=city if city != 'All' else None, q=search_query if search_query else None) }}" 
-               class="filter-pill {% if selected_city == city %}active{% endif %}"
-               style="text-decoration: none;">
+               class="filter-pill no-decor {% if selected_city == city %}active{% endif %}">
                 {{ city }}
             </a>
             {% endfor %}
@@ -56,15 +55,15 @@
                 {% endif %}
             </div>
             
-            <h2 id="exp-title-{{ exp.id }}" class="card-title" style="font-size: 1.2rem; min-height: 2.8rem; margin: 0 0 0.5rem 0;">
+            <h2 id="exp-title-{{ exp.id }}" class="card-title card-title-sm-margin">
                 {{ exp.title }}
             </h2>
             
-            <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--primary-color); display: block; margin-bottom: 0.5rem;">
+            <span class="card-theme">
                 {{ exp.theme }}
             </span>
 
-            <p style="font-size: 0.88rem; line-height: 1.45; margin-bottom: 1rem; color: var(--text-secondary); flex-grow: 1;">
+            <p class="card-description-sm">
                 {{ exp.tagline }}
             </p>
 
@@ -76,28 +75,28 @@
             </ul>
 
             <!-- Price & Duration Footer -->
-            <div style="border-top: var(--border-width) solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div class="card-footer">
                 <div>
-                    <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-secondary); display: block;">From</span>
+                    <span class="label-micro">From</span>
                     <span class="experience-price-tag">€{{ "%.2f"|format(exp.base_price) }}</span>
                 </div>
                 <span class="experience-duration">{{ exp.duration_minutes }} Min</span>
             </div>
 
             <!-- Action CTAs -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1.25rem;">
-                <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button" style="padding: 0.75rem 0.5rem; font-size: 0.8rem;">
+            <div class="card-actions-grid">
+                <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button cta-button-xs">
                     Book Package
                 </a>
-                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-outline" style="padding: 0.75rem 0.5rem; font-size: 0.8rem;" title="Ask Concierge about this package">
+                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-outline cta-button-xs" title="Ask Concierge about this package">
                     Tailor (AI)
                 </a>
             </div>
         </div>
     </article>
     {% else %}
-    <div style="grid-column: 1 / -1; background: #FFFFFF; border: var(--border-width) solid var(--border-color); box-shadow: var(--box-shadow-hard); padding: 3rem; text-align: center;">
-        <h3 style="text-transform: uppercase;">No Experiences Matched Your Search</h3>
+    <div class="card-empty-search">
+        <h3 class="text-transform-uppercase">No Experiences Matched Your Search</h3>
         <p>Try resetting the city filter or searching for another keyword.</p>
         <a href="{{ url_for('main.experiences') }}" class="cta-button mt-1">View All 20 Experiences</a>
     </div>

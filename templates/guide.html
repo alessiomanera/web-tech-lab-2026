@@ -5,8 +5,8 @@
 {% block content %}
 <div class="mb-2">
     <span class="badge badge-yellow">Grounded Generative AI &bull; Taste Memory</span>
-    <h1 class="mb-05 mt-0" style="font-size: 2.8rem;">Cultural Concierge</h1>
-    <p class="text-lg" style="margin: 0; max-width: 800px;">
+    <h1 class="mb-05 mt-0 title-large">Cultural Concierge</h1>
+    <p class="text-lg subtitle-wide-concierge">
         Your intelligent conversational guide. Ask for personalized recommendations, custom visit itineraries, or family-friendly routes. As you chat, the Concierge continuously refines your <strong>Cultural Taste Profile</strong>.
     </p>
 </div>
@@ -18,10 +18,10 @@
         <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
             <!-- Welcome Concierge Message -->
             <div class="chat-msg chat-msg-model">
-                <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: var(--primary-color); margin-bottom: 0.35rem;">
+                <div class="msg-header-model">
                     Concierge AI
                 </div>
-                <p style="margin: 0;">
+                <p class="m-0">
                     Benvenuto! I am your AI Cultural Concierge. Tell me where you are traveling, who you are with, and what art or history speaks to you—I will tailor the perfect Italian experience for you.
                 </p>
             </div>
@@ -31,14 +31,14 @@
                 {% for msg in session['chat_history'] %}
                     {% if msg.role == 'user' %}
                     <div class="chat-msg chat-msg-user">
-                        <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: #AAA; margin-bottom: 0.35rem;">
+                        <div class="msg-header-user">
                             You
                         </div>
-                        <p style="margin: 0;">{{ msg.parts[0] }}</p>
+                        <p class="m-0">{{ msg.parts[0] }}</p>
                     </div>
                     {% else %}
                     <div class="chat-msg chat-msg-model">
-                        <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: var(--primary-color); margin-bottom: 0.35rem;">
+                        <div class="msg-header-model">
                             Concierge AI
                         </div>
                         <div class="model-msg-body">{{ msg.parts[0]|replace('\n', '<br>')|safe }}</div>
@@ -49,7 +49,7 @@
         </div>
 
         <!-- Quick Inspiration Prompt Chips -->
-        <div style="padding: 0.75rem 1rem; border-top: 1px solid #E0E0E0; background: #F8F8F8; display: flex; gap: 0.5rem; overflow-x: auto;">
+        <div class="chips-container">
             <button type="button" class="quick-chip badge badge-white" data-prompt="I have 2 hours in Florence with a 9-year-old child. What should we see?">
                 2h in Florence with kids
             </button>
@@ -63,35 +63,35 @@
 
         <!-- Input Bar -->
         <form id="chat-form" class="chat-input-bar">
-            <input type="text" id="chat-input" class="form-input" style="flex: 1; margin: 0;" placeholder="Ask anything about our 20 Italian experiences..." required autocomplete="off">
-            <button type="submit" id="send-btn" class="cta-button" style="padding: 0.85rem 1.75rem;">Send</button>
+            <input type="text" id="chat-input" class="form-input chat-input-field" placeholder="Ask anything about our 20 Italian experiences..." required autocomplete="off">
+            <button type="submit" id="send-btn" class="cta-button">Send</button>
         </form>
     </div>
 
     <!-- Right Column: Live Cultural Taste Profile Memory -->
     <aside class="memory-side-card" aria-labelledby="memory-heading">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border-width) solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
-            <h2 id="memory-heading" style="font-size: 1.1rem; text-transform: uppercase; margin: 0;">
+        <div class="side-card-header">
+            <h2 id="memory-heading" class="side-card-title-sm">
                 Your Taste Profile
             </h2>
             <span class="badge badge-blue">Live Memory</span>
         </div>
 
-        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+        <p class="side-card-description">
             As you chat, our AI automatically extracts your art tastes, pacing preferences, and travel style to curate future recommendations.
         </p>
 
-        <div id="memory-content-box" style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1rem; font-size: 0.88rem; line-height: 1.5; margin-bottom: 1.25rem;">
+        <div id="memory-content-box" class="memory-box-sm">
             {% if user.preferences %}
                 <div id="memory-rendered-text">{{ user.preferences|replace('\n', '<br>')|safe }}</div>
             {% else %}
-                <p style="color: var(--text-secondary); font-style: italic; margin: 0;">
+                <p class="italic-secondary-m-0">
                     Start chatting with the Concierge to automatically build your Cultural Taste Profile!
                 </p>
             {% endif %}
         </div>
 
-        <button type="button" id="btn-reset-memory" class="cta-button cta-button-outline w-100" style="padding: 0.6rem; font-size: 0.8rem;">
+        <button type="button" id="btn-reset-memory" class="cta-button cta-button-outline w-100 cta-button-outline-sm">
             Reset Taste Memory
         </button>
     </aside>
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await fetch('/api/profile/reset-memory', { method: 'POST' });
                 if (res.ok) {
-                    memoryBox.innerHTML = '<p style="color: var(--text-secondary); font-style: italic; margin: 0;">Taste profile reset. Chat to rebuild!</p>';
+                    memoryBox.innerHTML = '<p class="italic-secondary-m-0">Taste profile reset. Chat to rebuild!</p>';
                 }
             } catch (e) {
                 alert('Error resetting profile.');
@@ -141,12 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let formatted = text.replace(cardRegex, function(match, id, title, city, price) {
             return `
             <div class="chat-exp-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <div class="flex-between-center mb-05">
                     <span class="badge badge-yellow">${city}</span>
-                    <strong style="font-size: 1.1rem;">€${parseFloat(price).toFixed(2)}</strong>
+                    <strong class="font-bold-lg">€${parseFloat(price).toFixed(2)}</strong>
                 </div>
-                <strong style="display: block; font-size: 1rem; text-transform: uppercase; margin-bottom: 0.75rem;">${title}</strong>
-                <a href="/booking?exp_id=${id}" class="cta-button w-100" style="padding: 0.6rem; font-size: 0.8rem;">
+                <strong class="card-heading d-block mb-1">${title}</strong>
+                <a href="/booking?exp_id=${id}" class="cta-button w-100 cta-button-xs">
                     Book This Package &rarr;
                 </a>
             </div>`;
@@ -168,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const userDiv = document.createElement('div');
         userDiv.className = 'chat-msg chat-msg-user';
         userDiv.innerHTML = `
-            <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: #AAA; margin-bottom: 0.35rem;">You</div>
-            <p style="margin: 0;">${message}</p>
+            <div class="msg-header-user">You</div>
+            <p class="m-0">${message}</p>
         `;
         chatMessages.appendChild(userDiv);
         chatInput.value = '';
@@ -184,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadDiv.id = 'typing-indicator';
         loadDiv.className = 'chat-msg chat-msg-model';
         loadDiv.innerHTML = `
-            <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: var(--primary-color); margin-bottom: 0.35rem;">Concierge AI</div>
-            <p style="margin: 0; font-style: italic;">Consulting Italian cultural catalog...</p>
+            <div class="msg-header-model">Concierge AI</div>
+            <p class="italic-secondary-m-0">Consulting Italian cultural catalog...</p>
         `;
         chatMessages.appendChild(loadDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modelDiv = document.createElement('div');
                 modelDiv.className = 'chat-msg chat-msg-model';
                 modelDiv.innerHTML = `
-                    <div style="font-weight: 800; text-transform: uppercase; font-size: 0.75rem; color: var(--primary-color); margin-bottom: 0.35rem;">Concierge AI</div>
+                    <div class="msg-header-model">Concierge AI</div>
                     <div>${formatRecommendationCards(data.response)}</div>
                 `;
                 chatMessages.appendChild(modelDiv);
@@ -216,14 +216,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 const errDiv = document.createElement('div');
                 errDiv.className = 'chat-msg chat-msg-model';
-                errDiv.innerHTML = `<p style="margin: 0; color: var(--error-color);">Error: ${data.error || 'Unable to connect to Concierge.'}</p>`;
+                errDiv.innerHTML = `<p class="error-text">Error: ${data.error || 'Unable to connect to Concierge.'}</p>`;
                 chatMessages.appendChild(errDiv);
             }
         } catch (err) {
             document.getElementById('typing-indicator')?.remove();
             const errDiv = document.createElement('div');
             errDiv.className = 'chat-msg chat-msg-model';
-            errDiv.innerHTML = `<p style="margin: 0; color: var(--error-color);">Network error. Please try again.</p>`;
+            errDiv.innerHTML = `<p class="error-text">Network error. Please try again.</p>`;
             chatMessages.appendChild(errDiv);
         } finally {
             chatInput.disabled = false;
