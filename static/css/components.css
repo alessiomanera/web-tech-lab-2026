@@ -136,7 +136,7 @@
 }
 
 .badge-blue { background: var(--accent-color); color: #FFFFFF; }
-.badge-red { background: var(--primary-color); color: #FFFFFF; }
+.badge-red { background: var(--primary-hover); color: #FFFFFF; }
 .badge-white { background: #FFFFFF; color: #000000; }
 
 .filter-pills-bar {
@@ -275,6 +275,11 @@
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0px 0px var(--border-color);
     border-color: var(--accent-color);
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+    color: #555555;
+    opacity: 1;
 }
 
 /* ---------------------------------------------------------
