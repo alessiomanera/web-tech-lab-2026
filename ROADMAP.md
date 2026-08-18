@@ -79,14 +79,15 @@ This document serves as the master source of truth and historical tracking timel
 ## Phase 4: Backend Setup & SQLite Database Schema
 - [x] **Flask Application Factory Architecture (`app.py`)**
   - [x] Implement `create_app()` factory pattern for clean lifecycle management.
-  - [x] Configure SQLite URI (`sqlite:///app.db`) and secret keys via `python-dotenv`.
+  - [x] Configure SQLite URI (`instance/app.db`) and secret keys via `python-dotenv`.
   - [x] Register Blueprints (`main_bp` in `routes.py`, `auth_bp` in `auth.py`).
-  - [x] Auto-create database tables on startup within app context.
-- [x] **Relational Database Schema Definition (`models.py`)**
-  - [x] `User` model: `id`, `name`, `email` (unique), `password_hash`, `preferences` (Markdown Taste Memory).
-  - [x] `Museum` model: `id`, `name`, `description`, `location`, `city`, `image_url`.
-  - [x] `Experience` model: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`.
-  - [x] `Booking` model: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
+  - [x] Initialize database connections using raw standard library `sqlite3` (`database.py`).
+- [x] **Relational Database Schema Definition (`schema.sql`)**
+  - [x] Define clean DDL schema with proper FOREIGN KEY constraints and PRAGMA foreign_keys = ON.
+  - [x] Table `users`: `id`, `name`, `email` (unique), `password_hash`, `preferences` (Markdown Taste Memory).
+  - [x] Table `museums`: `id`, `name`, `description`, `location`, `city`, `image_url`.
+  - [x] Table `experiences`: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`, `museum_id`.
+  - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
   - [x] Populate SQLite database with **Top 20 Curated Italian Cultural Experiences** across 9 major cities (Florence, Rome, Venice, Milan, Turin, Naples, Verona, Palermo, Bologna).
   - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
@@ -101,8 +102,8 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Route protection via `@login_required` decorator (`/booking`, `/concierge`, `/profile`).
 - [x] **Dynamic Catalog & Booking Workflows (`routes.py`)**
   - [x] Query and render 20 experiences with search and city filter on `/experiences`.
-  - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X`).
-  - [x] Asynchronous booking endpoint (`POST /api/book`): validate session, compute total with add-ons, issue `EXP-2026-XXXX` reference pass.
+  - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X` or `?museum_id=Y`).
+  - [x] Booking submission handler (`POST /booking`): validate input server-side, compute total with add-ons, insert row in `tickets`, and show a real digital confirmation pass.
   - [x] Feedback submission endpoint (`POST /api/feedback`).
 
 ---
@@ -113,7 +114,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Ground system prompt directly on the 20 SQLite experiences to eliminate hallucinations.
   - [x] In-chat actionable booking card triggers (`[RECOMMEND: id=X, title="Y", city="Z", price=W]`).
 - [x] **Dynamic Markdown Taste Memory Pipeline (`routes.py`, `templates/guide.html`)**
-  - [x] Background preference extraction: automatically updates `User.preferences` as structured Markdown in SQLite after each conversation.
+  - [x] Background preference extraction: automatically updates `preferences` column in `users` table as structured Markdown after each conversation.
   - [x] Live Taste Memory side panel in chat view and user dashboard (`/profile`).
   - [x] Option to reset/refine taste memory on demand (`POST /api/profile/reset-memory`).
 

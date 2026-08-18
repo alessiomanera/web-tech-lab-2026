@@ -81,11 +81,15 @@ nav {
 .logo {
     font-size: 1.75rem;
     font-family: var(--font-heading);
-    color: var(--primary-color);
+    color: var(--text-primary);
     text-decoration: none;
     font-weight: 900;
     letter-spacing: -0.04em;
     text-transform: uppercase;
+}
+
+.logo span {
+    color: var(--primary-color);
 }
 
 .nav-links {
@@ -110,6 +114,10 @@ nav {
     outline: none;
 }
 
+.nav-links a.nav-highlight {
+    color: var(--accent-color);
+}
+
 .nav-links a:focus-visible {
     border-bottom: 2px solid var(--primary-color);
 }
@@ -123,6 +131,18 @@ footer {
     color: var(--text-primary);
     margin-top: auto;
     font-size: 0.9rem;
+}
+
+footer .footer-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+footer .footer-info {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
 }
 
 /* Brutalist Global Scrollbar with Cursor Preservation */

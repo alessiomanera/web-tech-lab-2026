@@ -243,47 +243,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // Step 4: Submission to API
     // -------------------------------------------------------------------------
     if (btnConfirm) {
-        btnConfirm.addEventListener('click', async () => {
-            errorMsg.style.display = 'none';
+        btnConfirm.addEventListener('click', () => {
+            if (errorMsg) errorMsg.style.display = 'none';
+            
+            // Client-side validation as a UX nicety
+            if (!state.experienceId) {
+                alert('Please select a cultural experience package first.');
+                return;
+            }
+            if (!state.visitDate) {
+                alert('Please pick a visit date.');
+                return;
+            }
+
             btnConfirm.disabled = true;
             btnConfirm.textContent = 'Securing Your Pass...';
 
-            try {
-                const res = await fetch('/api/book', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        experience_id: state.experienceId,
-                        visit_date: state.visitDate,
-                        time_slot: state.timeSlot,
-                        guests_count: state.guestsCount,
-                        selected_addons: state.selectedAddons
-                    })
-                });
+            // Populate the form hidden fields
+            const hiddenExpId = document.getElementById('hidden-experience-id');
+            const hiddenDate = document.getElementById('hidden-visit-date');
+            const hiddenSlot = document.getElementById('hidden-time-slot');
+            const hiddenGuests = document.getElementById('hidden-guests-count');
+            const hiddenAddons = document.getElementById('hidden-selected-addons-json');
+            const form = document.getElementById('booking-form');
 
-                const data = await res.json();
+            if (hiddenExpId) hiddenExpId.value = state.experienceId;
+            if (hiddenDate) hiddenDate.value = state.visitDate;
+            if (hiddenSlot) hiddenSlot.value = state.timeSlot;
+            if (hiddenGuests) hiddenGuests.value = state.guestsCount;
+            if (hiddenAddons) hiddenAddons.value = JSON.stringify(state.selectedAddons);
 
-                if (res.ok) {
-                    // Populate Pass Info
-                    document.getElementById('pass-exp-title').textContent = data.experience_title;
-                    document.getElementById('pass-code').textContent = data.booking_code;
-                    document.getElementById('pass-city').textContent = data.city;
-                    document.getElementById('pass-date').textContent = data.visit_date;
-                    document.getElementById('pass-slot').textContent = data.time_slot;
-                    document.getElementById('pass-price').textContent = data.total_price;
-
-                    showStep(4);
-                } else {
-                    errorMsg.textContent = data.error || 'Failed to complete booking.';
-                    errorMsg.style.display = 'block';
-                    btnConfirm.disabled = false;
-                    btnConfirm.textContent = 'Confirm & Issue Pass →';
-                }
-            } catch (err) {
-                errorMsg.textContent = 'Network error. Please try again.';
-                errorMsg.style.display = 'block';
-                btnConfirm.disabled = false;
-                btnConfirm.textContent = 'Confirm & Issue Pass →';
+            if (form) {
+                form.submit();
             }
         });
     }

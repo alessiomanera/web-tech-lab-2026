@@ -5,58 +5,58 @@
 {% block content %}
 <div class="mb-2">
     <span class="badge badge-blue">User Account Dashboard</span>
-    <h1 class="mb-05 mt-0" style="font-size: 2.6rem;">My Experiences</h1>
-    <p class="text-lg" style="margin: 0;">
+    <h1 class="mb-05 mt-0 title-large">My Experiences</h1>
+    <p class="text-lg m-0">
         Welcome back, <strong>{{ user.name }}</strong> ({{ user.email }}). Manage your reserved passes, submit visit reviews, and inspect your AI taste memory.
     </p>
 </div>
 
-<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2.5rem; margin-top: 2rem;">
+<div class="profile-layout">
     <!-- Left Column: Active Passes & Past Bookings -->
     <div>
-        <h2 style="font-size: 1.5rem; text-transform: uppercase; margin-bottom: 1.25rem; border-bottom: var(--border-width) solid var(--border-color); padding-bottom: 0.5rem;">
+        <h2 class="profile-section-title">
             Your Bookings &amp; Digital Passes
         </h2>
 
         {% if bookings %}
             {% for b in bookings %}
-            <article class="card mb-2" style="background: #FFFFFF;" aria-labelledby="booking-code-{{ b.id }}">
+            <article class="card mb-2 bg-white" aria-labelledby="booking-code-{{ b.id }}">
                 <div class="card-content">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <div class="card-header">
                         <span class="badge badge-yellow" id="booking-code-{{ b.id }}">{{ b.booking_code }}</span>
                         <span class="badge {% if b.status == 'Confirmed' %}badge-blue{% else %}badge-white{% endif %}">
                             {{ b.status }}
                         </span>
                     </div>
 
-                    <h3 style="font-size: 1.25rem; text-transform: uppercase; margin: 0 0 0.5rem 0;">
-                        {{ b.experience.title }}
+                    <h3 class="card-heading">
+                        {{ b.experience_title }}
                     </h3>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.9rem; margin-bottom: 1rem; background: #FAFAFA; border: 2px solid #000; padding: 0.85rem;">
+                    <div class="pass-info-box">
                         <div>
-                            <span style="color: var(--text-secondary); display: block;">City:</span>
-                            <strong>{{ b.experience.city }}</strong>
+                            <span class="text-secondary-block">City:</span>
+                            <strong>{{ b.experience_city }}</strong>
                         </div>
                         <div>
-                            <span style="color: var(--text-secondary); display: block;">Visit Date:</span>
-                            <strong>{{ b.visit_date.strftime('%Y-%m-%d') }}</strong>
+                            <span class="text-secondary-block">Visit Date:</span>
+                            <strong>{{ b.visit_date }}</strong>
                         </div>
                         <div>
-                            <span style="color: var(--text-secondary); display: block;">Time Slot:</span>
+                            <span class="text-secondary-block">Time Slot:</span>
                             <strong>{{ b.time_slot }}</strong>
                         </div>
                         <div>
-                            <span style="color: var(--text-secondary); display: block;">Party Size:</span>
+                            <span class="text-secondary-block">Party Size:</span>
                             <strong>{{ b.guests_count }} Guest(s)</strong>
                         </div>
                     </div>
 
                     <!-- Add-ons breakdown if any -->
                     {% if b.selected_addons %}
-                    <div style="margin-bottom: 1rem; font-size: 0.85rem;">
-                        <span style="font-weight: 800; text-transform: uppercase;">Selected Add-ons:</span>
-                        <ul style="margin: 0.25rem 0 0 1.2rem; padding: 0;">
+                    <div class="pass-addons-list">
+                        <span class="font-weight-800 text-uppercase">Selected Add-ons:</span>
+                        <ul class="bullet-list-indented">
                             {% for a in b.selected_addons %}
                             <li>{{ a.name }} (+€{{ "%.2f"|format(a.price) }})</li>
                             {% endfor %}
@@ -64,29 +64,29 @@
                     </div>
                     {% endif %}
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: var(--border-width) solid var(--border-color); padding-top: 0.75rem;">
-                        <span style="font-size: 1.15rem; font-weight: 900;">Total: €{{ "%.2f"|format(b.total_price) }}</span>
+                    <div class="card-footer-lite">
+                        <span class="font-bold-lg">Total: €{{ "%.2f"|format(b.total_price) }}</span>
                     </div>
 
                     <!-- Feedback / Rating Section -->
-                    <div style="margin-top: 1.25rem; border-top: 1px dashed #CCC; padding-top: 1rem;">
+                    <div class="feedback-section">
                         {% if b.feedback_rating %}
-                        <div style="background: #EBF2FF; border: 2px solid var(--accent-color); padding: 0.75rem;">
-                            <span style="font-weight: 800; color: var(--accent-color);">Your Review:</span>
-                            <span style="color: #FF9900; font-size: 1.1rem;">
+                        <div class="review-box">
+                            <span class="review-label">Your Review:</span>
+                            <span class="review-stars">
                                 {% for i in range(b.feedback_rating) %}★{% endfor %}
                             </span>
-                            <p style="margin: 0.35rem 0 0 0; font-size: 0.85rem;">"{{ b.feedback_text }}"</p>
+                            <p class="review-text">"{{ b.feedback_text }}"</p>
                         </div>
                         {% else %}
-                        <details style="cursor: pointer;">
-                            <summary style="font-weight: 800; font-size: 0.9rem; text-transform: uppercase; color: var(--primary-color);">
+                        <details class="cursor-pointer">
+                            <summary class="details-summary">
                                 + Rate this Experience
                             </summary>
-                            <form class="feedback-form mt-1" data-booking-id="{{ b.id }}" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <label style="font-size: 0.85rem; font-weight: 700;">Rating:</label>
-                                    <select name="rating" class="form-select" style="padding: 0.4rem; font-size: 0.85rem;" required>
+                            <form class="feedback-form mt-1 flex-column-gap" data-booking-id="{{ b.id }}">
+                                <div class="flex-align-center">
+                                    <label class="label-bold-sm">Rating:</label>
+                                    <select name="rating" class="form-select select-sm" required>
                                         <option value="5">★★★★★ (5 - Outstanding)</option>
                                         <option value="4">★★★★☆ (4 - Great)</option>
                                         <option value="3">★★★☆☆ (3 - Good)</option>
@@ -94,8 +94,8 @@
                                         <option value="1">★☆☆☆☆ (1 - Poor)</option>
                                     </select>
                                 </div>
-                                <textarea name="comment" class="form-textarea" placeholder="Share what you loved about this cultural journey..." rows="2" style="font-size: 0.85rem;"></textarea>
-                                <button type="submit" class="cta-button" style="padding: 0.5rem; font-size: 0.8rem; align-self: flex-start;">
+                                <textarea name="comment" class="form-textarea textarea-sm" placeholder="Share what you loved about this cultural journey..." rows="2"></textarea>
+                                <button type="submit" class="cta-button cta-button-xs align-self-start">
                                     Submit Feedback
                                 </button>
                             </form>
@@ -106,9 +106,9 @@
             </article>
             {% endfor %}
         {% else %}
-            <div style="background: #FFFFFF; border: var(--border-width) solid var(--border-color); box-shadow: var(--box-shadow-hard); padding: 2.5rem; text-align: center;">
-                <h3 style="text-transform: uppercase; margin-top: 0;">No Passes Booked Yet</h3>
-                <p style="font-size: 0.95rem; margin-bottom: 1.5rem;">
+            <div class="card-empty-bookings">
+                <h3 class="uppercase-mt-0">No Passes Booked Yet</h3>
+                <p class="mb-15 text-lg">
                     Ready for your next cultural adventure? Explore our 20 curated Italian packages.
                 </p>
                 <a href="{{ url_for('main.experiences') }}" class="cta-button">
@@ -121,32 +121,32 @@
     <!-- Right Column: Cultural Taste Profile -->
     <div>
         <div class="memory-side-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--border-width) solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
-                <h2 style="font-size: 1.2rem; text-transform: uppercase; margin: 0;">
+            <div class="side-card-header">
+                <h2 class="side-card-title">
                     Cultural Taste Profile
                 </h2>
                 <span class="badge badge-yellow">AI Learned</span>
             </div>
 
-            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
+            <p class="side-card-description">
                 This Markdown memory profile is continuously updated as you chat with our AI Concierge. It tailors recommendations to your exact interests.
             </p>
 
-            <div style="background: #FAFAFA; border: var(--border-width) solid var(--border-color); padding: 1.25rem; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            <div class="memory-profile-box">
                 {% if user.preferences %}
                     {{ user.preferences|replace('\n', '<br>')|safe }}
                 {% else %}
-                    <p style="font-style: italic; color: var(--text-secondary); margin: 0;">
+                    <p class="italic-secondary-m-0">
                         No taste profile recorded yet. Chat with the Concierge to build your personalized profile!
                     </p>
                 {% endif %}
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100" style="padding: 0.75rem; font-size: 0.85rem;">
+            <div class="flex-column-gap-sm">
+                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100 cta-button-blue-sm">
                     Chat with Concierge &rarr;
                 </a>
-                <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100" style="padding: 0.6rem; font-size: 0.8rem;">
+                <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100 cta-button-outline-sm">
                     Reset Taste Profile
                 </button>
             </div>
