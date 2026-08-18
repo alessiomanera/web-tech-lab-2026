@@ -134,6 +134,10 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Validate responsive layout on desktop, tablet, and mobile viewports.
   - [x] Verify keyboard navigation and screen-reader accessibility.
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
+- [ ] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
+  - [ ] Individually inspect each of the 20 cultural experience entries in `seed.py` and the SQLite database.
+  - [ ] Replace any mismatched or generic placeholder imagery (e.g., replace out-of-place Liguria/Cinque Terre photos with authentic Venice Palazzo Ducale / St. Mark's Lagoon imagery for Venetian experiences).
+  - [ ] Cross-check all 20 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
 
 ---
 
