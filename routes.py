@@ -66,7 +66,7 @@ def home():
 @main_bp.route('/experiences')
 def experiences():
     """
-    Renders the full 20-Experience catalog.
+    Renders the full 12-Experience catalog.
     Supports filtering by city, theme, and search keyword.
     """
     city_filter = request.args.get('city')
@@ -94,8 +94,8 @@ def experiences():
     all_experiences = [_exp_row_to_dict(row) for row in rows]
 
     # Get distinct cities for filter pills
-    cities = ['All', 'Florence', 'Rome', 'Venice', 'Milan', 'Turin',
-              'Naples', 'Verona', 'Palermo', 'Bologna']
+    distinct_cities = [r['city'] for r in db.execute("SELECT DISTINCT city FROM experiences ORDER BY city").fetchall()]
+    cities = ['All'] + distinct_cities
 
     return render_template(
         'experiences.html',
@@ -492,7 +492,7 @@ def _call_gemini_concierge(user_message, current_profile, all_experiences, api_k
     import google.generativeai as genai
     genai.configure(api_key=api_key)
 
-    # Format the 20 catalog experiences for grounding
+    # Format the 12 catalog experiences for grounding
     catalog_summary = []
     for exp in all_experiences:
         catalog_summary.append(

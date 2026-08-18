@@ -12,7 +12,7 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Repository Setup & Modular Directory Skeleton**
   - [x] Initialize Git repository with `testing` development branch workflow.
   - [x] Create standardized project hierarchy: `/templates/`, `/static/css/`, `/static/js/`, `/static/images/`, `/DOCS/`, `/instance/`.
-  - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `Flask-SQLAlchemy`, `python-dotenv`, `google-generativeai`).
+  - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `python-dotenv`, `google-generativeai`).
   - [x] Configure environment variables template (`.env.example`) and security ignores (`.gitignore`).
 - [x] **Draft Project Proposal (`DOCS/PROJECT_PROPOSAL.md`)**
   - [x] Formulate project purpose and dual core objectives (Ticketing + AI Concierge).
@@ -32,21 +32,16 @@ This document serves as the master source of truth and historical tracking timel
 ---
 
 ## Phase 2: Design System & Neubrutalism Architecture
-- [x] **Adopt Neubrutalism Design Philosophy ([neubrutalism.com](https://neubrutalism.com/))**
-  - [x] Choose Neubrutalism aesthetic to deliver extreme simplicity, high contrast, and zero cognitive load.
-  - [x] Disable dark mode to strictly preserve the high-contrast stark white print aesthetic.
-- [x] **Define Design Tokens & CSS Custom Properties (`static/css/variables.css`)**
-  - [x] Color palette: Pure White base (`#FFFFFF`), Solid Black border/text (`#000000`), High-contrast Red (`#FF3333`), Electric Blue (`#0055FF`), Cyber Yellow (`#FFCC00`).
-  - [x] Border tokens: Aggressive `3px solid #000000`.
-  - [x] Shadow tokens: Hard offset block shadows (`4px 4px 0px 0px #000000`).
-  - [x] Border radius: Strictly `0px` across all containers, inputs, buttons, and cards.
-  - [x] Spacing & sizing scales: Modular rem-based units for consistent whitespace.
-- [x] **Typography & Micro-interactions Setup**
-  - [x] Import and configure `Inter` sans-serif font family with heavy weights (800/900) for headings.
-  - [x] Configure progressive text wrapping: `text-wrap: balance` on headings, `text-wrap: pretty` on paragraphs.
-  - [x] Implement tactile mechanical button click states (`transform: translate(4px, 4px)` with shadow collapse on `:active`).
-- [x] **Core Layout & Component Styles**
-  - [x] Build master grid and flexbox layout utilities (`static/css/layout.css`).
+- [x] **Core Design Tokens (`static/css/variables.css`)**
+  - [x] Stark high-contrast light theme (`#FFFFFF` background, `#000000` text & borders).
+  - [x] Strict Neubrutalism geometry: `3px` solid borders, `4px 4px 0px 0px` hard drop-shadows, `0px` border-radius.
+  - [x] Purposeful accent highlights for actions, badges, and focus indicators.
+  - [x] Typography: Strictly `Inter` sans-serif with aggressive font weights (800/900).
+- [x] **Layout & Responsive Grid (`static/css/layout.css`)**
+  - [x] Mobile-first layout with CSS Grid and Flexbox containers.
+  - [x] Custom tactile SVG cursor implementation (`cursor.svg`, `cursor-pointer.svg`).
+- [x] **Modular Component Library & Micro-interactions**
+  - [x] Mechanical button click press states (`translate(4px, 4px)` with shadow collapse).
   - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
   - [x] Build main CSS aggregator (`static/css/style.css`).
@@ -63,7 +58,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
 - [x] **Experience Economy Page Templates**
   - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
-  - [x] `templates/experiences.html`: Full 20-Experience catalog with search bar and city/theme filter pills.
+  - [x] `templates/experiences.html`: Full 12-Experience catalog with search bar and city/theme filter pills.
   - [x] `templates/experience_detail.html`: Deep-dive view with full itinerary, included perks, and customizable add-ons.
   - [x] `templates/booking.html`: 4-step wizard (Package & Add-ons $\rightarrow$ Date & Slot $\rightarrow$ Summary $\rightarrow$ Digital Pass).
   - [x] `templates/guide.html`: AI Cultural Concierge with grounded RAG, in-chat booking cards, and live Markdown taste memory panel.
