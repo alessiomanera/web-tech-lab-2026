@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap');
+
+/* Bauhaus Neo-Brutalism Design System */
+:root {
+    /* Color Palette */
+    --bg-color: #FFFFFF; /* Pure White */
+    --surface-color: #FFFFFF; /* Pure White surface */
+    --text-primary: #000000; /* Solid Black */
+    --text-secondary: #333333; /* Dark Grey */
+    --border-color: #000000; /* Solid Black */
+    
+    /* Bauhaus Primaries */
+    --primary-color: #FF3333; /* Red */
+    --primary-hover: #E60000;
+    --accent-color: #0055FF; /* Blue */
+    --accent-yellow: #FFCC00; /* Yellow */
+    
+    --error-color: #d32f2f;
+    --success-color: #388e3c;
+    
+    /* Neo-Brutalist Variables */
+    --border-width: 3px; /* Thick borders */
+    --box-shadow-hard: 4px 4px 0px 0px var(--border-color); /* Hard block shadow */
+    
+    /* Typography */
+    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    
+    /* Metrics */
+    --border-radius: 0px; /* Sharp corners */
+    --border-radius-lg: 0px;
+    --transition-speed: 0.1s; /* Snappy mechanical interaction */
+    --max-width: 1200px;
+
+    /* Custom SVG Cursors */
+    --cursor-default: url('/static/images/cursor.svg') 2 2, auto;
+    --cursor-pointer: url('/static/images/cursor-pointer.svg') 14 2, pointer;
+}

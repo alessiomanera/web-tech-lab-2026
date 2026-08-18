@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ exp.title }} | Italy Cultural Experiences{% endblock %}
+
+{% block content %}
+<div class="mb-2">
+    <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline cta-button-back">
+        &larr; Back to All Experiences
+    </a>
+</div>
+
+<div class="card max-w-800 mx-auto bg-white">
+    <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="detail-hero-img">
+    
+    <div class="card-content card-content-lg">
+        <div class="experience-header-meta">
+            <span class="badge badge-blue badge-md">{{ exp.city }}</span>
+            {% if exp.badge %}
+            <span class="badge badge-yellow badge-md">{{ exp.badge }}</span>
+            {% endif %}
+        </div>
+
+        <h1 class="title-large-margin">{{ exp.title }}</h1>
+        <span class="meta-theme-duration">
+            Theme: {{ exp.theme }} &bull; Duration: {{ exp.duration_minutes }} Minutes
+        </span>
+
+        <p class="description-text">
+            {{ exp.description }}
+        </p>
+
+        <!-- Highlights Box -->
+        {% if exp.highlights %}
+        <div class="highlights-box">
+            <h3 class="highlights-title">
+                Curated Highlights
+            </h3>
+            <p class="highlights-text">{{ exp.highlights }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Included Items -->
+        <h3 class="heading-uppercase-md">
+            What is Included in This Package:
+        </h3>
+        <ul class="experience-perks-list mb-2rem">
+            {% for item in exp.included_items %}
+            <li class="font-md">{{ item }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Available Add-ons Preview -->
+        {% if exp.available_addons %}
+        <h3 class="heading-uppercase-md">
+            Customizable Add-ons (Selectable at Booking):
+        </h3>
+        <div class="addons-preview-grid">
+            {% for addon in exp.available_addons %}
+            <div class="addon-preview-box">
+                <strong class="addon-name">{{ addon.name }}</strong>
+                <span class="addon-price">+€{{ "%.2f"|format(addon.price) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Bottom Action Bar -->
+        <div class="detail-action-bar">
+            <div>
+                <span class="label-micro">Base Price</span>
+                <span class="experience-price-tag price-tag-large">€{{ "%.2f"|format(exp.base_price) }}</span>
+            </div>
+
+            <div class="card-actions">
+                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-outline">
+                    Ask Concierge (AI)
+                </a>
+                <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button">
+                    Book This Experience &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

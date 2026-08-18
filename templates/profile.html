@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}My Experiences &amp; Cultural Taste Profile{% endblock %}
+
+{% block content %}
+<div class="mb-2">
+    <span class="badge badge-blue">User Account Dashboard</span>
+    <h1 class="mb-05 mt-0 title-large">My Experiences</h1>
+    <p class="text-lg m-0">
+        Welcome back, <strong>{{ user.name }}</strong> ({{ user.email }}). Manage your reserved passes, submit visit reviews, and inspect your AI taste memory.
+    </p>
+</div>
+
+<div class="profile-layout">
+    <!-- Left Column: Active Passes & Past Bookings -->
+    <div>
+        <h2 class="profile-section-title">
+            Your Bookings &amp; Digital Passes
+        </h2>
+
+        {% if bookings %}
+            {% for b in bookings %}
+            <article class="card mb-2 bg-white" aria-labelledby="booking-code-{{ b.id }}">
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="badge badge-yellow" id="booking-code-{{ b.id }}">{{ b.booking_code }}</span>
+                        <span class="badge {% if b.status == 'Confirmed' %}badge-blue{% else %}badge-white{% endif %}">
+                            {{ b.status }}
+                        </span>
+                    </div>
+
+                    <h3 class="card-heading">
+                        {{ b.experience_title }}
+                    </h3>
+
+                    <div class="pass-info-box">
+                        <div>
+                            <span class="text-secondary-block">City:</span>
+                            <strong>{{ b.experience_city }}</strong>
+                        </div>
+                        <div>
+                            <span class="text-secondary-block">Visit Date:</span>
+                            <strong>{{ b.visit_date }}</strong>
+                        </div>
+                        <div>
+                            <span class="text-secondary-block">Time Slot:</span>
+                            <strong>{{ b.time_slot }}</strong>
+                        </div>
+                        <div>
+                            <span class="text-secondary-block">Party Size:</span>
+                            <strong>{{ b.guests_count }} Guest(s)</strong>
+                        </div>
+                    </div>
+
+                    <!-- Add-ons breakdown if any -->
+                    {% if b.selected_addons %}
+                    <div class="pass-addons-list">
+                        <span class="font-weight-800 text-uppercase">Selected Add-ons:</span>
+                        <ul class="bullet-list-indented">
+                            {% for a in b.selected_addons %}
+                            <li>{{ a.name }} (+€{{ "%.2f"|format(a.price) }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="card-footer-lite">
+                        <span class="font-bold-lg">Total: €{{ "%.2f"|format(b.total_price) }}</span>
+                    </div>
+
+                    <!-- Feedback / Rating Section -->
+                    <div class="feedback-section">
+                        {% if b.feedback_rating %}
+                        <div class="review-box">
+                            <span class="review-label">Your Review:</span>
+                            <span class="review-stars">
+                                {% for i in range(b.feedback_rating) %}★{% endfor %}
+                            </span>
+                            <p class="review-text">"{{ b.feedback_text }}"</p>
+                        </div>
+                        {% else %}
+                        <details class="cursor-pointer">
+                            <summary class="details-summary">
+                                + Rate this Experience
+                            </summary>
+                            <form class="feedback-form mt-1 flex-column-gap" data-booking-id="{{ b.id }}">
+                                <div class="flex-align-center">
+                                    <label class="label-bold-sm">Rating:</label>
+                                    <select name="rating" class="form-select select-sm" required>
+                                        <option value="5">★★★★★ (5 - Outstanding)</option>
+                                        <option value="4">★★★★☆ (4 - Great)</option>
+                                        <option value="3">★★★☆☆ (3 - Good)</option>
+                                        <option value="2">★★☆☆☆ (2 - Average)</option>
+                                        <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                                    </select>
+                                </div>
+                                <textarea name="comment" class="form-textarea textarea-sm" placeholder="Share what you loved about this cultural journey..." rows="2"></textarea>
+                                <button type="submit" class="cta-button cta-button-xs align-self-start">
+                                    Submit Feedback
+                                </button>
+                            </form>
+                        </details>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="card-empty-bookings">
+                <h3 class="uppercase-mt-0">No Passes Booked Yet</h3>
+                <p class="mb-15 text-lg">
+                    Ready for your next cultural adventure? Explore our 20 curated Italian packages.
+                </p>
+                <a href="{{ url_for('main.experiences') }}" class="cta-button">
+                    Explore 20 Experiences &rarr;
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Column: Cultural Taste Profile -->
+    <div>
+        <div class="memory-side-card">
+            <div class="side-card-header">
+                <h2 class="side-card-title">
+                    Cultural Taste Profile
+                </h2>
+                <span class="badge badge-yellow">AI Learned</span>
+            </div>
+
+            <p class="side-card-description">
+                This Markdown memory profile is continuously updated as you chat with our AI Concierge. It tailors recommendations to your exact interests.
+            </p>
+
+            <div class="memory-profile-box">
+                {% if user.preferences %}
+                    {{ user.preferences|replace('\n', '<br>')|safe }}
+                {% else %}
+                    <p class="italic-secondary-m-0">
+                        No taste profile recorded yet. Chat with the Concierge to build your personalized profile!
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="flex-column-gap-sm">
+                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100 cta-button-blue-sm">
+                    Chat with Concierge &rarr;
+                </a>
+                <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100 cta-button-outline-sm">
+                    Reset Taste Profile
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Feedback form submission
+    document.querySelectorAll('.feedback-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bookingId = form.getAttribute('data-booking-id');
+            const rating = form.querySelector('[name="rating"]').value;
+            const comment = form.querySelector('[name="comment"]').value;
+            const btn = form.querySelector('button[type="submit"]');
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                const res = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: bookingId, rating, comment })
+                });
+
+                if (res.ok) {
+                    alert('Thank you for reviewing your visit!');
+                    window.location.reload();
+                } else {
+                    alert('Could not submit feedback.');
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Feedback';
+                }
+            } catch (err) {
+                alert('Network error.');
+                btn.disabled = false;
+                btn.textContent = 'Submit Feedback';
+            }
+        });
+    });
+
+    // Reset profile memory
+    const resetBtn = document.getElementById('profile-reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to clear your AI Taste Profile?')) return;
+            const res = await fetch('/api/profile/reset-memory', { method: 'POST' });
+            if (res.ok) {
+                window.location.reload();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

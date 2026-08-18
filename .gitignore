@@ -29,3 +29,15 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Project-specific private / untracked directories
+_PERSONAL/
+_CLASS_RESOURCES/
+_*
+
+# Agent root rule files protection
+/AGENTS.md
+/agents.md
+
+# Environment variables
+.env

@@ -1,34 +1,110 @@
 {% extends 'base.html' %}
 
+{% block title %}Curated Cultural Experiences in Italy{% endblock %}
+
 {% block content %}
-<section class="hero" style="text-align: center; padding: 6rem 1rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
-    <h1 style="font-size: 4rem; margin: 0; font-weight: 800; line-height: 1.1; letter-spacing: -1px;">
-        Discover Culture <span style="background: linear-gradient(to right, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with AI</span>
-    </h1>
-    <p style="font-size: 1.25rem; max-width: 600px; margin: 0; color: var(--text-secondary);">
-        Frictionless ticketing. Personalized curation. Experience the world's most vital cultural heritage without the noise.
+<!-- Hero Section -->
+<section class="hero" aria-labelledby="hero-heading">
+    <span class="badge badge-red">Experience Economy &bull; AI Powered</span>
+    <h1 id="hero-heading" class="hero-title">Culture, Unlocked &amp; Tailored to You</h1>
+    <p class="hero-subtitle">
+        Say goodbye to fragmented museum tickets and generic tours. Discover 20 curated Italian cultural packages with priority access, custom add-ons, and an intelligent AI Concierge that learns your taste.
     </p>
-    <a href="{{ url_for('main.museums') }}" class="cta-button" style="margin-top: 1rem;">Explore Museums</a>
+    <div class="hero-actions">
+        <a href="{{ url_for('main.experiences') }}" class="cta-button">Explore 20 Experiences</a>
+        <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue">Talk to AI Concierge</a>
+    </div>
 </section>
 
-<section style="margin-top: 4rem;">
-    <h2 style="text-align: center; margin-bottom: 2rem;">Why Use Our Platform?</h2>
+<!-- 3-Step Experience Flow -->
+<section aria-labelledby="how-it-works-heading" class="section-space">
+    <div class="text-center mb-2">
+        <h2 id="how-it-works-heading" class="section-title">
+            How It Works
+        </h2>
+        <p class="text-lg">Friction-free culture from inspiration to digital pass.</p>
+    </div>
+
+    <div class="steps-row">
+        <!-- Step 1 -->
+        <div class="step-box">
+            <div class="step-num-pill">1</div>
+            <h3 class="step-title">1. Explore or Tailor</h3>
+            <p class="step-description">
+                Browse 20 pre-configured cultural packages or chat with our <strong>AI Concierge</strong> to create a custom itinerary grounded in real catalog data.
+            </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-box">
+            <div class="step-num-pill step-num-blue">2</div>
+            <h3 class="step-title">2. Frictionless Booking</h3>
+            <p class="step-description">
+                Select your preferred date, dedicated time slot, and customizable add-ons (Audio Guides, Expert Docents, VIP Fast-Track) in our 4-step wizard.
+            </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-box">
+            <div class="step-num-pill step-num-yellow">3</div>
+            <h3 class="step-title">3. Enjoy &amp; Evolve</h3>
+            <p class="step-description">
+                Access your instant digital pass, enjoy your curated visit, leave feedback, and watch your <strong>Cultural Taste Profile</strong> grow smarter.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Experiences Grid -->
+<section aria-labelledby="featured-heading">
+    <div class="section-header">
+        <div>
+            <span class="badge badge-blue">Handpicked Highlights</span>
+            <h2 id="featured-heading" class="section-header-title">
+                Trending Packages
+            </h2>
+        </div>
+        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline cta-button-sm">
+            View All 20 Experiences &rarr;
+        </a>
+    </div>
+
     <div class="grid-auto">
-        <div class="card" style="padding: 2rem; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">⚡</div>
-            <h3 style="margin-bottom: 1rem;">Zero Friction</h3>
-            <p style="margin: 0;">No native app downloads. Just scan a QR code and you're immediately connected to our interactive AI guide.</p>
-        </div>
-        <div class="card" style="padding: 2rem; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
-            <h3 style="margin-bottom: 1rem;">AI Curation</h3>
-            <p style="margin: 0;">Dynamic, context-aware insights grounded in institutional facts. Ask questions naturally.</p>
-        </div>
-        <div class="card" style="padding: 2rem; text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎟️</div>
-            <h3 style="margin-bottom: 1rem;">Instant Booking</h3>
-            <p style="margin: 0;">Skip the lines. Secure tickets instantaneously with our polite, seamless checkout flow.</p>
-        </div>
+        {% for exp in featured %}
+        <article class="experience-card" aria-labelledby="exp-title-{{ exp.id }}">
+            <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
+            <div class="card-content">
+                <div class="experience-header-meta">
+                    <span class="badge">{{ exp.city }}</span>
+                    {% if exp.badge %}
+                    <span class="badge badge-red">{{ exp.badge }}</span>
+                    {% endif %}
+                </div>
+                
+                <h3 id="exp-title-{{ exp.id }}" class="card-title card-title-sm">
+                    {{ exp.title }}
+                </h3>
+                
+                <p class="card-description">
+                    {{ exp.tagline }}
+                </p>
+
+                <div class="card-footer">
+                    <div>
+                        <span class="label-micro">From</span>
+                        <span class="experience-price-tag">€{{ "%.2f"|format(exp.base_price) }}</span>
+                    </div>
+                    <span class="experience-duration">{{ exp.duration_minutes }} Min</span>
+                </div>
+
+                <div class="card-actions">
+                    <a href="{{ url_for('main.booking', exp_id=exp.id) }}" class="cta-button w-100 cta-button-md">
+                        Book Package
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

@@ -1,50 +1,152 @@
 # Project Implementation Roadmap
 
-This document outlines the step-by-step implementation plan for the Museum Ticketing & AI Guide application. It is designed to be updated as the project evolves.
+This document serves as the master source of truth and historical tracking timeline for the **Museum Ticketing & AI Cultural Guide** web application. It documents past completed milestones, current active development, and future implementations organized into detailed phases and subtasks.
 
-## Phase 1: Foundation & Planning (Current)
-- [x] Review project requirements and guidelines.
-- [x] Setup repository and define directory skeleton.
-- [x] Write project proposal (`PROPOSAL.md`).
-- [x] Define coding guidelines and README.
-- [ ] Submit 1-page proposal to the professor.
+---
 
-## Phase 2: Design & UI Mockups
-- [x] Define the color palette, typography, and core CSS variables.
-- [x] Create wireframes/mockups for core pages: Home, Museum Listing, Ticket Booking, Profile/Recommendations.
-- [x] Build the base HTML template (`base.html`) with header and footer.
-- [x] Ensure strict WCAG text contrast and design zero-cognitive-load checkout flows.
+## Phase 1: Foundation, Academic Guidelines & Planning
+- [x] **Review Academic Requirements & Evaluation Criteria**
+  - [x] Analyze `AY2025_2026_project_guide.pdf` (30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge).
+  - [x] Confirm single-person group structure (Group-11 registered with Professor Yucel).
+  - [x] Identify required technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask, SQLite).
+- [x] **Repository Setup & Modular Directory Skeleton**
+  - [x] Initialize Git repository with `testing` development branch workflow.
+  - [x] Create standardized project hierarchy: `/templates/`, `/static/css/`, `/static/js/`, `/static/images/`, `/DOCS/`, `/instance/`.
+  - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `Flask-SQLAlchemy`, `python-dotenv`, `google-generativeai`).
+  - [x] Configure environment variables template (`.env.example`) and security ignores (`.gitignore`).
+- [x] **Draft Project Proposal (`DOCS/PROJECT_PROPOSAL.md`)**
+  - [x] Formulate project purpose and dual core objectives (Ticketing + AI Concierge).
+  - [x] Identify primary target audiences (tourists, families, cultural sites).
+  - [x] Define the 4 core system modules (User Management, Catalog Directory, Ticketing Engine, AI Concierge).
+  - [x] Define task distribution and roles for single-member delivery (Alessio Manera, ID: 905639).
+  - [x] Ensure strict 1-page A4 PDF length constraint for Moodle submission.
+- [x] **Coding Guidelines & Documentation Standards**
+  - [x] Author comprehensive project overview and coding standards (`README.md`).
+  - [x] Compile detailed market and competitor analysis report (`DOCS/Competitor_Analysis.md`).
+  - [x] Synthesize course guidelines, exam rules, and architectural constraints (`DOCS/Project_Analysis_Report.md`).
+- [ ] **Submit 1-Page Proposal to Professor on Moodle**
+  - [ ] Generate clean A4 PDF from `DOCS/PROJECT_PROPOSAL.md`.
+  - [ ] Submit on Moodle before the semester proposal deadline.
+  - [ ] Review professor feedback and integrate any required adjustments.
 
-## Phase 3: Frontend Development (Static)
-- [x] Develop `index.html` (Landing page with featured museums).
-- [x] Develop `museums.html` (List/Grid view of all cultural sites).
-- [x] Develop `booking.html` (Ticket selection interface).
-- [x] Implement responsive Vanilla CSS styling.
-- [x] Add basic JS interactions (modals, form validations).
-- [x] Implement semantic HTML for screen readers and zero CLS image rendering via aspect-ratio.
+---
 
-## Phase 4: Backend Setup & Database
-- [ ] Initialize Flask application (`app.py`).
-- [ ] Define database schema (Users, Museums, Tickets, Preferences).
-- [ ] Integrate database with Flask (using SQLAlchemy or raw SQLite).
-- [ ] Create basic routes for rendering templates.
+## Phase 2: Design System & Neubrutalism Architecture
+- [x] **Adopt Neubrutalism Design Philosophy ([neubrutalism.com](https://neubrutalism.com/))**
+  - [x] Choose Neubrutalism / Bauhaus aesthetic to deliver extreme simplicity, high contrast, and zero cognitive load.
+  - [x] Disable dark mode to strictly preserve the high-contrast stark white print aesthetic.
+- [x] **Define Design Tokens & CSS Custom Properties (`static/css/variables.css`)**
+  - [x] Color palette: Pure White base (`#FFFFFF`), Solid Black border/text (`#000000`), Bauhaus Red (`#FF3333`), Bauhaus Blue (`#0055FF`), Bauhaus Yellow (`#FFCC00`).
+  - [x] Border tokens: Aggressive `3px solid #000000`.
+  - [x] Shadow tokens: Hard offset block shadows (`4px 4px 0px 0px #000000`).
+  - [x] Border radius: Strictly `0px` across all containers, inputs, buttons, and cards.
+  - [x] Spacing & sizing scales: Modular rem-based units for consistent whitespace.
+- [x] **Typography & Micro-interactions Setup**
+  - [x] Import and configure `Inter` sans-serif font family with heavy weights (800/900) for headings.
+  - [x] Configure progressive text wrapping: `text-wrap: balance` on headings, `text-wrap: pretty` on paragraphs.
+  - [x] Implement tactile mechanical button click states (`transform: translate(4px, 4px)` with shadow collapse on `:active`).
+- [x] **Core Layout & Component Styles**
+  - [x] Build master grid and flexbox layout utilities (`static/css/layout.css`).
+  - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
+  - [x] Create helper classes and utilities (`static/css/utilities.css`).
+  - [x] Build main CSS aggregator (`static/css/style.css`).
+- [x] **Accessibility & Performance Standards**
+  - [x] Ensure WCAG AAA contrast ratio across all text and interactive elements.
+  - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).
 
-## Phase 5: Dynamic Integration
-- [ ] Connect frontend forms to Flask endpoints (e.g., submitting a booking).
-- [ ] Implement user authentication (Login/Register).
-- [ ] Fetch and display museum data dynamically from the database.
-- [ ] Implement asynchronous, polite error handling for robust booking flows.
+---
 
-## Phase 6: AI Guidance & Recommendations Feature
-- [ ] Develop a simple recommendation algorithm based on user preferences.
-- [ ] (Optional) Integrate an external LLM API (like OpenAI or Gemini) for generating dynamic cultural insights.
-- [ ] Ground the AI output strictly in institutional reference materials to prevent hallucinations.
-- [ ] Build the "AI Guide" interface on the frontend as a zero-download web overlay accessed via QR code, with no required onsite account creation.
+## Phase 3: Frontend Templates & Client-Side Scripts (Experience Economy UI)
+- [x] **Base Layout Template (`templates/base.html`)**
+  - [x] Establish HTML5 semantic structure (`<header>`, `<nav>`, `<main>`, `<footer>`).
+  - [x] User-centric navigation: `Home`, `Explore Experiences`, `Tailor Experience (AI)`, `Book Now`, `My Experiences`.
+  - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
+- [x] **Experience Economy Page Templates**
+  - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
+  - [x] `templates/experiences.html`: Full 20-Experience catalog with search bar and city/theme filter pills.
+  - [x] `templates/experience_detail.html`: Deep-dive view with full itinerary, included perks, and customizable add-ons.
+  - [x] `templates/booking.html`: 4-step wizard (Package & Add-ons $\rightarrow$ Date & Slot $\rightarrow$ Summary $\rightarrow$ Digital Pass).
+  - [x] `templates/guide.html`: AI Cultural Concierge with grounded RAG, in-chat booking cards, and live Markdown taste memory panel.
+  - [x] `templates/profile.html`: User dashboard with active digital passes, visit review/feedback loops, and taste memory inspector.
+  - [x] `templates/login.html` & `templates/register.html`: Neubrutalist authentication forms.
+- [x] **Client-Side Interactions (`static/js/main.js`, `static/js/bookingWizard.js`)**
+  - [x] 4-step wizard state machine and dynamic addon price calculations.
+  - [x] Time-slot selection and date bounding (today to +90 days).
+  - [x] Asynchronous feedback and review submission handlers.
 
-## Phase 7: Polish, Testing, and Submission
-- [ ] Code review against guidelines (No monolithic code, DRY, proper comments).
-- [ ] Cross-browser and mobile responsive testing.
-- [ ] Write final project documentation and run instructions.
-- [ ] Create presentation/slides for the oral exam.
-- [ ] Remove extra reference folders (e.g., `CLASS_RESOURCES`) and non-essential files prior to final submission.
-- [ ] Submit project zip archive on Moodle.
+---
+
+## Phase 4: Backend Setup & SQLite Database Schema
+- [x] **Flask Application Factory Architecture (`app.py`)**
+  - [x] Implement `create_app()` factory pattern for clean lifecycle management.
+  - [x] Configure SQLite URI (`instance/app.db`) and secret keys via `python-dotenv`.
+  - [x] Register Blueprints (`main_bp` in `routes.py`, `auth_bp` in `auth.py`).
+  - [x] Initialize database connections using raw standard library `sqlite3` (`database.py`).
+- [x] **Relational Database Schema Definition (`schema.sql`)**
+  - [x] Define clean DDL schema with proper FOREIGN KEY constraints and PRAGMA foreign_keys = ON.
+  - [x] Table `users`: `id`, `name`, `email` (unique), `password_hash`, `preferences` (Markdown Taste Memory).
+  - [x] Table `museums`: `id`, `name`, `description`, `location`, `city`, `image_url`.
+  - [x] Table `experiences`: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`, `museum_id`.
+  - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
+- [x] **Database Seeding (`seed.py`)**
+  - [x] Populate SQLite database with **Top 20 Curated Italian Cultural Experiences** across 9 major cities (Florence, Rome, Venice, Milan, Turin, Naples, Verona, Palermo, Bologna).
+  - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
+
+---
+
+## Phase 5: Dynamic Integration & Authentication
+- [x] **User Authentication & Session Management (`auth.py`)**
+  - [x] Registration handler (`/register` POST) with secure password hashing via `werkzeug.security.generate_password_hash`.
+  - [x] Login handler (`/login` POST) with password verification via `check_password_hash`.
+  - [x] Session establishment (`session['user_id']`) and logout handler (`/logout`).
+  - [x] Route protection via `@login_required` decorator (`/booking`, `/concierge`, `/profile`).
+- [x] **Dynamic Catalog & Booking Workflows (`routes.py`)**
+  - [x] Query and render 20 experiences with search and city filter on `/experiences`.
+  - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X` or `?museum_id=Y`).
+  - [x] Booking submission handler (`POST /booking`): validate input server-side, compute total with add-ons, insert row in `tickets`, and show a real digital confirmation pass.
+  - [x] Feedback submission endpoint (`POST /api/feedback`).
+
+---
+
+## Phase 6: AI Cultural Concierge & Grounded RAG Feature
+- [x] **Gemini API Integration & Grounding Workflow**
+  - [x] Configure Google Generative AI SDK (`google-generativeai`) with secure `GEMINI_API_KEY`.
+  - [x] Ground system prompt directly on the 20 SQLite experiences to eliminate hallucinations.
+  - [x] In-chat actionable booking card triggers (`[RECOMMEND: id=X, title="Y", city="Z", price=W]`).
+- [x] **Dynamic Markdown Taste Memory Pipeline (`routes.py`, `templates/guide.html`)**
+  - [x] Background preference extraction: automatically updates `preferences` column in `users` table as structured Markdown after each conversation.
+  - [x] Live Taste Memory side panel in chat view and user dashboard (`/profile`).
+  - [x] Option to reset/refine taste memory on demand (`POST /api/profile/reset-memory`).
+
+---
+
+## Phase 7: Quality Assurance, Security, & Testing
+- [ ] **Code Quality & Modularity Audit (6 Points Academic Evaluation)**
+  - [ ] Verify adherence to DRY principles across Python blueprints, Jinja2 templates, and CSS stylesheets.
+  - [ ] Add comprehensive docstrings and inline comments across all functions and route handlers.
+  - [ ] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
+- [ ] **Security & Error Handling Verification**
+  - [ ] Verify SQL injection protection via SQLAlchemy parameterized queries.
+  - [ ] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
+  - [ ] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
+  - [ ] Implement custom HTTP error pages (`404.html`, `500.html`).
+- [ ] **Cross-Device & Responsive Usability Testing**
+  - [ ] Validate responsive layout on desktop, tablet, and mobile viewports.
+  - [ ] Verify keyboard navigation and screen-reader accessibility.
+  - [ ] Verify zero visual regressions or layout shifts during dynamic interactions.
+
+---
+
+## Phase 8: Final Packaging, Documentation & Exam Presentation
+- [ ] **Project Setup & Run Documentation**
+  - [ ] Finalize `README.md` with complete, step-by-step instructions for running the project locally.
+  - [ ] Verify virtual environment activation commands for Windows (`powershell`), macOS, and Linux.
+  - [ ] Ensure all dependencies are locked in `requirements.txt`.
+- [ ] **Oral Exam Presentation Preparation (6 Points Academic Evaluation)**
+  - [ ] Structure presentation outline emphasizing project purpose, technical architecture, strengths, and limitations.
+  - [ ] Prepare live demonstration walkthrough (Discover Experience $\rightarrow$ 4-Step Booking $\rightarrow$ AI Concierge Recommendation & Memory $\rightarrow$ Review Feedback).
+  - [ ] Document potential future enhancements (e.g., QR-code digital ticket generation, calendar sync).
+- [ ] **Moodle Submission Packaging**
+  - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
+  - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.
+  - [ ] Submit on Moodle ahead of the deadline.

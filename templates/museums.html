@@ -1,40 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="margin-bottom: 2rem;">
-    <h1 style="margin-bottom: 0.5rem;">Explore Museums</h1>
-    <p style="font-size: 1.1rem;">Discover cultural sites, from Renaissance classics to contemporary visions.</p>
+<div class="mb-2">
+    <h1 class="mb-05">Explore Museums</h1>
+    <p class="text-lg">Discover cultural sites, from Renaissance classics to contemporary visions.</p>
 </div>
 
 <div class="grid-auto">
-    <!-- Museum Card 1 -->
+    {% for museum in museums %}
     <div class="card">
-        <img src="{{ url_for('static', filename='images/grand_gallery.png') }}" alt="A majestic Renaissance art gallery" class="aspect-video">
+        <img src="{{ museum.image_url }}" alt="{{ museum.name }}" class="aspect-video">
         <div class="card-content">
-            <h3 class="card-title">The Grand Gallery</h3>
-            <p style="flex-grow: 1; margin-top: 0;">A sprawling collection of Renaissance art located in the heart of the city.</p>
-            <a href="{{ url_for('main.booking') }}" class="cta-button" style="width: 100%; box-sizing: border-box;" aria-label="Book tickets for The Grand Gallery">Book Tickets</a>
+            <h3 class="card-title">{{ museum.name }}</h3>
+            <p class="flex-grow-1 mt-0">{{ museum.description }}</p>
+            <div class="card-meta">
+                📍 {{ museum.location }}
+            </div>
+            <a href="{{ url_for('main.booking', museum_id=museum.id) }}" class="cta-button w-100 box-border" aria-label="Book tickets for {{ museum.name }}">Book Tickets</a>
         </div>
     </div>
-    
-    <!-- Museum Card 2 -->
-    <div class="card">
-        <img src="{{ url_for('static', filename='images/modern_art.png') }}" alt="Sleek modern art museum interior" class="aspect-video">
+    {% else %}
+    <div class="card card-empty">
         <div class="card-content">
-            <h3 class="card-title">Modern Art Institute</h3>
-            <p style="flex-grow: 1; margin-top: 0;">Contemporary exhibitions pushing the boundaries of visual expression.</p>
-            <a href="{{ url_for('main.booking') }}" class="cta-button" style="width: 100%; box-sizing: border-box;" aria-label="Book tickets for Modern Art Institute">Book Tickets</a>
+            <h3 class="card-title">Check back soon!</h3>
+            <p>No museums have been added to the database yet.</p>
         </div>
     </div>
-    
-    <!-- Museum Card 3 -->
-    <div class="card">
-        <img src="{{ url_for('static', filename='images/history_museum.png') }}" alt="Natural history museum hall with dinosaur skeleton" class="aspect-video">
-        <div class="card-content">
-            <h3 class="card-title">National History Museum</h3>
-            <p style="flex-grow: 1; margin-top: 0;">Explore the natural world from the dawn of time to the modern era.</p>
-            <a href="{{ url_for('main.booking') }}" class="cta-button" style="width: 100%; box-sizing: border-box;" aria-label="Book tickets for National History Museum">Book Tickets</a>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 {% endblock %}
