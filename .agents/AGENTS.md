@@ -14,17 +14,17 @@
 - **CSS:** MUST be split into logical files (`variables.css`, `layout.css`, `components.css`) and imported into a main stylesheet. No inline styles.
 - **JavaScript:** Keep scripts modular and focused (e.g., `api.js`, `ui.js`).
 
-## 3. UI/UX & Aesthetics (Bauhaus Neo-Brutalism)
+## 3. UI/UX & Aesthetics (Neo-Brutalism)
 - **Design System:** 
-  - Pure Neo-Brutalism meets Bauhaus (https://neubrutalism.com/). Stark white backgrounds, aggressive thick black borders (`3px`), hard offset black shadows (`4px 4px 0px 0px #000`), zero border radii (`0px`).
-- **Color Palette (Bauhaus Primaries):**
+  - Pure Neo-Brutalism (https://neubrutalism.com/). Stark white backgrounds, aggressive thick black borders (`3px`), hard offset black shadows (`4px 4px 0px 0px #000`), zero border radii (`0px`).
+- **Color Palette (Vibrant Primaries):**
   - Base/Background: Pure White (`#FFFFFF`)
   - Border/Text: Solid Black (`#000000`)
   - Primary Red: `#FF3333`
   - Primary Blue: `#0055FF`
   - Primary Yellow: `#FFCC00`
 - **Typography:** Strictly `Inter` (sans-serif) across all elements. Heavy weights (800/900) for headings.
-- **Theme Toggle:** NO DARK MODE. Bauhaus relies on the stark white contrast.
+- **Theme Toggle:** NO DARK MODE. Neubrutalism relies on the stark white contrast.
 - **Micro-interactions:** Snappy, neo-brutalist "press" effects. Buttons should physically depress (`translate(4px, 4px)`) and lose their shadow on active/hover to simulate a mechanical click.
 - **Responsiveness:** Ensure mobile-first or fully responsive design using Flexbox/Grid.
 

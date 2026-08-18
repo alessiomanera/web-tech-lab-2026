@@ -53,7 +53,7 @@ The course evaluation consists of two complementary components (both graded out 
   - Borders: Heavy `3px solid #000000`
   - Shadows: Hard offset `4px 4px 0px 0px #000000` (zero blur)
   - Corner Radii: Strictly `0px`
-  - Accent Colors: Bauhaus Primary Red (`#FF3333`), Blue (`#0055FF`), Yellow (`#FFCC00`)
+  - Accent Colors: Primary Red (`#FF3333`), Blue (`#0055FF`), Yellow (`#FFCC00`)
 - **Typography:** `Inter` sans-serif with heavy weights (800/900) for titles and progressive text-wrap enhancements.
 - **Micro-interactions:** Snappy mechanical button depress (`transform: translate(4px, 4px)`) on click.
 - **Theme:** Exclusively Light Mode.
@@ -65,15 +65,16 @@ The course evaluation consists of two complementary components (both graded out 
 ```text
 web-tech-lab-2026/
 ├── app.py                 # Application factory (create_app())
-├── models.py              # SQLAlchemy models: User, Museum, Experience, Booking
-├── routes.py              # Main routes and API handlers (/api/book, /api/chat, /api/feedback)
+├── database.py            # SQLite connection context manager & initialization
+├── schema.sql             # SQL database definition (users, museums, experiences, tickets)
+├── routes.py              # Main routes and API handlers (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication routes (/register, /login, /logout) and @login_required
 ├── seed.py                # Database seeding script with Top 20 Curated Italian Experiences
-├── requirements.txt       # Dependencies: Flask, Flask-SQLAlchemy, python-dotenv, google-generativeai
+├── requirements.txt       # Dependencies: Flask, python-dotenv, google-generativeai
 ├── static/                # Modular CSS and client-side JS
 │   ├── css/               # variables.css, layout.css, components.css, utilities.css, style.css
 │   ├── images/            # cursor.svg, cursor-pointer.svg
-│   └── js/                # main.js (global utilities), bookingWizard.js (4-step wizard)
+│   └── js/                # main.js (coordinator), api.js (fetch calls), ui.js (cursors), bookingWizard.js
 └── templates/             # Jinja2 templates extending base.html
     ├── base.html          # Global navigation, alerts, and footer
     ├── index.html         # Landing page with 3-step value workflow & trending packages
