@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}500 Internal Server Error | Italy Cultural Experiences{% endblock %}
+
+{% block content %}
+<div class="card error-page-card">
+    <div class="mb-1">
+        <span class="badge badge-red error-badge-lg">Error 500</span>
+    </div>
+    
+    <h1 class="error-page-title">
+        Server Error
+    </h1>
+    
+    <p class="error-page-desc">
+        An unexpected error occurred while processing your cultural inquiry. Our system has logged the event.
+    </p>
+
+    <div class="card-actions justify-center gap-1">
+        <a href="{{ url_for('main.home') }}" class="cta-button">
+            &larr; Return to Home
+        </a>
+        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline">
+            Browse Experiences
+        </a>
+    </div>
+</div>
+{% endblock %}

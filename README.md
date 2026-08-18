@@ -18,7 +18,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom design system loaded directly), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI updates).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
 - **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine:** Google Gemini API (`gemini-1.5-flash`) via the `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the SQLite catalog.
+- **AI Engine:** Google Gemini API (`gemini-3.7-flash`, configurable via `GEMINI_MODEL`) via the `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the SQLite catalog.
 
 ---
 

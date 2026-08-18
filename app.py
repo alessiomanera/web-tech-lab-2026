@@ -40,6 +40,21 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
 
+    # Register custom error pages
+    from flask import render_template
+
+    @app.errorhandler(400)
+    def bad_request_error(e):
+        return render_template('400.html', error=e), 400
+
+    @app.errorhandler(404)
+    def not_found_error(e):
+        return render_template('404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template('500.html'), 500
+
     return app
 
 

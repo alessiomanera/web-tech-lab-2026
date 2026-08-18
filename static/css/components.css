@@ -1287,3 +1287,31 @@
     line-height: 1.5;
     margin-bottom: 1.25rem;
 }
+
+/* Error Pages */
+.error-page-card {
+    max-width: 650px;
+    margin: 2.5rem auto;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    background: #FFFFFF;
+}
+
+.error-badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1.25rem;
+    letter-spacing: 0.05em;
+}
+
+.error-page-title {
+    font-size: 2.8rem;
+    margin: 1.25rem 0 0.75rem 0;
+    text-transform: uppercase;
+}
+
+.error-page-desc {
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}404 Not Found | Italy Cultural Experiences{% endblock %}
+
+{% block content %}
+<div class="card error-page-card">
+    <div class="mb-1">
+        <span class="badge badge-yellow error-badge-lg">Error 404</span>
+    </div>
+    
+    <h1 class="error-page-title">
+        Page Not Found
+    </h1>
+    
+    <p class="error-page-desc">
+        The cultural itinerary or page you are looking for does not exist or has been relocated.
+    </p>
+
+    <div class="card-actions justify-center gap-1">
+        <a href="{{ url_for('main.home') }}" class="cta-button">
+            &larr; Return to Home
+        </a>
+        <a href="{{ url_for('main.experiences') }}" class="cta-button cta-button-outline">
+            Browse Experiences
+        </a>
+        <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue">
+            Ask AI Concierge &rarr;
+        </a>
+    </div>
+</div>
+{% endblock %}

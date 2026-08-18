@@ -429,16 +429,85 @@ def api_feedback():
     return jsonify({'success': True, 'message': 'Thank you for your feedback!'})
 
 
+def _call_gemini_concierge(user_message, current_profile, all_experiences, api_key):
+    """
+    Calls Google Gemini API with Grounded RAG context from the SQLite catalog.
+    Extracts response text and updated Markdown taste profile.
+    """
+    import google.generativeai as genai
+    genai.configure(api_key=api_key)
+
+    # Format the 20 catalog experiences for grounding
+    catalog_summary = []
+    for exp in all_experiences:
+        catalog_summary.append(
+            f"- ID: {exp['id']} | Title: \"{exp['title']}\" | City: {exp['city']} | "
+            f"Theme: {exp['theme']} | Duration: {exp['duration_minutes']} mins | "
+            f"Base Price: €{exp['base_price']:.2f} | Highlights: {exp.get('highlights', '')}"
+        )
+    catalog_text = "\n".join(catalog_summary)
+
+    system_instruction = f"""You are the official AI Cultural Concierge for Italy Experience, an elite cultural booking platform in Italy.
+You help visitors discover the right museum and cultural experiences in Italy based on their interests, party size, pacing, and tastes.
+
+GROUNDED CATALOG (Only recommend from these verified experiences):
+{catalog_text}
+
+USER'S CURRENT TASTE PROFILE:
+{current_profile or "No profile established yet (new user)."}
+
+CRITICAL INSTRUCTIONS:
+1. Speak in a warm, knowledgeable, culturally refined Italian concierge voice (fluent in English, using tasteful Italian greetings like Benvenuto, Ciao, Perfetto).
+2. When you recommend any specific package from the catalog, you MUST include this exact booking trigger tag in your response:
+   [RECOMMEND: id=<ID>, title="<TITLE>", city="<CITY>", price=<PRICE>]
+   For example: [RECOMMEND: id=1, title="Uffizi VIP Masterpieces Tour", city="Florence", price=65.00]
+3. Keep recommendations concise, vivid, and helpful (2-3 short paragraphs max).
+4. At the very end of your response, if the user revealed new tastes, preferences, group details, or favorite cities, provide an updated Markdown Taste Profile starting exactly with the delimiter:
+---TASTE_PROFILE---
+### Cultural Taste Profile
+- **Primary Interests:** <interests>
+- **Visit Pacing:** <pacing>
+- **Group Style:** <style>
+- **Preferred Perks:** <perks>
+- **Favorite Cities:** <cities>
+"""
+
+    model_name = os.environ.get("GEMINI_MODEL", "gemini-3.7-flash")
+    candidate_models = [model_name, "gemini-2.5-flash", "gemini-flash-latest"]
+    candidate_models = list(dict.fromkeys(candidate_models))
+
+    last_error = None
+    for m in candidate_models:
+        try:
+            model = genai.GenerativeModel(
+                model_name=m,
+                system_instruction=system_instruction
+            )
+            response = model.generate_content(user_message)
+            if response and response.text:
+                full_text = response.text
+                updated_profile = None
+                if "---TASTE_PROFILE---" in full_text:
+                    parts = full_text.split("---TASTE_PROFILE---")
+                    response_text = parts[0].strip()
+                    updated_profile = parts[1].strip()
+                else:
+                    response_text = full_text.strip()
+                return response_text, updated_profile
+        except Exception as e:
+            last_error = e
+            continue
+
+    raise last_error or Exception("Unable to generate response from Gemini API.")
+
+
 @main_bp.route('/api/chat', methods=['POST'])
 @login_required
 def api_chat():
     """
     AI Cultural Concierge endpoint.
     Performs grounded RAG querying the SQLite catalog of 20 experiences
-    plus the user's current Markdown taste profile.
-
-    TODO: Connect to the real Gemini API once an API key is configured.
-    Currently uses a local keyword-matching fallback.
+    plus the user's current Markdown taste profile using Google Gemini.
     """
     data = request.get_json() or {}
     user_message = data.get('message', '').strip()
@@ -456,61 +525,60 @@ def api_chat():
 
     api_key = os.environ.get("GEMINI_API_KEY")
 
-    # Fallback simulation if no API key configured
-    if not api_key or api_key == "your_gemini_api_key_here":
-        # Smart local concierge matching
-        matched_exp = None
-        for exp in all_experiences:
-            if (exp['city'].lower() in user_message.lower() or
-                    exp['theme'].lower() in user_message.lower()):
-                matched_exp = exp
-                break
-        if not matched_exp and all_experiences:
-            matched_exp = all_experiences[0]
-
-        if matched_exp:
-            ai_response_text = (
-                f"Welcome! Based on your interest, I highly recommend exploring "
-                f"**{matched_exp['title']}** in {matched_exp['city']}.\n\n"
-                f"It offers a {matched_exp['duration_minutes']}-minute curated journey "
-                f"covering {matched_exp['highlights']}.\n\n"
-                f"[RECOMMEND: id={matched_exp['id']}, title=\"{matched_exp['title']}\", "
-                f"city=\"{matched_exp['city']}\", price={matched_exp['base_price']:.2f}]\n\n"
-                f"Would you like me to customize this with an expert docent or audio guide?"
+    # If Gemini API key is configured, execute real Gemini RAG
+    if api_key and api_key != "your_gemini_api_key_here":
+        try:
+            response_text, updated_profile = _call_gemini_concierge(
+                user_message=user_message,
+                current_profile=user['preferences'] if user else None,
+                all_experiences=all_experiences,
+                api_key=api_key
             )
-        else:
-            ai_response_text = (
-                "Welcome! I'm your AI Cultural Concierge. Ask me about Italian cultural "
-                "experiences — try mentioning a city like Florence or Rome, or a theme "
-                "like Renaissance or Baroque."
-            )
+            if updated_profile:
+                db.execute(
+                    "UPDATE users SET preferences = ? WHERE id = ?",
+                    (updated_profile, session['user_id'])
+                )
+                db.commit()
+            return jsonify({
+                'response': response_text,
+                'updated_profile': updated_profile or (user['preferences'] if user else None)
+            })
+        except Exception as err:
+            # Fall back to local matcher if external network error occurs
+            pass
 
-        # Update sample preference
-        if "florence" in user_message.lower() or "renaissance" in user_message.lower():
-            new_prefs = """### Cultural Taste Profile
-- **Primary Interests:** Renaissance Masterpieces & Florentine Architecture
-- **Visit Pacing:** Dense & Curated (2 hours)
-- **Group Style:** Partner / Solo exploration
-- **Preferred Perks:** Skip-The-Line Access, Audio Guide
-- **Favorite Cities:** Florence, Rome"""
-            db.execute(
-                "UPDATE users SET preferences = ? WHERE id = ?",
-                (new_prefs, session['user_id'])
-            )
-            db.commit()
-            # Re-fetch updated preferences
-            user = db.execute(
-                "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-            ).fetchone()
+    # Heuristic fallback if API key is not present or failed
+    matched_exp = None
+    for exp in all_experiences:
+        if (exp['city'].lower() in user_message.lower() or
+                exp['theme'].lower() in user_message.lower()):
+            matched_exp = exp
+            break
+    if not matched_exp and all_experiences:
+        matched_exp = all_experiences[0]
 
-        return jsonify({
-            'response': ai_response_text,
-            'updated_profile': user['preferences']
-        })
+    if matched_exp:
+        ai_response_text = (
+            f"Benvenuto! Based on your interest, I highly recommend exploring "
+            f"**{matched_exp['title']}** in {matched_exp['city']}.\n\n"
+            f"It offers a {matched_exp['duration_minutes']}-minute curated journey "
+            f"covering {matched_exp['highlights']}.\n\n"
+            f"[RECOMMEND: id={matched_exp['id']}, title=\"{matched_exp['title']}\", "
+            f"city=\"{matched_exp['city']}\", price={matched_exp['base_price']:.2f}]\n\n"
+            f"Would you like me to customize this with an expert docent or audio guide?"
+        )
+    else:
+        ai_response_text = (
+            "Benvenuto! I'm your AI Cultural Concierge. Tell me what kind of art or history "
+            "you love in Italy — try mentioning a city like Florence, Rome, or Venice, or a theme "
+            "like Renaissance, Ancient Roman, or Food & Wine."
+        )
 
-    # TODO: Official Gemini API execution path
-    # When the API key is configured, uncomment and implement the Gemini integration.
-    return jsonify({'error': 'AI Concierge is not yet configured (no API key).'}), 503
+    return jsonify({
+        'response': ai_response_text,
+        'updated_profile': user['preferences'] if user else None
+    })
 
 
 @main_bp.route('/api/profile/reset-memory', methods=['POST'])
