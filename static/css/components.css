@@ -234,6 +234,136 @@
 }
 
 /* ---------------------------------------------------------
+   4b. Catalog Toolbar & Compact View Mode
+   --------------------------------------------------------- */
+.catalog-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.results-count-text {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.view-toggle-group {
+    display: inline-flex;
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: 3px 3px 0px 0px var(--border-color);
+    background: #FFFFFF;
+}
+
+.view-toggle-btn {
+    background: #FFFFFF;
+    color: var(--text-primary);
+    border: none;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-body);
+    transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+.view-toggle-btn:not(:last-child) {
+    border-right: var(--border-width) solid var(--border-color);
+}
+
+.view-toggle-btn:hover {
+    background: #F0F0F0;
+}
+
+.view-toggle-btn.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+/* Compact View Grid Modifications */
+.grid-auto.view-compact {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+
+.view-compact .experience-card {
+    box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+.view-compact .experience-card-img {
+    height: 120px;
+}
+
+.view-compact .card-content {
+    padding: 0.85rem;
+    gap: 0.4rem;
+}
+
+.view-compact .experience-header-meta {
+    margin-bottom: 0.35rem;
+}
+
+.view-compact .experience-header-meta .badge {
+    padding: 0.2rem 0.45rem;
+    font-size: 0.7rem;
+}
+
+.view-compact .card-title {
+    font-size: 1rem;
+    line-height: 1.25;
+    margin-bottom: 0.2rem;
+}
+
+.view-compact .card-theme {
+    font-size: 0.72rem;
+    margin-bottom: 0.3rem;
+}
+
+.view-compact .card-description-sm {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.view-compact .experience-perks-list {
+    display: none;
+}
+
+.view-compact .card-footer {
+    padding-top: 0.4rem;
+    margin-top: auto;
+    margin-bottom: 0.6rem;
+    border-top: 1px dashed var(--border-color);
+}
+
+.view-compact .experience-price-tag {
+    font-size: 1.15rem;
+}
+
+.view-compact .card-actions-grid {
+    gap: 0.4rem;
+}
+
+.view-compact .card-actions-grid .cta-button {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* ---------------------------------------------------------
    5. Forms & Inputs
    --------------------------------------------------------- */
 .form-group {

@@ -11,4 +11,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.documentElement.style.setProperty('--cursor-default', `url('${cursorSvg}') 2 2, auto`);
     document.documentElement.style.setProperty('--cursor-pointer', `url('${cursorPointerSvg}') 14 2, pointer`);
+
+    // ---------------------------------------------------------
+    // Experience Catalog View Mode Switcher (Standard vs Compact)
+    // ---------------------------------------------------------
+    const expGrid = document.getElementById('experiences-grid');
+    const stdBtn = document.getElementById('view-standard-btn');
+    const cmpBtn = document.getElementById('view-compact-btn');
+
+    if (expGrid && stdBtn && cmpBtn) {
+        const setViewMode = (mode) => {
+            if (mode === 'compact') {
+                expGrid.classList.add('view-compact');
+                cmpBtn.classList.add('active');
+                cmpBtn.setAttribute('aria-pressed', 'true');
+                stdBtn.classList.remove('active');
+                stdBtn.setAttribute('aria-pressed', 'false');
+                try { localStorage.setItem('experiences_view_mode', 'compact'); } catch (e) {}
+            } else {
+                expGrid.classList.remove('view-compact');
+                stdBtn.classList.add('active');
+                stdBtn.setAttribute('aria-pressed', 'true');
+                cmpBtn.classList.remove('active');
+                cmpBtn.setAttribute('aria-pressed', 'false');
+                try { localStorage.setItem('experiences_view_mode', 'standard'); } catch (e) {}
+            }
+        };
+
+        // Load persisted user preference (default: standard)
+        let savedMode = 'standard';
+        try {
+            savedMode = localStorage.getItem('experiences_view_mode') || 'standard';
+        } catch (e) {}
+        setViewMode(savedMode);
+
+        stdBtn.addEventListener('click', () => setViewMode('standard'));
+        cmpBtn.addEventListener('click', () => setViewMode('compact'));
+    }
 });

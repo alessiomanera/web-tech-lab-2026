@@ -41,8 +41,23 @@
     </div>
 </div>
 
+<!-- Catalog Toolbar & View Switcher -->
+<div class="catalog-toolbar">
+    <div class="results-count-text">
+        Showing <strong>{{ experiences|length }}</strong> curated cultural experiences
+    </div>
+    <div class="view-toggle-group" role="group" aria-label="Catalog Display Mode">
+        <button type="button" class="view-toggle-btn active" id="view-standard-btn" data-view="standard" aria-pressed="true">
+            <span>⊞</span> Standard
+        </button>
+        <button type="button" class="view-toggle-btn" id="view-compact-btn" data-view="compact" aria-pressed="false">
+            <span>⊟</span> Compact
+        </button>
+    </div>
+</div>
+
 <!-- Experiences Results Grid -->
-<div class="grid-auto">
+<div class="grid-auto experiences-grid" id="experiences-grid">
     {% for exp in experiences %}
     <article class="experience-card" aria-labelledby="exp-title-{{ exp.id }}">
         <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
