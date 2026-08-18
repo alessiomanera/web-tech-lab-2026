@@ -281,6 +281,31 @@ def guide_redirect():
     return redirect(url_for('main.concierge'))
 
 
+def _parse_taste_profile(raw_text):
+    """
+    Parses a Markdown Cultural Taste Profile into structured items
+    for clean, aligned template rendering.
+    """
+    if not raw_text:
+        return []
+    items = []
+    for line in raw_text.splitlines():
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+        if line.startswith('-'):
+            line = line.lstrip('- ').strip()
+        if '**' in line:
+            parts = line.split('**')
+            if len(parts) >= 3:
+                key = parts[1].rstrip(':').strip()
+                val = parts[2].lstrip(':').strip()
+                items.append({'label': key, 'value': val})
+                continue
+        items.append({'label': None, 'value': line})
+    return items
+
+
 @main_bp.route('/profile')
 @login_required
 def profile():
@@ -309,7 +334,15 @@ def profile():
         d = dict(row)
         d['selected_addons'] = _parse_json_column(d.get('selected_addons_json'))
         bookings_list.append(d)
-    return render_template('profile.html', user=user, bookings=bookings_list)
+
+    taste_items = _parse_taste_profile(user['preferences'] if user else '')
+
+    return render_template(
+        'profile.html',
+        user=user,
+        bookings=bookings_list,
+        taste_items=taste_items
+    )
 
 
 # -----------------------------------------------------------------------------
