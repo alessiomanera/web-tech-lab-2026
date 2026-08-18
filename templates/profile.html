@@ -120,37 +120,56 @@
 
     <!-- Right Column: Cultural Taste Profile -->
     <div>
-        <div class="memory-side-card">
-            <div class="side-card-header">
-                <h2 class="side-card-title">
-                    Cultural Taste Profile
-                </h2>
-                <span class="badge badge-yellow">AI Learned</span>
-            </div>
+        <h2 class="profile-section-title">
+            AI Taste Profile
+        </h2>
 
-            <p class="side-card-description">
-                This Markdown memory profile is continuously updated as you chat with our AI Concierge. It tailors recommendations to your exact interests.
-            </p>
+        <aside class="card bg-white" aria-labelledby="taste-profile-heading">
+            <div class="card-content">
+                <div class="card-header">
+                    <span class="badge badge-yellow">AI Learned</span>
+                    <span class="badge badge-blue">Live Memory</span>
+                </div>
 
-            <div class="memory-profile-box">
-                {% if user.preferences %}
-                    {{ user.preferences|replace('\n', '<br>')|safe }}
-                {% else %}
-                    <p class="italic-secondary-m-0">
-                        No taste profile recorded yet. Chat with the Concierge to build your personalized profile!
-                    </p>
-                {% endif %}
-            </div>
+                <h3 id="taste-profile-heading" class="card-heading">
+                    Cultural Curation Engine
+                </h3>
 
-            <div class="flex-column-gap-sm">
-                <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100 cta-button-blue-sm">
-                    Chat with Concierge &rarr;
-                </a>
-                <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100 cta-button-outline-sm">
-                    Reset Taste Profile
-                </button>
+                <p class="side-card-description">
+                    Continuously updated by the AI Concierge based on your queries and preferences.
+                </p>
+
+                <div class="memory-profile-box">
+                    {% if taste_items %}
+                        <ul class="taste-profile-list">
+                            {% for item in taste_items %}
+                            <li class="taste-item">
+                                {% if item.label %}
+                                <span class="taste-label">{{ item.label }}</span>
+                                <span class="taste-value">{{ item.value }}</span>
+                                {% else %}
+                                <span class="taste-value">{{ item.value }}</span>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="italic-secondary-m-0">
+                            No taste profile recorded yet. Chat with the Concierge to build your personalized profile!
+                        </p>
+                    {% endif %}
+                </div>
+
+                <div class="flex-column-gap-sm">
+                    <a href="{{ url_for('main.concierge') }}" class="cta-button cta-button-blue w-100 text-center">
+                        Chat with Concierge &rarr;
+                    </a>
+                    <button type="button" id="profile-reset-btn" class="cta-button cta-button-outline w-100">
+                        Reset Taste Profile
+                    </button>
+                </div>
             </div>
-        </div>
+        </aside>
     </div>
 </div>
 
