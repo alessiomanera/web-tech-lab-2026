@@ -561,7 +561,7 @@ CRITICAL INSTRUCTIONS:
 def api_chat():
     """
     AI Cultural Concierge endpoint.
-    Performs grounded RAG querying the SQLite catalog of 20 experiences
+    Performs grounded RAG querying the SQLite catalog of 12 experiences
     plus the user's current Markdown taste profile using Google Gemini.
     """
     data = request.get_json() or {}
