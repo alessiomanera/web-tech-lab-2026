@@ -25,8 +25,8 @@ The proposed project is a full-stack web application designed to modernize the c
 - **External AI Integration:** Google Gemini API (`gemini-1.5-flash`) via the official `google-generativeai` SDK.
 
 ### 5. UI/UX Design Paradigm (Neubrutalism)
-The interface is designed around the **Neubrutalism** aesthetic (inspired by [neubrutalism.com](https://neubrutalism.com/) and Bauhaus minimalism) to deliver extreme visual simplicity and zero cognitive load:
-- **High-Contrast Light Theme:** Stark white background (`#FFFFFF`), solid high-contrast black borders (`3px solid #000000`), hard offset drop-shadows (`4px 4px 0px 0px #000000`), zero border radii (`0px`), and Bauhaus primary color accents (`#FF3333`, `#0055FF`, `#FFCC00`).
+The interface is designed around the **Neubrutalism** aesthetic (inspired by [neubrutalism.com](https://neubrutalism.com/)) to deliver extreme visual simplicity and zero cognitive load:
+- **High-Contrast Light Theme:** Stark white background (`#FFFFFF`), solid high-contrast black borders (`3px solid #000000`), hard offset drop-shadows (`4px 4px 0px 0px #000000`), zero border radii (`0px`), and vibrant primary/accent colors (`#FF3333`, `#0055FF`, `#FFCC00`).
 - **Tactile Micro-interactions:** Mechanical button click responses (`translate(4px, 4px)` with shadow collapse on click) and strict WCAG AAA contrast for maximum accessibility.
 
 ### 6. Task Distribution & Roles

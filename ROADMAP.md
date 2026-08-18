@@ -33,10 +33,10 @@ This document serves as the master source of truth and historical tracking timel
 
 ## Phase 2: Design System & Neubrutalism Architecture
 - [x] **Adopt Neubrutalism Design Philosophy ([neubrutalism.com](https://neubrutalism.com/))**
-  - [x] Choose Neubrutalism / Bauhaus aesthetic to deliver extreme simplicity, high contrast, and zero cognitive load.
+  - [x] Choose Neubrutalism aesthetic to deliver extreme simplicity, high contrast, and zero cognitive load.
   - [x] Disable dark mode to strictly preserve the high-contrast stark white print aesthetic.
 - [x] **Define Design Tokens & CSS Custom Properties (`static/css/variables.css`)**
-  - [x] Color palette: Pure White base (`#FFFFFF`), Solid Black border/text (`#000000`), Bauhaus Red (`#FF3333`), Bauhaus Blue (`#0055FF`), Bauhaus Yellow (`#FFCC00`).
+  - [x] Color palette: Pure White base (`#FFFFFF`), Solid Black border/text (`#000000`), High-contrast Red (`#FF3333`), Electric Blue (`#0055FF`), Cyber Yellow (`#FFCC00`).
   - [x] Border tokens: Aggressive `3px solid #000000`.
   - [x] Shadow tokens: Hard offset block shadows (`4px 4px 0px 0px #000000`).
   - [x] Border radius: Strictly `0px` across all containers, inputs, buttons, and cards.

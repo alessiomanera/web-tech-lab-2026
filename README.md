@@ -24,12 +24,12 @@ A full-stack web application designed for discovering and booking tickets to mus
 
 ## Design System & UI/UX (Neubrutalism)
 
-The user interface strictly adheres to the **Neubrutalism** design philosophy (inspired by [neubrutalism.com](https://neubrutalism.com/) and Bauhaus minimalism), engineered for extreme visual clarity, simplicity, and zero cognitive friction:
+The user interface strictly adheres to the **Neubrutalism** design philosophy (inspired by [neubrutalism.com](https://neubrutalism.com/)), engineered for extreme visual clarity, simplicity, and zero cognitive friction:
 
 - **High-Contrast Canvas:** Stark white background (`#FFFFFF`) with solid black text and high-contrast `3px` solid black borders (`#000000`).
 - **Hard Offset Drop-Shadows:** `4px 4px 0px 0px #000000` with zero blur for distinct depth separation.
 - **Zero Border-Radius:** `0px` border-radius across all buttons, cards, modal dialogs, and input fields.
-- **Bauhaus Primary Color Accents:**
+- **Vibrant Primary & Accent Colors:**
   - Primary Red: `#FF3333`
   - Primary Blue: `#0055FF`
   - Primary Yellow: `#FFCC00`

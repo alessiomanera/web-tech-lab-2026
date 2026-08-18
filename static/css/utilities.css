@@ -1,16 +1,25 @@
-/* Utilities (Frictionless UX) */
+/* Utilities (Accessibility & Layout) */
 .skip-to-content {
     position: absolute;
-    top: -40px;
-    left: 0;
-    background: var(--primary-color);
-    color: white;
-    padding: 8px;
-    z-index: 1000;
-    transition: top 0.2s;
+    top: -60px;
+    left: 10px;
+    background: #000000;
+    color: #FFFFFF;
+    padding: 0.6rem 1.25rem;
+    font-weight: 900;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 3px solid #FFCC00;
+    box-shadow: 4px 4px 0px 0px #000000;
+    z-index: 9999;
+    transition: top 0.15s ease-in-out;
+    text-decoration: none;
 }
 .skip-to-content:focus {
-    top: 0;
+    top: 10px;
+    outline: 3px solid #000000;
+    outline-offset: 2px;
 }
 
 .aspect-video {
