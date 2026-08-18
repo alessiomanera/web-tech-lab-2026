@@ -152,7 +152,7 @@ nav {
 
 .logo .logo-accent {
     background: #FFFFFF;
-    color: var(--primary-color);
+    color: var(--primary-hover);
     padding: 0.45rem 0.65rem;
     border-left: 2px solid var(--border-color);
 }
@@ -191,7 +191,7 @@ nav {
 .nav-link:hover, .nav-link:focus {
     background: #FAFAFA;
     border: 2px solid var(--border-color);
-    color: var(--primary-color);
+    color: var(--primary-hover);
     box-shadow: 2px 2px 0px 0px var(--border-color);
     outline: none;
 }

@@ -229,7 +229,7 @@
 
 .experience-perks-list li::before {
     content: "■";
-    color: var(--primary-color);
+    color: var(--primary-hover);
     font-size: 0.75rem;
 }
 
@@ -435,7 +435,7 @@
 }
 
 .wizard-step-node.active {
-    color: var(--primary-color);
+    color: var(--primary-hover);
 }
 
 .wizard-step-node.completed {
@@ -923,7 +923,7 @@
     font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: var(--primary-color);
+    color: var(--primary-hover);
     display: block;
     margin-bottom: 0.5rem;
 }
@@ -1182,7 +1182,7 @@
     font-weight: 800;
     font-size: 0.9rem;
     text-transform: uppercase;
-    color: var(--primary-color);
+    color: var(--primary-hover);
 }
 
 .flex-column-gap {
@@ -1354,7 +1354,7 @@
     font-size: 0.95rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: var(--primary-color);
+    color: var(--primary-hover);
     display: block;
     margin-bottom: 1.25rem;
 }
@@ -1419,7 +1419,7 @@
 }
 
 .addon-price {
-    color: var(--primary-color);
+    color: var(--primary-hover);
     font-weight: 800;
     font-size: 0.9rem;
 }
