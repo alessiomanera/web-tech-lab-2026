@@ -54,9 +54,7 @@ web-tech-lab-2026/
 ├── .env.example           # Template for environment variables (GEMINI_API_KEY, FLASK_SECRET_KEY)
 ├── DOCS/
 │   ├── PROJECT_PROPOSAL.md # 1-page A4 project proposal (Official Frozen Submission)
-│   ├── PROJECT_PROPOSAL.docx # Official project proposal Word document
 │   ├── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
-│   ├── Project_Analysis_Report.md # Course guidelines and technical reference
 │   ├── AY2025_2026_project_guide.pdf # Official course & project guidelines
 │   └── AY2024_2025_project_outlines.pdf # Historical project topics reference
 ├── tests/                 # Automated test suite (Standard Library unittest)
