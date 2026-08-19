@@ -150,10 +150,10 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Finalize `README.md` with complete, step-by-step instructions for running the project locally.
   - [x] Verify virtual environment activation commands for Windows (`powershell`), macOS, and Linux.
   - [x] Ensure all dependencies are locked in `requirements.txt`.
-- [x] **Oral Exam Presentation Preparation (6 Points Academic Evaluation)**
-  - [x] Create comprehensive defense guide in `DOCS/Presentation_Guide.md` with 5-minute live demo script.
-  - [x] Map implementation directly to all 7 criteria in Professor Yucel's 30+1 grading rubric.
-  - [x] Prepare bullet-proof answers for anticipated oral defense questions (SQLi, PBKDF2, RAG grounding, Neubrutalism).
+- [x] **Oral Presentation Preparation & Architecture Defense**
+  - [x] Structure presentation outline and 5-minute live demonstration walkthrough.
+  - [x] Align implementation details with technical evaluation criteria.
+  - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
   - [x] Document potential future enhancements:
     - [ ] **Curated Color Palette Reduction & Light/Dark Theme Architecture:** Simplify the multi-color primary palette (reducing simultaneous red, blue, yellow) down to a strict monochrome base (`#FFFFFF` / `#000000`) with a single refined accent, and implement a high-contrast Neubrutalist Light/Dark theme toggle.
     - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and calendar sync integration.

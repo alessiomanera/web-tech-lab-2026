@@ -55,7 +55,6 @@ web-tech-lab-2026/
 ├── DOCS/
 │   ├── PROJECT_PROPOSAL.md # 1-page A4 project proposal (Official Frozen Submission)
 │   ├── PROJECT_PROPOSAL.docx # Official project proposal Word document
-│   ├── Presentation_Guide.md # Oral exam presentation script, rubric defense & Q&A prep
 │   ├── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
 │   ├── Project_Analysis_Report.md # Course guidelines and technical reference
 │   ├── AY2025_2026_project_guide.pdf # Official course & project guidelines
