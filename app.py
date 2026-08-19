@@ -13,7 +13,7 @@ from routes import main_bp
 from auth import auth_bp
 
 
-def create_app():
+def create_app(test_config=None):
     """
     Application factory function.
     Loads environment variables, configures the database, and initializes plugins.
@@ -23,11 +23,15 @@ def create_app():
 
     app = Flask(__name__)
 
-    # Configure the SQLite database path and secret key
+    # Configure default settings
     app.config['DATABASE'] = os.path.join(app.instance_path, 'app.db')
     app.config['SECRET_KEY'] = os.environ.get(
         'FLASK_SECRET_KEY', 'dev-secret-key-change-in-production'
     )
+
+    # Apply test configuration overrides if provided
+    if test_config is not None:
+        app.config.update(test_config)
 
     # Register the raw sqlite3 database helpers
     database.init_app(app)
