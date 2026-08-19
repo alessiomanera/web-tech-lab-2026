@@ -33,10 +33,14 @@ def register():
     On POST, hashes the password and creates a new User in the database.
     """
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
+        name = (request.form.get('name') or '').strip()
+        email = (request.form.get('email') or '').strip()
+        password = request.form.get('password') or ''
         preferences = request.form.get('preferences')
+
+        if not name or not email or not password:
+            flash('Please fill in all required fields.')
+            return redirect(url_for('auth.register'))
 
         db = get_db()
 
@@ -74,8 +78,12 @@ def login():
     On POST, verifies credentials against the database and establishes a session.
     """
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = (request.form.get('email') or '').strip()
+        password = request.form.get('password') or ''
+
+        if not email or not password:
+            flash('Please fill in all required fields.')
+            return redirect(url_for('auth.login'))
 
         db = get_db()
         user = db.execute(

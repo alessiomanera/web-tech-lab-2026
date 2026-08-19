@@ -12,7 +12,7 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Repository Setup & Modular Directory Skeleton**
   - [x] Initialize Git repository with `testing` development branch workflow.
   - [x] Create standardized project hierarchy: `/templates/`, `/static/css/`, `/static/js/`, `/static/images/`, `/DOCS/`, `/instance/`.
-  - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `Flask-SQLAlchemy`, `python-dotenv`, `google-generativeai`).
+  - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `python-dotenv`, `google-generativeai`).
   - [x] Configure environment variables template (`.env.example`) and security ignores (`.gitignore`).
 - [x] **Draft Project Proposal (`DOCS/PROJECT_PROPOSAL.md`)**
   - [x] Formulate project purpose and dual core objectives (Ticketing + AI Concierge).
@@ -32,26 +32,21 @@ This document serves as the master source of truth and historical tracking timel
 ---
 
 ## Phase 2: Design System & Neubrutalism Architecture
-- [x] **Adopt Neubrutalism Design Philosophy ([neubrutalism.com](https://neubrutalism.com/))**
-  - [x] Choose Neubrutalism aesthetic to deliver extreme simplicity, high contrast, and zero cognitive load.
-  - [x] Disable dark mode to strictly preserve the high-contrast stark white print aesthetic.
-- [x] **Define Design Tokens & CSS Custom Properties (`static/css/variables.css`)**
-  - [x] Color palette: Pure White base (`#FFFFFF`), Solid Black border/text (`#000000`), High-contrast Red (`#FF3333`), Electric Blue (`#0055FF`), Cyber Yellow (`#FFCC00`).
-  - [x] Border tokens: Aggressive `3px solid #000000`.
-  - [x] Shadow tokens: Hard offset block shadows (`4px 4px 0px 0px #000000`).
-  - [x] Border radius: Strictly `0px` across all containers, inputs, buttons, and cards.
-  - [x] Spacing & sizing scales: Modular rem-based units for consistent whitespace.
-- [x] **Typography & Micro-interactions Setup**
-  - [x] Import and configure `Inter` sans-serif font family with heavy weights (800/900) for headings.
-  - [x] Configure progressive text wrapping: `text-wrap: balance` on headings, `text-wrap: pretty` on paragraphs.
-  - [x] Implement tactile mechanical button click states (`transform: translate(4px, 4px)` with shadow collapse on `:active`).
-- [x] **Core Layout & Component Styles**
-  - [x] Build master grid and flexbox layout utilities (`static/css/layout.css`).
+- [x] **Core Design Tokens (`static/css/variables.css`)**
+  - [x] Stark high-contrast light theme (`#FFFFFF` background, `#000000` text & borders).
+  - [x] Strict Neubrutalism geometry: `3px` solid borders, `4px 4px 0px 0px` hard drop-shadows, `0px` border-radius.
+  - [x] Purposeful accent highlights for actions, badges, and focus indicators.
+  - [x] Typography: Strictly `Inter` sans-serif with aggressive font weights (800/900).
+- [x] **Layout & Responsive Grid (`static/css/layout.css`)**
+  - [x] Mobile-first layout with CSS Grid and Flexbox containers.
+  - [x] Custom tactile SVG cursor implementation (`cursor.svg`, `cursor-pointer.svg`).
+- [x] **Modular Component Library & Micro-interactions**
+  - [x] Mechanical button click press states (`translate(4px, 4px)` with shadow collapse).
   - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
   - [x] Build main CSS aggregator (`static/css/style.css`).
 - [x] **Accessibility & Performance Standards**
-  - [x] Ensure WCAG AAA contrast ratio across all text and interactive elements.
+  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text and buttons).
   - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).
 
 ---
@@ -63,7 +58,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
 - [x] **Experience Economy Page Templates**
   - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
-  - [x] `templates/experiences.html`: Full 20-Experience catalog with search bar and city/theme filter pills.
+  - [x] `templates/experiences.html`: Full 12-Experience catalog with search bar, city/theme filter pills, and Standard/Compact view switcher with `localStorage` persistence.
   - [x] `templates/experience_detail.html`: Deep-dive view with full itinerary, included perks, and customizable add-ons.
   - [x] `templates/booking.html`: 4-step wizard (Package & Add-ons $\rightarrow$ Date & Slot $\rightarrow$ Summary $\rightarrow$ Digital Pass).
   - [x] `templates/guide.html`: AI Cultural Concierge with grounded RAG, in-chat booking cards, and live Markdown taste memory panel.
@@ -89,7 +84,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Table `experiences`: `id`, `title`, `tagline`, `city`, `theme`, `duration_minutes`, `base_price`, `badge`, `included_items_json`, `available_addons_json`, `highlights`, `museum_id`.
   - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
-  - [x] Populate SQLite database with **Top 20 Curated Italian Cultural Experiences** across 9 major cities (Florence, Rome, Venice, Milan, Turin, Naples, Verona, Palermo, Bologna).
+  - [x] Populate SQLite database with **Top 12 Curated Italian Cultural Experiences** across 6 major art cities (Florence, Rome, Venice, Milan, Turin, Naples).
   - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
 
 ---
@@ -101,7 +96,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Session establishment (`session['user_id']`) and logout handler (`/logout`).
   - [x] Route protection via `@login_required` decorator (`/booking`, `/concierge`, `/profile`).
 - [x] **Dynamic Catalog & Booking Workflows (`routes.py`)**
-  - [x] Query and render 20 experiences with search and city filter on `/experiences`.
+  - [x] Query and render 12 experiences with search and city filter on `/experiences`.
   - [x] 4-step wizard endpoint `/booking` with support for URL preselection (`?exp_id=X` or `?museum_id=Y`).
   - [x] Booking submission handler (`POST /booking`): validate input server-side, compute total with add-ons, insert row in `tickets`, and show a real digital confirmation pass.
   - [x] Feedback submission endpoint (`POST /api/feedback`).
@@ -111,7 +106,7 @@ This document serves as the master source of truth and historical tracking timel
 ## Phase 6: AI Cultural Concierge & Grounded RAG Feature
 - [x] **Gemini API Integration & Grounding Workflow**
   - [x] Configure Google Generative AI SDK (`google-generativeai`) with secure `GEMINI_API_KEY`.
-  - [x] Ground system prompt directly on the 20 SQLite experiences to eliminate hallucinations.
+  - [x] Ground system prompt directly on the 12 SQLite experiences to eliminate hallucinations.
   - [x] In-chat actionable booking card triggers (`[RECOMMEND: id=X, title="Y", city="Z", price=W]`).
 - [x] **Dynamic Markdown Taste Memory Pipeline (`routes.py`, `templates/guide.html`)**
   - [x] Background preference extraction: automatically updates `preferences` column in `users` table as structured Markdown after each conversation.
@@ -121,31 +116,47 @@ This document serves as the master source of truth and historical tracking timel
 ---
 
 ## Phase 7: Quality Assurance, Security, & Testing
-- [ ] **Code Quality & Modularity Audit (6 Points Academic Evaluation)**
-  - [ ] Verify adherence to DRY principles across Python blueprints, Jinja2 templates, and CSS stylesheets.
-  - [ ] Add comprehensive docstrings and inline comments across all functions and route handlers.
-  - [ ] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
-- [ ] **Security & Error Handling Verification**
-  - [ ] Verify SQL injection protection via SQLAlchemy parameterized queries.
-  - [ ] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
-  - [ ] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
-  - [ ] Implement custom HTTP error pages (`404.html`, `500.html`).
-- [ ] **Cross-Device & Responsive Usability Testing**
-  - [ ] Validate responsive layout on desktop, tablet, and mobile viewports.
-  - [ ] Verify keyboard navigation and screen-reader accessibility.
-  - [ ] Verify zero visual regressions or layout shifts during dynamic interactions.
+- [x] **Code Quality & Modularity Audit (6 Points Academic Evaluation)**
+  - [x] Verify adherence to DRY principles across Python blueprints, Jinja2 templates, and CSS stylesheets.
+  - [x] Add comprehensive docstrings and inline comments across all functions and route handlers.
+  - [x] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
+- [x] **Automated Test Suite Scaffold & Execution**
+  - [x] Built comprehensive 44-test automated test suite using Python standard library `unittest`.
+  - [x] Isolated test databases with full foreign key constraint checks (`test_database.py`).
+  - [x] Authentication and PBKDF2 hashing verification (`test_auth.py`).
+  - [x] Catalog search and multi-filtering tests (`test_catalog.py`).
+  - [x] 4-Step booking engine validation, bounds, and arithmetic tests (`test_booking.py`).
+  - [x] Grounded Gemini RAG, recommendation cards, and dynamic taste memory tests (`test_concierge.py`).
+  - [x] Post-visit review loops and user ownership verification (`test_feedback.py`).
+  - [x] Custom HTTP error pages and profile dashboard tests (`test_errors.py`).
+- [x] **Security & Error Handling Verification**
+  - [x] Verify SQL injection protection via raw SQLite3 parameterized queries.
+  - [x] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
+  - [x] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
+  - [x] Implement custom HTTP error pages (`400.html`, `404.html`, `500.html`).
+- [x] **Cross-Device & Responsive Usability Testing**
+  - [x] Validate responsive layout on desktop, tablet, and mobile viewports.
+  - [x] Verify keyboard navigation and screen-reader accessibility.
+  - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
+- [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
+  - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
+  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
 
 ---
 
 ## Phase 8: Final Packaging, Documentation & Exam Presentation
-- [ ] **Project Setup & Run Documentation**
-  - [ ] Finalize `README.md` with complete, step-by-step instructions for running the project locally.
-  - [ ] Verify virtual environment activation commands for Windows (`powershell`), macOS, and Linux.
-  - [ ] Ensure all dependencies are locked in `requirements.txt`.
-- [ ] **Oral Exam Presentation Preparation (6 Points Academic Evaluation)**
-  - [ ] Structure presentation outline emphasizing project purpose, technical architecture, strengths, and limitations.
-  - [ ] Prepare live demonstration walkthrough (Discover Experience $\rightarrow$ 4-Step Booking $\rightarrow$ AI Concierge Recommendation & Memory $\rightarrow$ Review Feedback).
-  - [ ] Document potential future enhancements (e.g., QR-code digital ticket generation, calendar sync).
+- [x] **Project Setup & Run Documentation**
+  - [x] Finalize `README.md` with complete, step-by-step instructions for running the project locally.
+  - [x] Verify virtual environment activation commands for Windows (`powershell`), macOS, and Linux.
+  - [x] Ensure all dependencies are locked in `requirements.txt`.
+- [x] **Oral Presentation Preparation & Architecture Defense**
+  - [x] Structure presentation outline and 5-minute live demonstration walkthrough.
+  - [x] Align implementation details with technical evaluation criteria.
+  - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
+  - [x] Document potential future enhancements:
+    - [ ] **Curated Color Palette Reduction & Light/Dark Theme Architecture:** Simplify the multi-color primary palette (reducing simultaneous red, blue, yellow) down to a strict monochrome base (`#FFFFFF` / `#000000`) with a single refined accent, and implement a high-contrast Neubrutalist Light/Dark theme toggle.
+    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and calendar sync integration.
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
   - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.

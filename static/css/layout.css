@@ -1,3 +1,7 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: var(--font-body);
@@ -9,16 +13,60 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Cursors (Matching am-portfolio) */
+/* Custom Cursors (Tactile Neo-Brutalism) */
 @media (pointer: fine) {
     body, html {
         cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto);
     }
 
-    a, button, [role="button"], input, select, textarea, summary, .cursor-pointer, label, 
-    .cta-button, .filter-pill, .time-slot-pill, .addon-choice-card, .quick-chip, 
-    .wizard-step-node, details summary, .badge {
+    /* Only truly clickable interactive elements get the pointer cursor */
+    a[href], 
+    button:not(:disabled), 
+    [role="button"]:not([aria-disabled="true"]), 
+    input[type="submit"]:not(:disabled), 
+    input[type="button"]:not(:disabled), 
+    input[type="checkbox"], 
+    input[type="radio"], 
+    select, 
+    summary, 
+    label[for], 
+    .cursor-pointer, 
+    .cta-button:not(:disabled), 
+    .nav-cta,
+    .nav-link,
+    .filter-pill, 
+    .time-slot-pill, 
+    .addon-choice-card, 
+    .quick-chip,
+    a.badge,
+    button.badge {
         cursor: var(--cursor-pointer, url('/static/images/cursor-pointer.svg') 14 2, pointer) !important;
+    }
+
+    /* Text input fields get standard text cursor */
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"], 
+    input[type="number"], 
+    input[type="date"], 
+    textarea,
+    .form-input,
+    .form-textarea {
+        cursor: text !important;
+    }
+
+    /* Non-clickable static badges and elements get default arrow cursor */
+    .badge:not(a):not(button) {
+        cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto) !important;
+    }
+
+    /* Non-clickable / disabled elements get not-allowed cursor */
+    button:disabled, 
+    .cta-button:disabled, 
+    [aria-disabled="true"],
+    input:disabled,
+    select:disabled {
+        cursor: not-allowed !important;
     }
 }
 
@@ -104,7 +152,7 @@ nav {
 
 .logo .logo-accent {
     background: #FFFFFF;
-    color: var(--primary-color);
+    color: var(--primary-hover);
     padding: 0.45rem 0.65rem;
     border-left: 2px solid var(--border-color);
 }
@@ -143,7 +191,7 @@ nav {
 .nav-link:hover, .nav-link:focus {
     background: #FAFAFA;
     border: 2px solid var(--border-color);
-    color: var(--primary-color);
+    color: var(--primary-hover);
     box-shadow: 2px 2px 0px 0px var(--border-color);
     outline: none;
 }

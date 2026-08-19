@@ -3,7 +3,7 @@ seed.py
 -------
 Database seeding script.
 Drops all existing tables and populates the SQLite database with
-the Top 20 Curated Italian Cultural Experiences, museums, exhibitions,
+the Top 12 Curated Italian Cultural Experiences, museums, exhibitions,
 and sample user profiles. Uses raw sqlite3 with parameterized queries.
 """
 import json
@@ -18,7 +18,7 @@ from database import get_db
 
 def seed_db():
     """
-    Initializes the database schema and loads 20 rich Italian cultural experiences
+    Initializes the database schema and loads 12 rich Italian cultural experiences
     with durations, transparent base pricing, included perks, and customizable add-ons.
     """
     app = create_app()
@@ -47,43 +47,43 @@ def seed_db():
             ("Galleria degli Uffizi",
              "The world's foremost repository of Renaissance masterworks, showcasing Botticelli, Leonardo da Vinci, Michelangelo, and Caravaggio.",
              "Piazzale degli Uffizi 6, 50122 Florence", "Florence",
-             "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-01-uffizi.jpg"),
             ("Parco Archeologico del Colosseo",
              "The monumental epicenter of the Roman Empire, encompassing the Flavian Amphitheater, the Roman Forum, and Palatine Hill.",
              "Piazza del Colosseo 1, 00184 Rome", "Rome",
-             "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-02-colosseum.jpg"),
             ("Palazzo Ducale di Venezia",
              "The majestic Gothic seat of the Serenissima Republic, featuring the Doge's private apartments, Grand Council chamber, and the Bridge of Sighs.",
              "Piazza San Marco 1, 30124 Venice", "Venice",
-             "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-03-doges-palace.jpg"),
             ("Museo Egizio di Torino",
              "The oldest Egyptian museum in the world and second in importance only to Cairo, housing over 40,000 priceless antiquities.",
              "Via Accademia delle Scienze 6, 10123 Turin", "Turin",
-             "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-04-museo-egizio.jpg"),
             ("Cenacolo Vinciano",
              "The sacred refectory of Santa Maria delle Grazie hosting Leonardo da Vinci's immortal masterpiece, The Last Supper.",
              "Piazza di Santa Maria delle Grazie 2, 20123 Milan", "Milan",
-             "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-05-cenacolo.jpg"),
             ("Parco Archeologico di Pompei",
              "An astonishing ancient Roman city frozen in time by the 79 AD eruption of Mount Vesuvius, featuring intact villas, frescoes, and streets.",
              "Via Plinio 26, 80045 Pompeii (Naples)", "Naples",
-             "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-06-pompeii.jpg"),
             ("Galleria Borghese",
              "A magnificent villa set in Roman parklands, showcasing Bernini's sensational marble sculptures and key canvases by Caravaggio, Titian, and Raphael.",
              "Piazzale Scipione Borghese 5, 00197 Rome", "Rome",
-             "https://images.unsplash.com/photo-1548126032-079a0fb0099d?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-07-borghese.jpg"),
             ("Galleria dell'Accademia",
              "The legendary sanctuary of Florentine Renaissance sculpture, home to Michelangelo's original colossal David and unfinished Slaves.",
              "Via Ricasoli 58/60, 50122 Florence", "Florence",
-             "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-08-accademia.jpg"),
             ("Collezione Peggy Guggenheim",
              "Venice's premier museum for 20th-century European and American avant-garde art, housed in Peggy Guggenheim's historic Grand Canal palace.",
              "Dorsoduro 701, 30123 Venice", "Venice",
-             "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-09-guggenheim.jpg"),
             ("Pinacoteca di Brera",
              "Milan's landmark public gallery of classical art, boasting masterpieces by Caravaggio, Hayez, Mantegna, and Raphael.",
              "Via Brera 28, 20121 Milan", "Milan",
-             "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/museums/museum-10-brera.jpg"),
         ]
 
         db.executemany(
@@ -94,7 +94,7 @@ def seed_db():
         print(f"Added {len(museums_data)} baseline museums.")
 
         # ---------------------------------------------------------
-        # 2. Populate the Top 20 Curated Italian Experiences
+        # 2. Populate the Top 12 Curated Italian Experiences
         # ---------------------------------------------------------
         standard_addons = json.dumps([
             {"id": "audio", "name": "Spatial Audio Guide (Smartphone App)", "price": 5.0},
@@ -118,7 +118,7 @@ def seed_db():
              standard_addons,
              "Experience the pinnacle of Florentine Renaissance art without the friction of endless queues. This curated package guides you chronologically through Giotto, Botticelli's iconic halls, Leonardo da Vinci's early genius, Raphael, and Caravaggio's dramatic chiaroscuro.",
              "Botticelli's Birth of Venus, Caravaggio's Medusa, Leonardo's Adoration of the Magi, Arno River panorama from the upper corridor.",
-             "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-01-florence-uffizi.jpg"),
             # 2. Rome - Colosseum
             (2, "Imperial Colosseum, Forum & Gladiators Underground",
              "Comprehensive archaeological journey exploring the arena floor, Roman Forum temples, and Palatine Hill emperors' palaces.",
@@ -130,7 +130,7 @@ def seed_db():
              standard_addons,
              "Walk the footsteps of gladiators and Roman emperors. This all-inclusive archaeological pass grants access to the restricted arena floor, the monumental triumphal arches, and the legendary Senate House in the Roman Forum.",
              "Gladiator Arena Gate, Curia Julia (Roman Senate), Arch of Constantine, Palatine Panoramic View.",
-             "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-02-rome-colosseum.jpg"),
             # 3. Venice - Doge's Palace
             (3, "Secret Itineraries of the Doges & Bridge of Sighs",
              "Explore the hidden torture chambers, Casanova's prison cell, and the dazzling Golden Staircase of the Venetian Republic.",
@@ -142,7 +142,7 @@ def seed_db():
              standard_addons,
              "Unravel the political intrigue and maritime dominance of Venice. Cross the Bridge of Sighs into the New Prisons, marvel at Tintoretto's colossal Paradise in the Grand Council Chamber, and admire the gilded Renaissance ceilings.",
              "Tintoretto's Il Paradiso, Bridge of Sighs crossing, Piombi Inquisitors' cells, Golden Staircase.",
-             "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-03-venice-doges-palace.jpg"),
             # 4. Turin - Museo Egizio
             (4, "Pharaohs, Mummies & Golden Papyrus Quest",
              "Discover the tomb of Kha, the monumental Sphinx gallery, and three millennia of ancient Nile civilization.",
@@ -154,7 +154,7 @@ def seed_db():
              standard_addons,
              "Immerse yourself in the world's most evocative collection of Egyptian antiquities outside Cairo. Walk through mirror-lined statuary halls illuminated like sacred temples, decipher ancient papyrus scrolls, and inspect intact burial chambers.",
              "Colossal Statue of Ramesses II, Intact Tomb of Kha and Merit, Book of the Dead Papyrus, Statuary Gallery.",
-             "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-04-turin-museo-egizio.jpg"),
             # 5. Milan - Last Supper
             (5, "Leonardo's Last Supper & Renaissance Genius",
              "Rare, climate-controlled intimate viewing of Da Vinci's world-altering fresco in the Dominican refectory.",
@@ -166,7 +166,7 @@ def seed_db():
              standard_addons,
              "A once-in-a-lifetime encounter with Leonardo da Vinci's masterpiece. Limited to strictly small batches of visitors, this experience lets you examine the emotional turbulence of Christ's apostles and Leonardo's groundbreaking linear perspective.",
              "Leonardo da Vinci's Il Cenacolo (1495-1498), Donato Montorfano's Crucifixion fresco, Bramante Cloister.",
-             "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-05-milan-last-supper.jpg"),
             # 6. Naples - Pompeii
             (6, "Pompeii Villa Frescoes & Lost Roman Civilization",
              "Step into ancient Roman homes, amphitheaters, and thermal baths perfectly preserved beneath volcanic ash.",
@@ -178,7 +178,7 @@ def seed_db():
              standard_addons,
              "Explore the world's most poignant archaeological site. Witness brilliant cinnabar red frescoes in the Villa of Mysteries, inspect intact Roman bakeries and fast-food bars (Thermopolia), and gaze at Mount Vesuvius looming on the horizon.",
              "Villa dei Misteri Dionysian frieze, House of the Faun, Roman Amphitheater, plaster casts of victims.",
-             "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-06-naples-pompeii.jpg"),
             # 7. Rome - Galleria Borghese
             (7, "Galleria Borghese & Caravaggio in Private",
              "Strictly capacity-controlled villa experience surrounded by Bernini's Apollo and Daphne and master canvases by Titian.",
@@ -190,7 +190,7 @@ def seed_db():
              standard_addons,
              "Widely regarded as the world's most intimate high-end museum experience. Marvel at Bernini turning cold marble into soft skin and sprouting leaves in Apollo and Daphne, and inspect six foundational masterworks by Caravaggio.",
              "Bernini's Apollo and Daphne, Pluto and Persephone, Caravaggio's Boy with a Basket of Fruit, Canova's Paolina Borghese.",
-             "https://images.unsplash.com/photo-1548126032-079a0fb0099d?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-07-rome-galleria-borghese.jpg"),
             # 8. Florence - Accademia
             (8, "Michelangelo's David & The Anatomy of Marble",
              "Gaze upon the supreme icon of male beauty, Michelangelo's colossal David, and the dramatic unfinished Slaves.",
@@ -202,7 +202,7 @@ def seed_db():
              standard_addons,
              "Witness the statue that defined the Renaissance. Stand beneath the 17-foot David, carved from a single flawed block of Carrara marble, and observe the unfinished 'Slaves' struggling to free themselves from stone.",
              "Michelangelo's David (1504), The Prisoners / Slaves series, Stradivari 1690 Medici cello, Giambologna plaster cast.",
-             "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-08-florence-accademia.jpg"),
             # 9. Venice - Peggy Guggenheim
             (9, "Peggy Guggenheim Avant-Garde & Canal Sculptures",
              "Explore surrealism, cubism, and abstract expressionism inside an eccentric 18th-century palace on Venice's Grand Canal.",
@@ -214,7 +214,7 @@ def seed_db():
              standard_addons,
              "The ultimate antidote to Venice's ancient architecture. Wander through light-filled rooms containing Pollock drip paintings, Picasso cubist studies, Magritte surrealist skies, and Marino Marini sculptures overlooking gondolas on the Grand Canal.",
              "Magritte's Empire of Light, Pollock's Alchemy, Ernst, Kandinsky, and Peggy Guggenheim's garden tomb.",
-             "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-09-venice-peggy-guggenheim.jpg"),
             # 10. Milan - Pinacoteca di Brera
             (10, "Pinacoteca di Brera & Masterpieces of Italian Painting",
              "Stroll through Milan's artistic soul in the bohemian Brera district, witnessing Hayez's The Kiss and Mantegna's Dead Christ.",
@@ -226,7 +226,7 @@ def seed_db():
              standard_addons,
              "Nestled in Milan's most romantic neighborhood, the Brera Pinacoteca displays northern Italy's greatest triumphs in perspective, chiaroscuro, and emotional drama, from Renaissance altarpieces to 19th-century Romanticism.",
              "Francesco Hayez's The Kiss, Andrea Mantegna's Dead Christ, Raphael's Marriage of the Virgin, Caravaggio's Supper at Emmaus.",
-             "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-10-milan-pinacoteca-brera.jpg"),
             # 11. Rome - Vatican Museums
             (2, "Vatican Museums, Raphael Rooms & Sistine Chapel",
              "Journey across 7 kilometers of papal galleries culminating in Michelangelo's breathtaking Sistine Chapel ceiling.",
@@ -238,7 +238,7 @@ def seed_db():
              standard_addons,
              "The summit of Western religious art. Gaze up at Michelangelo's Creation of Adam and The Last Judgment in the Sistine Chapel, explore Raphael's philosophical School of Athens, and marvel at the golden Cartographic corridors.",
              "Sistine Chapel ceiling, Raphael's School of Athens, Laocoön and His Sons, Bramante spiral staircase.",
-             "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-11-rome-vatican-sistine.jpg"),
             # 12. Naples - MANN
             (6, "National Archaeological Museum & The Farnese Marbles",
              "Encounter the monumental Farnese Hercules, Alexander Mosaic from Pompeii, and secret Roman erotic artifacts.",
@@ -250,103 +250,7 @@ def seed_db():
              standard_addons,
              "One of the world's most important classical antiquity museums, housing the colossal marbles discovered in the Baths of Caracalla and the delicate mosaics rescued from the ruins of Pompeii and Herculaneum.",
              "Alexander Mosaic from House of the Faun, Farnese Bull colossal marble, Farnese Hercules, Roman bronze statues.",
-             "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=80"),
-            # 13. Verona - Arena
-            (2, "Roman Arena & Opera Legends Sunset Tour",
-             "Explore the 2,000-year-old pink marble Roman amphitheater that transforms into the world's most prestigious open-air opera stage.",
-             "Verona", "Roman Heritage & Opera", 90, 16.0, "Open Air Wonder", 0,
-             json.dumps(["Priority Arena di Verona Entry",
-                         "Climb to Upper Tier Panorama",
-                         "Opera Set Design Exhibition",
-                         "Verona Historic Center Audio Trail"]),
-             standard_addons,
-             "Older than the Colosseum in Rome, Verona's pristine Roman Arena offers breathtaking vistas across the Adige River and Piazza Bra, showcasing how ancient gladiatorial arenas evolve into temples of music.",
-             "Ancient Roman internal arches, Arena summit sunset view, Scenographic opera exhibits.",
-             "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80"),
-            # 14. Palermo - Palazzo dei Normanni
-            (1, "Norman Palace & Palatine Chapel Gold Mosaics",
-             "Witness the dazzling convergence of Byzantine, Arab, and Norman craftsmanship in Sicily's most glittering royal chapel.",
-             "Palermo", "Byzantine & Arab-Norman", 90, 19.0, "Golden Mosaics", 0,
-             json.dumps(["Full Royal Palace & Cappella Palatina Entry",
-                         "Royal Apartments of the Kings of Sicily",
-                         "Subtropical Royal Gardens Access",
-                         "Arab-Norman Architectural Symbol Guide"]),
-             standard_addons,
-             "A breathtaking gem of multicultural medieval Europe. Marvel at ceiling-to-floor 24-karat gold mosaics depicting Christ Pantocrator, intricate Islamic muqarnas wooden ceilings, and centuries of Norman royal history.",
-             "Christ Pantocrator gold dome mosaic, Islamic carved wooden ceiling, Roger II royal bedroom, Romanesque arches.",
-             "https://images.unsplash.com/photo-1548126032-079a0fb0099d?auto=format&fit=crop&w=1200&q=80"),
-            # 15. Bologna - Archiginnasio
-            (4, "Medieval Towers, Anatomical Theater & University Lore",
-             "Explore Europe's oldest university, the wooden 17th-century Anatomical dissection theater, and 6,000 student heraldic coats of arms.",
-             "Bologna", "Medieval & Science History", 90, 15.0, "Secret University", 0,
-             json.dumps(["Archiginnasio Palace & Anatomical Theater Entry",
-                         "Stabat Mater Historic Lecture Hall",
-                         "Bologna Porticoes Walking Guide",
-                         "Heraldic Library Highlights"]),
-             standard_addons,
-             "Discover the birthplace of modern European higher learning. Step inside the fragrant cedar-wood Anatomical Theater where Galileo's contemporaries dissected human cadavers by candlelight beneath statues of ancient physicians.",
-             "Carved wooden Anatomical Theater (1637), Spellati statues, 6,000 student coats of arms, Stabat Mater hall.",
-             "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=1200&q=80"),
-            # 16. Turin - Musei Reali
-            (4, "Royal Palace of Savoy & The Armory of Kings",
-             "Step into royal opulence with glittering state rooms, one of the world's greatest equestrian armories, and Leonardo da Vinci's self-portrait.",
-             "Turin", "Royal Splendor & Armory", 150, 22.0, "Royal Court", 0,
-             json.dumps(["Palazzo Reale State Apartments Access",
-                         "Royal Armory (Armeria Reale)",
-                         "Sabauda Picture Gallery",
-                         "Royal Gardens of Andre Le Notre"]),
-             standard_addons,
-             "Turin was the first capital of unified Italy and the seat of the House of Savoy. Tour the Throne Room, mirror galleries, and the astounding Royal Armory featuring knightly armor forged by medieval armorers.",
-             "Armeria Reale knight equestrian gallery, Royal Throne Room, Holy Shroud Chapel architecture, Sabauda Gallery.",
-             "https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&w=1200&q=80"),
-            # 17. Florence - Bargello
-            (1, "Bargello Sculpture Treasury & Donatello's Bronze",
-             "The fortress palace housing Donatello's bronze David, Michelangelo's early Bacchus, and Renaissance decorative arts.",
-             "Florence", "Renaissance Sculpture", 90, 18.0, "Sculpture Haven", 0,
-             json.dumps(["Full Bargello National Museum Entry",
-                         "Donatello & Verrocchio Sculptures Hall",
-                         "Medici Ivory & Jewelry Collection",
-                         "Medieval Courtyard & Prison Walk"]),
-             standard_addons,
-             "Often overshadowed by the Uffizi, the Bargello is the world's most intimate museum of Renaissance three-dimensional art. Set within a 13th-century fortress, it showcases the masterpieces that sparked the Florentine revolution.",
-             "Donatello's Bronze David (1440), Michelangelo's Bacchus, Giambologna's Flying Mercury, Brunelleschi vs Ghiberti competition panels.",
-             "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?auto=format&fit=crop&w=1200&q=80"),
-            # 18. Milan - Museo del Novecento
-            (5, "Futurism, Boccioni & 20th Century Pioneers",
-             "Witness the energetic revolution of Italian modernism with Fontana's glowing neon and front-row Duomo terrace views.",
-             "Milan", "Modern & Contemporary", 90, 15.0, "Duomo View", 0,
-             json.dumps(["Museo del Novecento Permanent Collection Entry",
-                         "Lucio Fontana Spatial Neon Room",
-                         "Futurism Gallery (Balla, Boccioni, Severini)",
-                         "Duomo di Milano Panoramic Terrace Access"]),
-             standard_addons,
-             "Located right inside Piazza del Duomo, this dynamic museum traces Italy's 20th-century artistic vanguard: Futurism, Metaphysical painting, Spatialism, and Arte Povera, topped off by an unforgettable viewpoint facing the Duomo spires.",
-             "Umberto Boccioni's Unique Forms of Continuity in Space, Pellizza da Volpedo's Il Quarto Stato, Lucio Fontana neon ceiling.",
-             "https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=1200&q=80"),
-            # 19. Venice - Museo Correr
-            (3, "Correr Museum & Napoleonic Royal Rooms",
-             "Discover the art, naval conquests, and daily life of Venetian Doges across Empress Sisi's neoclassical imperial apartments.",
-             "Venice", "Venetian History & Art", 100, 25.0, "St. Mark's Square", 0,
-             json.dumps(["Museo Correr Full Entry",
-                         "Imperial Apartments of Empress Elisabeth (Sisi)",
-                         "Canova Marble Sculpture Gallery",
-                         "Venetian Navigational Instruments & Coins Collection"]),
-             standard_addons,
-             "Commanding the western end of Piazza San Marco, the Correr Museum reveals Venice beyond the canals: its naval supremacy, Doge election ballots, coin mints, and stunning Canova statues inside neoclassical ballrooms.",
-             "Antonio Canova's Daedalus and Icarus, Empress Sisi's boudoir, Antonello da Messina's Pieta, Venetian globes.",
-             "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80"),
-            # 20. Rome - Musei Capitolini
-            (2, "Capitoline Museums & The Foundations of Rome",
-             "Explore the world's oldest public museum atop the Capitoline Hill, home to the She-Wolf, Dying Gaul, and Marcus Aurelius bronze.",
-             "Rome", "Ancient Classical", 120, 22.0, "Oldest Museum", 0,
-             json.dumps(["Full Capitoline Museums & Tabularium Entry",
-                         "Overlook of the Roman Forum from Ancient Archives",
-                         "Marcus Aurelius Original Gilded Equestrian Bronze",
-                         "Lupa Capitolina Bronze Gallery"]),
-             standard_addons,
-             "Founded in 1471 by Pope Sixtus IV, the Capitoline Museums sit on Michelangelo's famous piazza. Walk through underground tunnels connecting the palaces and gaze out over the entire Roman Forum from the ancient Tabularium.",
-             "Lupa Capitolina (Capitoline She-Wolf), The Dying Gaul, Colossus of Constantine marble fragments, Tabularium Forum View.",
-             "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=80"),
+             "/static/images/experiences/exp-12-naples-mann.jpg"),
         ]
 
         db.executemany(
@@ -396,7 +300,7 @@ def seed_db():
         )
 
         db.commit()
-        print("Database successfully seeded with Top 20 Experiences and demo user!")
+        print("Database successfully seeded with Top 12 Experiences and demo user!")
 
 
 if __name__ == '__main__':

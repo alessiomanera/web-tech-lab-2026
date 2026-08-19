@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Explore 20 Curated Italian Cultural Experiences{% endblock %}
+{% block title %}Explore 12 Curated Italian Cultural Experiences{% endblock %}
 
 {% block content %}
 <div class="mb-2">
     <span class="badge badge-yellow">Italy Cultural Catalog</span>
     <h1 class="mb-05 mt-0 title-large">Explore Experiences</h1>
     <p class="text-lg subtitle-wide">
-        Browse 20 curated Italian cultural packages designed for depth, convenience, and priority access. Filter by city or search by art period.
+        Browse 12 curated Italian cultural packages designed for depth, convenience, and priority access. Filter by city or search by art period.
     </p>
 </div>
 
@@ -41,8 +41,23 @@
     </div>
 </div>
 
+<!-- Catalog Toolbar & View Switcher -->
+<div class="catalog-toolbar">
+    <div class="results-count-text">
+        Showing <strong>{{ experiences|length }}</strong> curated cultural experiences
+    </div>
+    <div class="view-toggle-group" role="group" aria-label="Catalog Display Mode">
+        <button type="button" class="view-toggle-btn active" id="view-standard-btn" data-view="standard" aria-pressed="true">
+            <span>⊞</span> Standard
+        </button>
+        <button type="button" class="view-toggle-btn" id="view-compact-btn" data-view="compact" aria-pressed="false">
+            <span>⊟</span> Compact
+        </button>
+    </div>
+</div>
+
 <!-- Experiences Results Grid -->
-<div class="grid-auto">
+<div class="grid-auto experiences-grid" id="experiences-grid">
     {% for exp in experiences %}
     <article class="experience-card" aria-labelledby="exp-title-{{ exp.id }}">
         <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
@@ -98,7 +113,7 @@
     <div class="card-empty-search">
         <h3 class="text-transform-uppercase">No Experiences Matched Your Search</h3>
         <p>Try resetting the city filter or searching for another keyword.</p>
-        <a href="{{ url_for('main.experiences') }}" class="cta-button mt-1">View All 20 Experiences</a>
+        <a href="{{ url_for('main.experiences') }}" class="cta-button mt-1">View All 12 Experiences</a>
     </div>
     {% endfor %}
 </div>
