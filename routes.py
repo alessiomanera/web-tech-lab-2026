@@ -15,9 +15,6 @@ from flask import Blueprint, render_template, request, jsonify, session, redirec
 from auth import login_required
 from database import get_db
 
-# TODO: Re-enable Gemini API integration once an API key is configured.
-# import google.generativeai as genai
-
 main_bp = Blueprint('main', __name__)
 
 
