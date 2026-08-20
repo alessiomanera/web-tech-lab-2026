@@ -11,6 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
 }
 
 /* Custom Cursors (Tactile Neo-Brutalism) */
@@ -34,6 +35,7 @@ body {
     .cta-button:not(:disabled), 
     .nav-cta,
     .nav-link,
+    .nav-theme-btn,
     .filter-pill, 
     .time-slot-pill, 
     .addon-choice-card, 
@@ -116,6 +118,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 nav {
@@ -139,20 +142,20 @@ nav {
     flex-shrink: 0;
     border: 2px solid var(--border-color);
     box-shadow: 3px 3px 0px 0px var(--border-color);
-    background: #000000;
-    color: #FFFFFF;
+    background: var(--text-primary);
+    color: var(--bg-color);
     line-height: 1;
 }
 
 .logo .logo-tag {
-    background: #000000;
-    color: #FFFFFF;
+    background: var(--text-primary);
+    color: var(--bg-color);
     padding: 0.45rem 0.65rem;
 }
 
 .logo .logo-accent {
-    background: #FFFFFF;
-    color: var(--primary-hover);
+    background: var(--surface-color);
+    color: var(--primary-color);
     padding: 0.45rem 0.65rem;
     border-left: 2px solid var(--border-color);
 }
@@ -189,7 +192,7 @@ nav {
 }
 
 .nav-link:hover, .nav-link:focus {
-    background: #FAFAFA;
+    background: var(--surface-subtle);
     border: 2px solid var(--border-color);
     color: var(--primary-hover);
     box-shadow: 2px 2px 0px 0px var(--border-color);
@@ -202,12 +205,12 @@ nav {
 
 .nav-link.nav-ai-link:hover {
     color: var(--accent-color);
-    background: #F0F5FF;
+    background: var(--surface-subtle);
 }
 
 .nav-link.nav-ai-link .ai-sparkle {
     color: var(--accent-yellow);
-    text-shadow: 1px 1px 0px #000;
+    text-shadow: 1px 1px 0px var(--border-color);
     font-size: 1rem;
 }
 
@@ -216,6 +219,51 @@ nav {
     align-items: center;
     gap: 0.75rem;
     flex-shrink: 0;
+}
+
+/* Tactile Neubrutalist Theme Toggle Button */
+.nav-theme-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: var(--border-width) solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-primary);
+    box-shadow: 3px 3px 0px 0px var(--border-color);
+    cursor: pointer;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), background var(--transition-speed);
+}
+
+.nav-theme-btn svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.nav-theme-btn:hover, .nav-theme-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px 0px var(--border-color);
+    background: var(--surface-subtle);
+}
+
+/* Light Theme: Show Moon icon (action: switch to dark), Hide Sun */
+:root .theme-icon-sun, [data-theme="light"] .theme-icon-sun {
+    display: none !important;
+}
+:root .theme-icon-moon, [data-theme="light"] .theme-icon-moon {
+    display: block !important;
+}
+
+/* Dark Theme: Show Sun icon (action: switch to light), Hide Moon */
+[data-theme="dark"] .theme-icon-sun {
+    display: block !important;
+}
+[data-theme="dark"] .theme-icon-moon {
+    display: none !important;
 }
 
 .nav-cta {
@@ -242,20 +290,22 @@ nav {
 
 .nav-cta-yellow {
     background: var(--accent-yellow);
-    color: #000000;
+    color: #000000 !important;
 }
 
 .nav-cta-yellow:hover {
-    background: #E5B800;
+    background: var(--accent-yellow-hover);
+    color: #000000 !important;
 }
 
 .nav-cta-blue {
     background: var(--accent-color);
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
 
 .nav-cta-blue:hover {
-    background: #0044CC;
+    background: var(--accent-hover);
+    color: #FFFFFF !important;
 }
 
 .nav-logout {
@@ -272,6 +322,7 @@ footer {
     color: var(--text-primary);
     margin-top: auto;
     font-size: 0.9rem;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 footer .footer-title {
@@ -293,14 +344,14 @@ footer .footer-info {
 }
 
 ::-webkit-scrollbar-track {
-    background: #FFFFFF;
-    border-left: 2px solid #000000;
+    background: var(--bg-color);
+    border-left: 2px solid var(--border-color);
     cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto) !important;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 3px solid #FFFFFF;
+    background-color: var(--text-primary);
+    border: 3px solid var(--bg-color);
     cursor: var(--cursor-default, url('/static/images/cursor.svg') 2 2, auto) !important;
 }
 
@@ -311,7 +362,7 @@ footer .footer-info {
 
 * {
     scrollbar-width: auto;
-    scrollbar-color: #000000 #FFFFFF;
+    scrollbar-color: var(--text-primary) var(--bg-color);
 }
 
 @media (max-width: 992px) {

@@ -57,7 +57,7 @@
    --------------------------------------------------------- */
 .cta-button {
     background: var(--primary-hover);
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow-hard);
@@ -80,29 +80,34 @@
     transform: translate(4px, 4px);
     box-shadow: 0px 0px 0px 0px var(--border-color);
     background: var(--primary-hover);
+    color: #FFFFFF !important;
 }
 
 .cta-button-blue {
     background: var(--accent-color);
+    color: #FFFFFF !important;
 }
 .cta-button-blue:hover, .cta-button-blue:active {
-    background: #0044CC;
+    background: var(--accent-hover);
+    color: #FFFFFF !important;
 }
 
 .cta-button-yellow {
     background: var(--accent-yellow);
-    color: #000000;
+    color: #000000 !important;
 }
 .cta-button-yellow:hover, .cta-button-yellow:active {
-    background: #E5B800;
+    background: var(--accent-yellow-hover);
+    color: #000000 !important;
 }
 
 .cta-button-outline {
-    background: #FFFFFF;
-    color: #000000;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 .cta-button-outline:hover, .cta-button-outline:active {
-    background: #F0F0F0;
+    background: var(--surface-subtle);
+    color: var(--primary-hover);
 }
 
 .cta-button:disabled {
@@ -131,13 +136,14 @@
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     background: var(--accent-yellow);
-    color: #000000;
-    box-shadow: 2px 2px 0px 0px #000000;
+    color: #000000 !important;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
-.badge-blue { background: var(--accent-color); color: #FFFFFF; }
-.badge-red { background: var(--primary-hover); color: #FFFFFF; }
-.badge-white { background: #FFFFFF; color: #000000; }
+.badge-yellow { background: var(--accent-yellow); color: #000000 !important; }
+.badge-blue { background: var(--accent-color); color: #FFFFFF !important; }
+.badge-red { background: var(--primary-hover); color: #FFFFFF !important; }
+.badge-white { background: var(--surface-color); color: var(--text-primary) !important; }
 
 .filter-pills-bar {
     display: flex;
@@ -150,8 +156,8 @@
     padding: 0.5rem 1.25rem;
     font-size: 0.9rem;
     font-weight: 800;
-    background: #FFFFFF;
-    color: #000000;
+    background: var(--surface-color);
+    color: var(--text-primary);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow-hard);
@@ -161,15 +167,16 @@
 
 .filter-pill:hover, .filter-pill.active {
     background: var(--accent-yellow);
+    color: #000000 !important;
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px #000000;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
 /* ---------------------------------------------------------
    4. Experience Cards (Catalog & Previews)
    --------------------------------------------------------- */
 .experience-card {
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow-hard);
@@ -201,7 +208,7 @@
 .experience-price-tag {
     font-size: 1.35rem;
     font-weight: 900;
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .experience-duration {
@@ -257,11 +264,11 @@
     display: inline-flex;
     border: var(--border-width) solid var(--border-color);
     box-shadow: 3px 3px 0px 0px var(--border-color);
-    background: #FFFFFF;
+    background: var(--surface-color);
 }
 
 .view-toggle-btn {
-    background: #FFFFFF;
+    background: var(--surface-color);
     color: var(--text-primary);
     border: none;
     padding: 0.45rem 0.85rem;
@@ -282,12 +289,12 @@
 }
 
 .view-toggle-btn:hover {
-    background: #F0F0F0;
+    background: var(--surface-subtle);
 }
 
 .view-toggle-btn.active {
-    background: #000000;
-    color: #FFFFFF;
+    background: var(--text-primary);
+    color: var(--bg-color);
 }
 
 /* Compact View Grid Modifications */
@@ -390,7 +397,7 @@
 
 .form-input, .form-select, .form-textarea {
     padding: 0.85rem 1.25rem;
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow-hard);
@@ -408,8 +415,8 @@
 }
 
 .form-input::placeholder, .form-textarea::placeholder {
-    color: #555555;
-    opacity: 1;
+    color: var(--text-secondary);
+    opacity: 0.8;
 }
 
 /* ---------------------------------------------------------
@@ -449,18 +456,20 @@
     align-items: center;
     justify-content: center;
     border: var(--border-width) solid var(--border-color);
-    background: #FFFFFF;
-    box-shadow: 2px 2px 0px 0px #000000;
+    background: var(--surface-color);
+    box-shadow: 2px 2px 0px 0px var(--border-color);
     font-weight: 900;
+    color: var(--text-primary);
 }
 
 .wizard-step-node.active .wizard-step-badge {
     background: var(--accent-yellow);
+    color: #000000 !important;
 }
 
 .wizard-step-node.completed .wizard-step-badge {
     background: var(--accent-color);
-    color: #FFFFFF;
+    color: #FFFFFF !important;
 }
 
 .wizard-panel {
@@ -474,7 +483,7 @@
 .addon-choice-card {
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
-    background: #FFFFFF;
+    background: var(--surface-color);
     padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
@@ -486,11 +495,11 @@
 
 .addon-choice-card:hover {
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px #000000;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
 .addon-choice-card.selected {
-    background: #EBF2FF;
+    background: var(--review-bg);
     border-color: var(--accent-color);
 }
 
@@ -508,24 +517,26 @@
     font-size: 0.95rem;
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
-    background: #FFFFFF;
+    background: var(--surface-color);
+    color: var(--text-primary);
     cursor: pointer;
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 .time-slot-pill:hover, .time-slot-pill.active {
     background: var(--accent-yellow);
+    color: #000000 !important;
     transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px 0px #000000;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
 /* ---------------------------------------------------------
    7. Confirmed Digital Pass
    --------------------------------------------------------- */
 .digital-pass-card {
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
-    box-shadow: 6px 6px 0px 0px #000000;
+    box-shadow: var(--box-shadow-hard-lg);
     padding: 2.5rem;
     max-width: 580px;
     margin: 0 auto;
@@ -543,6 +554,7 @@
 
 .pass-code-pill {
     background: var(--accent-yellow);
+    color: #000000 !important;
     border: var(--border-width) solid var(--border-color);
     padding: 0.4rem 0.85rem;
     font-weight: 900;
@@ -569,7 +581,7 @@
 .chat-stream-box {
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
-    background: #FFFFFF;
+    background: var(--surface-color);
     display: flex;
     flex-direction: column;
     height: 580px;
@@ -589,36 +601,36 @@
     padding: 1rem 1.35rem;
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
-    box-shadow: 3px 3px 0px 0px #000000;
+    box-shadow: 3px 3px 0px 0px var(--border-color);
     font-size: 0.95rem;
     line-height: 1.5;
 }
 
 .chat-msg-user {
     align-self: flex-end;
-    background: #000000;
-    color: #FFFFFF;
-    border: var(--border-width) solid #000000;
-    box-shadow: 4px 4px 0px 0px var(--accent-yellow);
+    background: var(--text-primary);
+    color: var(--bg-color);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: 4px 4px 0px 0px var(--border-color);
 }
 
 .chat-msg-user p,
 .chat-msg-user span,
 .chat-msg-user div {
-    color: #FFFFFF !important;
+    color: var(--bg-color) !important;
 }
 
 .chat-msg-model {
     align-self: flex-start;
-    background: #FFFFFF;
-    color: #000000;
-    border: var(--border-width) solid #000000;
-    box-shadow: 4px 4px 0px 0px #000000;
+    background: var(--surface-subtle);
+    color: var(--text-primary);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: 3px 3px 0px 0px var(--border-color);
 }
 
 .chat-msg-model p,
 .chat-msg-model span {
-    color: #000000 !important;
+    color: var(--text-primary) !important;
 }
 
 .chat-input-bar {
@@ -626,14 +638,14 @@
     padding: 1rem;
     display: flex;
     gap: 0.75rem;
-    background: #FAFAFA;
+    background: var(--surface-subtle);
 }
 
 /* In-Chat Actionable Experience Card */
 .chat-exp-card {
-    background: #FFFFFF;
-    border: var(--border-width) solid #000000;
-    box-shadow: 3px 3px 0px 0px #000000;
+    background: var(--surface-color);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: 3px 3px 0px 0px var(--border-color);
     padding: 1rem;
     margin: 0.85rem 0;
     width: 100%;
@@ -653,7 +665,7 @@
 .memory-side-card {
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
-    background: #FFFFFF;
+    background: var(--surface-color);
     padding: 1.5rem;
     height: fit-content;
 }
@@ -663,14 +675,14 @@
    --------------------------------------------------------- */
 .hero {
     text-align: center;
-    padding: 5rem 2rem;
+    padding: 4.5rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.75rem;
     border: var(--border-width) solid var(--border-color);
-    background: var(--accent-yellow);
-    box-shadow: var(--box-shadow-hard);
+    background: var(--surface-color);
+    box-shadow: var(--box-shadow-hard-lg);
     margin-bottom: 3.5rem;
 }
 
@@ -702,7 +714,7 @@
 .step-box {
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
-    background: #FFFFFF;
+    background: var(--surface-color);
     padding: 2rem;
     text-align: center;
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
@@ -710,7 +722,7 @@
 
 .step-box:hover {
     transform: translate(4px, 4px);
-    box-shadow: 0px 0px 0px 0px #000000;
+    box-shadow: 0px 0px 0px 0px var(--border-color);
 }
 
 .step-num-pill {
@@ -721,16 +733,16 @@
     text-align: center;
     font-weight: 900;
     font-size: 1.25rem;
-    border: var(--border-width) solid #000000;
+    border: var(--border-width) solid var(--border-color);
     background: var(--primary-color);
-    color: #FFFFFF;
-    box-shadow: 2px 2px 0px 0px #000000;
+    color: #FFFFFF !important;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
     margin-bottom: 1rem;
 }
 
 .error-message {
     display: none; /* JS toggles it to block, or server-side renders with display: block */
-    background: #FFEBEB;
+    background: var(--error-bg);
     color: var(--error-color, #D32F2F);
     border: var(--border-width) solid var(--border-color);
     padding: 0.75rem 1.25rem;
@@ -755,7 +767,7 @@
 }
 
 .text-primary-color:hover {
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .text-accent-color {
@@ -811,11 +823,12 @@
 
 .step-num-blue {
     background: var(--accent-color);
+    color: #FFFFFF !important;
 }
 
 .step-num-yellow {
     background: var(--accent-yellow);
-    color: #000;
+    color: #000000 !important;
 }
 
 .cta-button-sm {
@@ -873,7 +886,7 @@
 }
 
 .search-filter-card {
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
     padding: 1.5rem;
@@ -950,7 +963,7 @@
 
 .card-empty-search {
     grid-column: 1 / -1;
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
     padding: 3rem;
@@ -963,7 +976,7 @@
 }
 
 .preview-box {
-    background: #FAFAFA;
+    background: var(--surface-subtle);
     border: var(--border-width) solid var(--border-color);
     padding: 1.25rem;
     margin-bottom: 1.5rem;
@@ -1007,7 +1020,7 @@
 }
 
 .summary-box {
-    background: #FAFAFA;
+    background: var(--surface-subtle);
     border: var(--border-width) solid var(--border-color);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
@@ -1016,7 +1029,7 @@
 .summary-header {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid #CCC;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
 }
@@ -1057,8 +1070,8 @@
 }
 
 .pass-barcode {
-    background: #000000;
-    color: #FFFFFF;
+    background: var(--text-primary);
+    color: var(--bg-color);
     padding: 1rem;
     text-align: center;
     font-family: monospace;
@@ -1097,7 +1110,7 @@
 }
 
 .bg-white {
-    background: #FFFFFF;
+    background: var(--surface-color);
 }
 
 .card-header {
@@ -1119,8 +1132,8 @@
     gap: 0.75rem;
     font-size: 0.9rem;
     margin-bottom: 1rem;
-    background: #FAFAFA;
-    border: 2px solid #000;
+    background: var(--surface-subtle);
+    border: 2px solid var(--border-color);
     padding: 0.85rem;
 }
 
@@ -1149,12 +1162,12 @@
 
 .feedback-section {
     margin-top: 1.25rem;
-    border-top: 1px dashed #CCC;
+    border-top: 1px dashed var(--border-color);
     padding-top: 1rem;
 }
 
 .review-box {
-    background: #EBF2FF;
+    background: var(--review-bg);
     border: 2px solid var(--accent-color);
     padding: 0.75rem;
 }
@@ -1165,7 +1178,7 @@
 }
 
 .review-stars {
-    color: #FF9900;
+    color: var(--accent-yellow);
     font-size: 1.1rem;
 }
 
@@ -1216,7 +1229,7 @@
 }
 
 .card-empty-bookings {
-    background: #FFFFFF;
+    background: var(--surface-color);
     border: var(--border-width) solid var(--border-color);
     box-shadow: var(--box-shadow-hard);
     padding: 2.5rem;
@@ -1255,13 +1268,13 @@
 }
 
 .memory-profile-box {
-    background: #FFFFFF;
+    background: var(--surface-subtle);
     border: var(--border-width) solid var(--border-color);
     padding: 1.25rem;
     font-size: 0.95rem;
     line-height: 1.5;
     margin-bottom: 1.5rem;
-    box-shadow: 2px 2px 0px 0px #000000;
+    box-shadow: 2px 2px 0px 0px var(--border-color);
 }
 
 .taste-profile-list {
@@ -1278,7 +1291,7 @@
     flex-direction: column;
     gap: 0.2rem;
     padding-bottom: 0.65rem;
-    border-bottom: 1px dashed #CCCCCC;
+    border-bottom: 1px dashed var(--border-color);
 }
 
 .taste-item:last-child {
@@ -1297,7 +1310,7 @@
 .taste-value {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #000000;
+    color: var(--text-primary);
 }
 
 .italic-secondary-m-0 {
@@ -1367,7 +1380,7 @@
 }
 
 .highlights-box {
-    background: #FAFAFA;
+    background: var(--surface-subtle);
     border: var(--border-width) solid var(--border-color);
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -1408,9 +1421,9 @@
 }
 
 .addon-preview-box {
-    border: 2px solid #000;
+    border: 2px solid var(--border-color);
     padding: 0.85rem;
-    background: #FAFAFA;
+    background: var(--surface-subtle);
 }
 
 .addon-name {
@@ -1464,8 +1477,8 @@
 
 .chips-container {
     padding: 0.75rem 1rem;
-    border-top: 1px solid #E0E0E0;
-    background: #F8F8F8;
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-subtle);
     display: flex;
     gap: 0.5rem;
     overflow-x: auto;
@@ -1483,7 +1496,7 @@
 }
 
 .memory-box-sm {
-    background: #FAFAFA;
+    background: var(--surface-subtle);
     border: var(--border-width) solid var(--border-color);
     padding: 1rem;
     font-size: 0.88rem;
@@ -1497,7 +1510,7 @@
     margin: 2.5rem auto;
     padding: 3.5rem 2rem;
     text-align: center;
-    background: #FFFFFF;
+    background: var(--surface-color);
 }
 
 .error-badge-lg {
@@ -1518,3 +1531,4 @@
     line-height: 1.6;
     font-size: 1.1rem;
 }
+
