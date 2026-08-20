@@ -72,7 +72,9 @@
     <div class="grid-auto">
         {% for exp in featured %}
         <article class="experience-card" aria-labelledby="exp-title-{{ exp.id }}">
-            <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
+            <a href="{{ url_for('main.experience_detail', exp_id=exp.id) }}" class="no-decor">
+                <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
+            </a>
             <div class="card-content">
                 <div class="experience-header-meta">
                     <span class="badge">{{ exp.city }}</span>
@@ -82,7 +84,9 @@
                 </div>
                 
                 <h3 id="exp-title-{{ exp.id }}" class="card-title card-title-sm">
-                    {{ exp.title }}
+                    <a href="{{ url_for('main.experience_detail', exp_id=exp.id) }}" class="no-decor" style="color: inherit;">
+                        {{ exp.title }}
+                    </a>
                 </h3>
                 
                 <p class="card-description">

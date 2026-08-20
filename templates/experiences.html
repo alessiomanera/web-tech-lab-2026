@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="mb-2">
-    <span class="badge badge-yellow">Italy Cultural Catalog</span>
+    <span class="badge badge-blue">Italy Cultural Catalog</span>
     <h1 class="mb-05 mt-0 title-large">Explore Experiences</h1>
     <p class="text-lg subtitle-wide">
         Browse 12 curated Italian cultural packages designed for depth, convenience, and priority access. Filter by city or search by art period.
@@ -60,7 +60,9 @@
 <div class="grid-auto experiences-grid" id="experiences-grid">
     {% for exp in experiences %}
     <article class="experience-card" aria-labelledby="exp-title-{{ exp.id }}">
-        <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
+        <a href="{{ url_for('main.experience_detail', exp_id=exp.id) }}" class="no-decor">
+            <img src="{{ exp.image_url }}" alt="{{ exp.title }}" class="experience-card-img" loading="lazy">
+        </a>
         
         <div class="card-content">
             <div class="experience-header-meta">
@@ -71,7 +73,9 @@
             </div>
             
             <h2 id="exp-title-{{ exp.id }}" class="card-title card-title-sm-margin">
-                {{ exp.title }}
+                <a href="{{ url_for('main.experience_detail', exp_id=exp.id) }}" class="no-decor" style="color: inherit;">
+                    {{ exp.title }}
+                </a>
             </h2>
             
             <span class="card-theme">

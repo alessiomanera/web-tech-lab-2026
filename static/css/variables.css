@@ -1,38 +1,96 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap');
 
-/* Neo-Brutalism Design System */
-:root {
-    /* Color Palette */
-    --bg-color: #FFFFFF; /* Pure White */
-    --surface-color: #FFFFFF; /* Pure White surface */
+/* ==========================================================================
+   NEUBRUTALISM DESIGN SYSTEM TOKENS (https://neubrutalism.com/)
+   Base Canvas (White/Black) | Secondary (Vivid Red & Cobalt Blue) | Micro-Accents (Yellow)
+   ========================================================================== */
+
+/* Light Theme (Default) */
+:root, [data-theme="light"] {
+    /* Color Palette from https://neubrutalism.com/#anatomy */
+    --bg-color: #FFFFFF; /* Pure White Canvas */
+    --surface-color: #FFFFFF; /* Pure White Card Surface */
+    --surface-subtle: #FFFDF5; /* Canonical Neubrutalist Off-white */
+    --surface-inset: #F4F0EA;
     --text-primary: #000000; /* Solid Black */
-    --text-secondary: #333333; /* Dark Grey */
-    --border-color: #000000; /* Solid Black */
+    --text-secondary: #222222; /* Dark Grey */
+    --text-muted: #555555;
+    --border-color: #000000; /* Solid Black 3px */
     
-    /* Primary & Accent Colors */
-    --primary-color: #FF3333; /* Red */
-    --primary-hover: #E60000;
-    --accent-color: #0055FF; /* Blue */
-    --accent-yellow: #FFCC00; /* Yellow */
+    /* Canonical Secondary Colors (neubrutalism.com) */
+    --primary-color: #FF6B6B; /* Canonical Coral Red */
+    --primary-hover: #FA5252;
+    --accent-color: #74B9FF; /* Canonical Sky Blue */
+    --accent-hover: #54A0FF;
     
-    --error-color: #d32f2f;
-    --success-color: #388e3c;
+    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY — Always with Black Text) */
+    --accent-yellow: #FFD23F; /* Canonical Bold Yellow */
+    --accent-yellow-hover: #ECC02F;
     
-    /* Neo-Brutalist Variables */
-    --border-width: 3px; /* Thick borders */
-    --box-shadow-hard: 4px 4px 0px 0px var(--border-color); /* Hard block shadow */
+    /* Canonical Utility Accents */
+    --success-color: #88D498; /* Canonical Soft Green */
+    --accent-orange: #FFA552; /* Canonical Orange */
+    --accent-lavender: #B8A9FA; /* Canonical Lavender */
+    --error-color: #FF6B6B;
+    --error-bg: #FFEBEB;
+    --review-bg: #EBF4FF;
+    
+    /* Neo-Brutalist Metrics */
+    --border-width: 3px;
+    --box-shadow-hard: 4px 4px 0px 0px var(--border-color);
+    --box-shadow-hard-sm: 2px 2px 0px 0px var(--border-color);
+    --box-shadow-hard-lg: 6px 6px 0px 0px var(--border-color);
     
     /* Typography */
     --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     
-    /* Metrics */
-    --border-radius: 0px; /* Sharp corners */
+    --border-radius: 0px;
     --border-radius-lg: 0px;
-    --transition-speed: 0.1s; /* Snappy mechanical interaction */
+    --transition-speed: 0.15s;
     --max-width: 1200px;
 
     /* Custom SVG Cursors */
     --cursor-default: url('/static/images/cursor.svg') 2 2, auto;
+    --cursor-pointer: url('/static/images/cursor-pointer.svg') 14 2, pointer;
+}
+
+/* High-Contrast Neo-Brutalist Dark Theme */
+[data-theme="dark"] {
+    /* Color Palette */
+    --bg-color: #121212; /* Deep Obsidian Canvas */
+    --surface-color: #1C1C1C; /* Dark Card Surface */
+    --surface-subtle: #242424; /* Dark Container */
+    --surface-inset: #2E2E2E;
+    --text-primary: #FFFFFF; /* Crisp Solid White */
+    --text-secondary: #CCCCCC; /* Clear Legible Grey */
+    --text-muted: #999999;
+    --border-color: #FFFFFF; /* Solid White 3px */
+    
+    /* Canonical Secondary Colors (neubrutalism.com) */
+    --primary-color: #FF6B6B; /* Canonical Coral Red */
+    --primary-hover: #FA5252;
+    --accent-color: #74B9FF; /* Canonical Sky Blue */
+    --accent-hover: #54A0FF;
+    
+    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY — Always with Black Text) */
+    --accent-yellow: #FFD23F; /* Canonical Bold Yellow */
+    --accent-yellow-hover: #ECC02F;
+    
+    /* Canonical Utility Accents */
+    --success-color: #88D498; /* Canonical Soft Green */
+    --accent-orange: #FFA552; /* Canonical Orange */
+    --accent-lavender: #B8A9FA; /* Canonical Lavender */
+    --error-color: #FF6B6B;
+    --error-bg: #2E1212;
+    --review-bg: #14243B;
+    
+    /* Neo-Brutalist Hard White Shadows */
+    --box-shadow-hard: 4px 4px 0px 0px #FFFFFF;
+    --box-shadow-hard-sm: 2px 2px 0px 0px #FFFFFF;
+    --box-shadow-hard-lg: 6px 6px 0px 0px #FFFFFF;
+
+    /* Inverted White Cursors for Dark Mode visibility */
+    --cursor-default: url('/static/images/cursor-pointer.svg') 2 2, auto;
     --cursor-pointer: url('/static/images/cursor-pointer.svg') 14 2, pointer;
 }
