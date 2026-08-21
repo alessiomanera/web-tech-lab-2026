@@ -10,7 +10,7 @@
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    border: 3px solid #FFCC00;
+    border: 3px solid var(--accent-yellow);
     box-shadow: 4px 4px 0px 0px #000000;
     z-index: 9999;
     transition: top 0.15s ease-in-out;
