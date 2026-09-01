@@ -7,8 +7,21 @@ This document serves as the master source of truth and historical tracking timel
 ## Phase 1: Foundation, Academic Guidelines & Planning
 - [x] **Review Academic Requirements & Evaluation Criteria**
   - [x] Analyze `AY2025_2026_project_guide.pdf` (30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge).
-  - [x] Confirm single-person group structure (Group-11 registered with Professor Yucel).
+  - [x] Confirm single-person group structure (Group-11 created by Professor Yucel; solo work declared 25 Jun 2026).
   - [x] Identify required technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask, SQLite).
+
+### Confirmed Academic Milestones (Sep 11, 2026 exam session)
+
+| Milestone | Status | Detail |
+| :--- | :--- | :--- |
+| Group members declared | [x] Done | Group-11 created by professor (25 Jun 2026). |
+| 1-page proposal submitted on Moodle | [x] Done | Uploaded 24 Aug 2026 (`PROJECT_PROPOSAL.pdf`). |
+| Professor proposal feedback | [x] Received | 22 Aug 2026 — approved, **no revisions requested**. Note: professor will cross-check originality against a past group's similar ticketing+AI project. |
+| Exam registration / booking | [x] Confirmed | Booked for Sep 11, 2026. |
+| **Project archive on Moodle** | [ ] **Due Sep 4, 23:55 (guide) / 23:59 (professor email)** | Target: well before Sep 4. |
+| Written exam | [ ] Sep 11, 10:00 (~40 min) | 5 multiple-choice + 3 open-ended; **scope = lecture slides**. |
+| Oral project presentation | [ ] Sep 11, ~11:00 (~30 min) | May be asked to stay as witness for another group. |
+
 - [x] **Repository Setup & Modular Directory Skeleton**
   - [x] Initialize Git repository with `testing` development branch workflow.
   - [x] Create standardized project hierarchy: `/templates/`, `/static/css/`, `/static/js/`, `/static/images/`, `/DOCS/`, `/instance/`.
@@ -23,11 +36,11 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Coding Guidelines & Documentation Standards**
   - [x] Author comprehensive project overview and coding standards (`README.md`).
   - [x] Compile detailed market and competitor analysis report (`DOCS/Competitor_Analysis.md`).
-  - [x] Synthesize course guidelines, exam rules, and architectural constraints (`DOCS/Project_Analysis_Report.md`).
-- [ ] **Submit 1-Page Proposal to Professor on Moodle**
-  - [ ] Generate clean A4 PDF from `DOCS/PROJECT_PROPOSAL.md`.
-  - [ ] Submit on Moodle before the semester proposal deadline.
-  - [ ] Review professor feedback and integrate any required adjustments.
+  - [x] Synthesize course guidelines, exam rules, and architectural constraints (internal working notes).
+- [x] **Submit 1-Page Proposal to Professor on Moodle**
+  - [x] Generate clean A4 PDF from `DOCS/PROJECT_PROPOSAL.md` (`PROJECT_PROPOSAL.pdf`, emailed 19 Aug 2026).
+  - [x] Submit on Moodle before the proposal deadline (uploaded 24 Aug 2026).
+  - [x] Review professor feedback — approved 22 Aug 2026 with **no revision requests**; no adjustments required.
 
 ---
 
@@ -55,7 +68,7 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Base Layout Template (`templates/base.html`)**
   - [x] Establish HTML5 semantic structure (`<header>`, `<nav>`, `<main>`, `<footer>`).
   - [x] User-centric navigation: `Home`, `Explore Experiences`, `Tailor Experience (AI)`, `Book Now`, `My Experiences`.
-  - [x] Set up flash messaging block with dismissible Neubrutalist alert boxes.
+  - [x] Render server-side flash messages as Neubrutalist alert boxes on the authentication forms (`login.html`, `register.html`).
 - [x] **Experience Economy Page Templates**
   - [x] `templates/index.html`: Landing page with hero banner, 3-step value workflow, and trending packages.
   - [x] `templates/experiences.html`: Full 12-Experience catalog with search bar, city/theme filter pills, and Standard/Compact view switcher with `localStorage` persistence.
@@ -121,7 +134,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Add comprehensive docstrings and inline comments across all functions and route handlers.
   - [x] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
 - [x] **Automated Test Suite Scaffold & Execution**
-  - [x] Built comprehensive 44-test automated test suite using Python standard library `unittest`.
+  - [x] Built comprehensive 51-test automated test suite using Python standard library `unittest`.
   - [x] Isolated test databases with full foreign key constraint checks (`test_database.py`).
   - [x] Authentication and PBKDF2 hashing verification (`test_auth.py`).
   - [x] Catalog search and multi-filtering tests (`test_catalog.py`).
@@ -134,6 +147,15 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Verify Cross-Site Scripting (XSS) prevention via Jinja2 auto-escaping.
   - [x] Verify secure password storage (Werkzeug SHA-256 / PBKDF2).
   - [x] Implement custom HTTP error pages (`400.html`, `404.html`, `500.html`).
+
+- [x] **Pre-Submission Security & Validation Hardening (Sep 2026)**
+  - [x] Close a reflected/stored XSS vector in the AI Concierge chat renderer: extract the inline `<script>` into `static/js/concierge.js`, escape all user input, model output, and stored taste-profile text before it reaches the DOM, and remove the dead `|safe`-filtered session history block.
+  - [x] Extract the profile dashboard inline `<script>` into `static/js/profile.js`; route both new modules through the previously-unused `static/js/api.js` fetch layer.
+  - [x] `/api/feedback`: return HTTP 400 (not 500) on non-numeric ratings and reject ratings outside the 1–5 range; use timezone-aware timestamps.
+  - [x] Render the branded custom 404 page for missing experiences via `abort(404)` instead of plain text.
+  - [x] Make booking codes collision-safe: 6-character suffix with retry on the `UNIQUE` constraint.
+  - [x] Honour a safe relative `?next=` redirect after login; reject absolute/off-site targets (open-redirect protection).
+  - [x] Correct the Gemini model identifier to `gemini-2.5-flash`; log the local-fallback path instead of silently swallowing the exception.
 - [x] **Cross-Device & Responsive Usability Testing**
   - [x] Validate responsive layout on desktop, tablet, and mobile viewports.
   - [x] Verify keyboard navigation and screen-reader accessibility.
@@ -154,9 +176,11 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Structure presentation outline and 5-minute live demonstration walkthrough.
   - [x] Align implementation details with technical evaluation criteria.
   - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
+  - [x] **High-Contrast Light/Dark Theme System (shipped in `e5c499f`):** canonical Neubrutalist palette (Coral Red `#FF6B6B`, Sky Blue `#74B9FF`, Bold Yellow `#FFD23F`, Soft Green `#88D498`) with a header toggle, `localStorage` persistence, SVG sun/moon icons, and an anti-FOUC bootstrap script in `<head>`.
   - [x] Document potential future enhancements:
-    - [ ] **Curated Color Palette Reduction & Light/Dark Theme Architecture:** Simplify the multi-color primary palette (reducing simultaneous red, blue, yellow) down to a strict monochrome base (`#FFFFFF` / `#000000`) with a single refined accent, and implement a high-contrast Neubrutalist Light/Dark theme toggle.
-    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and calendar sync integration.
+    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and `.ics` calendar sync integration.
+    - [ ] **Multi-turn Concierge:** send a running conversation history to Gemini (currently single-turn; only the persisted taste profile carries context).
+    - [ ] **Extended RAG grounding:** ground the concierge on `museums` and `exhibitions`, not only the `experiences` catalog.
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
   - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.
