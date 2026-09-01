@@ -156,8 +156,10 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Make booking codes collision-safe: 6-character suffix with retry on the `UNIQUE` constraint.
   - [x] Honour a safe relative `?next=` redirect after login; reject absolute/off-site targets (open-redirect protection).
   - [x] Correct the Gemini model identifier to `gemini-2.5-flash`; log the local-fallback path instead of silently swallowing the exception.
+  - [x] Reframe the AI Concierge: the Gemini RAG path is the core feature (requires `GEMINI_API_KEY`); the keyword-matching fallback is a labelled resilience safety net that does no RAG and no taste-profile updates. `/api/chat` now returns an `offline` flag and the concierge view shows a yellow banner when the fallback is active. Docs (README, project report) updated to match.
+  - [x] Replace the last deprecated `datetime.utcnow()` (in `seed.py`) with timezone-aware `datetime.now(timezone.utc)`.
 - [x] **Cross-Device & Responsive Usability Testing**
-  - [x] Validate responsive layout on desktop, tablet, and mobile viewports.
+  - [x] Validate responsive layout on desktop and tablet viewports; fixed the profile dashboard to stack to one column below 900px. Narrow-phone layouts are usable but lightly tested (recorded in the project report's Known Limitations).
   - [x] Verify keyboard navigation and screen-reader accessibility.
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**

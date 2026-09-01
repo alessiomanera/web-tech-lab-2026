@@ -8,7 +8,7 @@ and sample user profiles. Uses raw sqlite3 with parameterized queries.
 """
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash
 
 # We need a Flask app context to use database.get_db()
@@ -267,7 +267,7 @@ def seed_db():
         # ---------------------------------------------------------
         # 3. Create Sample Exhibitions & Seed User
         # ---------------------------------------------------------
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         exhibitions_data = [
             (1, "Botticelli: Line, Gold, and Melancholy",
              "A temporary monographic exhibition bringing together rare drawings and sacred panels from international collections.",
