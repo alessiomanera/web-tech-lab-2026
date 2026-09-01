@@ -6,6 +6,7 @@ Initializes the Flask app, configures the SQLite database via raw sqlite3,
 and registers blueprints.
 """
 import os
+import logging
 from flask import Flask
 from dotenv import load_dotenv
 import database
@@ -22,6 +23,8 @@ def create_app(test_config=None):
     load_dotenv()
 
     app = Flask(__name__)
+
+    logging.basicConfig(level=logging.INFO)
 
     # Configure default settings
     app.config['DATABASE'] = os.path.join(app.instance_path, 'app.db')
