@@ -61,7 +61,7 @@
                 </select>
             </div>
 
-            <div id="experience-preview-box" class="preview-box" style="display: {% if selected_exp %}block{% else %}none{% endif %};">
+            <div id="experience-preview-box" class="preview-box{% if not selected_exp %} is-hidden{% endif %}">
                 <div class="flex-between-center">
                     <strong id="preview-title" class="text-uppercase-lg">{{ selected_exp.title if selected_exp else '' }}</strong>
                     <span class="badge badge-blue" id="preview-city">{{ selected_exp.city if selected_exp else '' }}</span>

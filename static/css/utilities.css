@@ -63,3 +63,6 @@
 
 /* Preserves newlines in server-rendered plain text without requiring |safe */
 .preserve-lines { white-space: pre-line; }
+
+/* Toggled from JS instead of an inline style attribute */
+.is-hidden { display: none; }

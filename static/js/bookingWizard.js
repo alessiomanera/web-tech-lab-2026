@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addonsContainer.innerHTML = '';
 
         if (!addons || addons.length === 0) {
-            addonsContainer.innerHTML = '<p style="font-size: 0.9rem; color: var(--text-secondary);">No optional add-ons available for this package.</p>';
+            addonsContainer.innerHTML = '<p class="addon-empty-note">No optional add-ons available for this package.</p>';
             calculateTotal();
             return;
         }
@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'addon-choice-card';
             card.setAttribute('data-id', addon.id);
             card.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <input type="checkbox" id="addon-${idx}" style="width: 18px; height: 18px; accent-color: var(--primary-color);">
-                    <label for="addon-${idx}" style="font-weight: 700; font-size: 0.95rem; cursor: pointer;">${addon.name}</label>
+                <div class="addon-choice-row">
+                    <input type="checkbox" id="addon-${idx}" class="addon-checkbox">
+                    <label for="addon-${idx}" class="addon-label">${addon.name}</label>
                 </div>
-                <span style="font-weight: 900; font-size: 1rem; color: var(--primary-color);">+€${parseFloat(addon.price).toFixed(2)}</span>
+                <span class="addon-price">+€${parseFloat(addon.price).toFixed(2)}</span>
             `;
 
             const checkbox = card.querySelector('input[type="checkbox"]');
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Update preview
-        previewBox.style.display = 'block';
+        previewBox.classList.remove('is-hidden');
         previewTitle.textContent = selectedOption.text.split('—')[0].trim();
         state.experienceTitle = previewTitle.textContent;
         previewCity.textContent = state.city;
