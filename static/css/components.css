@@ -606,6 +606,10 @@
     .chat-container {
         grid-template-columns: 1fr;
     }
+    .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
 }
 
 .chat-stream-box {
