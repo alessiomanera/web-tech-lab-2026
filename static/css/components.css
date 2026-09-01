@@ -503,6 +503,36 @@
     border-color: var(--accent-color);
 }
 
+/* Add-on rows rendered by bookingWizard.js (classes, not injected inline styles) */
+.addon-empty-note {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.addon-choice-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.addon-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.addon-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: var(--cursor-pointer, pointer);
+}
+
+.addon-price {
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
 .time-slot-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -924,6 +954,7 @@
 
 .no-decor {
     text-decoration: none;
+    color: inherit;
 }
 
 .card-title-sm-margin {
