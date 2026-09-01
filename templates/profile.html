@@ -172,55 +172,8 @@
         </aside>
     </div>
 </div>
+{% endblock %}
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Feedback form submission
-    document.querySelectorAll('.feedback-form').forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const bookingId = form.getAttribute('data-booking-id');
-            const rating = form.querySelector('[name="rating"]').value;
-            const comment = form.querySelector('[name="comment"]').value;
-            const btn = form.querySelector('button[type="submit"]');
-
-            btn.disabled = true;
-            btn.textContent = 'Submitting...';
-
-            try {
-                const res = await fetch('/api/feedback', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ booking_id: bookingId, rating, comment })
-                });
-
-                if (res.ok) {
-                    alert('Thank you for reviewing your visit!');
-                    window.location.reload();
-                } else {
-                    alert('Could not submit feedback.');
-                    btn.disabled = false;
-                    btn.textContent = 'Submit Feedback';
-                }
-            } catch (err) {
-                alert('Network error.');
-                btn.disabled = false;
-                btn.textContent = 'Submit Feedback';
-            }
-        });
-    });
-
-    // Reset profile memory
-    const resetBtn = document.getElementById('profile-reset-btn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to clear your AI Taste Profile?')) return;
-            const res = await fetch('/api/profile/reset-memory', { method: 'POST' });
-            if (res.ok) {
-                window.location.reload();
-            }
-        });
-    }
-});
-</script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
 {% endblock %}
