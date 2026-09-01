@@ -103,7 +103,7 @@ def login():
 @auth_bp.route('/logout')
 def logout():
     """
-    Logs out the user by clearing the session data (including chat history).
+    Logs out the user by clearing all session data.
     """
     session.clear()
     return redirect(url_for('main.home'))

@@ -100,6 +100,20 @@ class ConciergeTestCase(BaseTestCase):
                 user = db.execute("SELECT preferences FROM users WHERE id = 1").fetchone()
                 self.assertEqual(user['preferences'], mock_updated_profile)
 
+    def test_stored_taste_profile_is_escaped_in_page(self):
+        """A taste profile containing markup is rendered as text, never as HTML."""
+        with self.app.app_context():
+            db = database.get_db()
+            db.execute(
+                "UPDATE users SET preferences = ? WHERE id = 1",
+                ("<script>alert('xss')</script>",)
+            )
+            db.commit()
+        res = self.client.get('/concierge')
+        body = res.get_data(as_text=True)
+        self.assertNotIn("<script>alert('xss')</script>", body)
+        self.assertIn("&lt;script&gt;", body)
+
     def test_reset_taste_memory(self):
         """POST /api/profile/reset-memory clears user's cultural taste profile."""
         response = self.client.post('/api/profile/reset-memory')

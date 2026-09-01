@@ -303,9 +303,6 @@ def concierge():
         "SELECT * FROM users WHERE id = ?", (session['user_id'],)
     ).fetchone()
 
-    if 'chat_history' not in session:
-        session['chat_history'] = []
-
     return render_template('guide.html', user=user)
 
 
