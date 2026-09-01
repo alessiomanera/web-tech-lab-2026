@@ -14,6 +14,11 @@
 <div class="chat-container">
     <!-- Left Column: Interactive Chat Stream -->
     <div class="chat-stream-box">
+        <!-- Offline-demo-mode notice (revealed by concierge.js when the API has no key / fails) -->
+        <p id="concierge-offline-notice" class="badge badge-yellow concierge-offline-notice" role="status">
+            Offline demo mode &mdash; set <code>GEMINI_API_KEY</code> to enable the full AI concierge (RAG grounding &amp; taste memory).
+        </p>
+
         <!-- Message History Stream -->
         <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
             <!-- Welcome Concierge Message -->

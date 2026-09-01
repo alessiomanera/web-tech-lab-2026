@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
     const memoryBox = document.getElementById('memory-content-box');
     const resetBtn = document.getElementById('btn-reset-memory');
+    const offlineNotice = document.getElementById('concierge-offline-notice');
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -129,6 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
             typing.remove();
 
             if (res.ok) {
+                if (offlineNotice) {
+                    offlineNotice.classList.toggle('is-visible', data.offline === true);
+                }
                 appendMessage('model', 'Concierge AI', renderConciergeReply(data.response));
                 if (data.updated_profile) {
                     memoryBox.textContent = data.updated_profile;

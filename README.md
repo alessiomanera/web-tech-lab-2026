@@ -18,7 +18,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom Neubrutalist design system loaded directly without build tools), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI state machines).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
 - **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine (Module 4):** Google Gemini API (`gemini-2.5-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog, accompanied by a resilient local heuristic fallback that runs with no API key.
+- **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-2.5-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
 
 ---
 
@@ -144,9 +144,10 @@ web-tech-lab-2026/
      ```bash
      cp .env.example .env
      ```
-   - Set your optional `GEMINI_API_KEY` and `FLASK_SECRET_KEY` in `.env`.
+   - Set `FLASK_SECRET_KEY` in `.env`.
+   - **Recommended for full evaluation:** set `GEMINI_API_KEY`. The AI Cultural Concierge (Module 4) is the project's core feature and runs on the Google Gemini API. Get a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes). With a key, the concierge performs RAG grounding on the live catalog and extracts a persistent taste profile from the conversation. The default model is `gemini-2.5-flash` (`GEMINI_MODEL`).
 
-   > **No Gemini API key? The app still works.** If `GEMINI_API_KEY` is unset, the AI Concierge automatically falls back to a local heuristic matcher grounded in the same SQLite catalog. Every feature — including the in-chat booking cards and the taste profile — remains fully demonstrable offline.
+   > **No key = offline demo mode.** The app still starts and every other module works, but the concierge drops to a deterministic keyword-matching mode: it returns a single templated recommendation card and does **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. This fallback is a deliberate network/quota safety net, not a substitute for the real concierge — evaluate with a key set.
 
 5. **Seed the database (run once on first setup):**
    ```bash
@@ -176,7 +177,7 @@ web-tech-lab-2026/
 The project includes an automated test suite implemented using Python's standard library `unittest` module, running against isolated temporary SQLite databases:
 
 ```bash
-# Run all 51 unit and integration tests with verbose output
+# Run all 52 unit and integration tests with verbose output
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 

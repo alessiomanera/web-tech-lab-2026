@@ -618,7 +618,8 @@ def api_chat():
                 db.commit()
             return jsonify({
                 'response': response_text,
-                'updated_profile': updated_profile or (user['preferences'] if user else None)
+                'updated_profile': updated_profile or (user['preferences'] if user else None),
+                'offline': False
             })
         except Exception as err:
             # Grounded RAG is best-effort: on any API failure (no network,
@@ -653,9 +654,12 @@ def api_chat():
             "like Renaissance, Ancient Roman, or Food & Wine."
         )
 
+    # offline=True: this reply came from the deterministic keyword matcher,
+    # not Gemini RAG (no key configured, or the API call failed).
     return jsonify({
         'response': ai_response_text,
-        'updated_profile': user['preferences'] if user else None
+        'updated_profile': user['preferences'] if user else None,
+        'offline': True
     })
 
 
