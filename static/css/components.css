@@ -621,6 +621,24 @@
     height: 580px;
 }
 
+/* Offline-demo-mode notice above the chat log. Visual treatment comes from
+   `badge badge-yellow`; this class only handles block layout + readability.
+   Hidden by default; concierge.js adds `.is-visible` when /api/chat reports
+   offline: true. */
+.concierge-offline-notice {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.4;
+}
+
+.concierge-offline-notice.is-visible {
+    display: block;
+}
+
 .chat-messages {
     flex: 1;
     overflow-y: auto;

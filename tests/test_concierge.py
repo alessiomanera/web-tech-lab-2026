@@ -57,6 +57,17 @@ class ConciergeTestCase(BaseTestCase):
             self.assertIn('Colosseum & Roman Forum Twilight Walk', data['response'])
             self.assertIn('id=2', data['response'])
 
+    def test_concierge_fallback_flags_offline_mode(self):
+        """The heuristic fallback response is flagged offline=True for the UI banner."""
+        with patch.dict('os.environ', {'GEMINI_API_KEY': ''}):
+            response = self.client.post(
+                '/api/chat',
+                data=json.dumps({'message': 'Something about Venice'}),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(response.get_json()['offline'])
+
     def test_concierge_empty_message_rejected(self):
         """POST /api/chat rejects empty or whitespace-only messages."""
         payload = {'message': '   '}
@@ -93,6 +104,7 @@ class ConciergeTestCase(BaseTestCase):
             data = response.get_json()
             self.assertIn('Uffizi VIP Masterpieces Tour', data['response'])
             self.assertEqual(data['updated_profile'], mock_updated_profile)
+            self.assertFalse(data['offline'])
 
             # Verify SQLite database updated
             with self.app.app_context():

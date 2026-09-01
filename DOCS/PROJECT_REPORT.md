@@ -24,7 +24,7 @@ This project is a full-stack web application that does both. It presents a curat
 1. **User Authentication & Cultural Profiling** — registration and login with Flask server-side sessions and Werkzeug PBKDF2 password hashing; an account dashboard listing digital passes and past visits; a persisted Markdown "Cultural Taste Profile" that the concierge updates as the conversation reveals preferences.
 2. **Experience & Museum Catalog Directory** — a dynamic catalog of experiences and museums with real-time relational filtering by city, theme, and free-text keyword search, plus per-experience detail pages covering duration, pricing, inclusions, and highlights.
 3. **4-Step Ticketing & Reservation Engine** — a frictionless booking wizard: choose the package, pick add-ons, select a visit date and time slot, and receive an instant digital pass with a unique booking code. Post-visit, the user can leave a 1–5 star rating and a written review, gated to bookings they actually own.
-4. **Grounded AI Cultural Concierge** — conversational discovery powered by the Google Gemini API using Retrieval-Augmented Generation (RAG) over the SQLite `experiences` catalog. The model emits an in-band `[RECOMMEND: id=…, title=…, city=…, price=…]` protocol tag that the front end parses into a real bookable card. When no API key is configured, or any API call fails, the concierge degrades gracefully to a local heuristic matcher grounded in the same catalog — so every feature stays demonstrable offline.
+4. **Grounded AI Cultural Concierge** — the core feature of the project. Conversational discovery powered by the Google Gemini API using Retrieval-Augmented Generation (RAG): the live `experiences` catalog is injected into the model's system instruction so it recommends only real, bookable packages, it emits an in-band `[RECOMMEND: id=…, title=…, city=…, price=…]` protocol tag that the front end parses into a real bookable card, and it writes back a structured Markdown taste profile that persists across sessions. A Gemini API key is required to run this path. **Without a key** (or if an API call fails mid-session), the concierge falls back to a deliberately limited keyword-matching mode: it matches the message against catalog cities and themes and returns a single templated recommendation card. This fallback does **not** perform RAG grounding, multi-factor reasoning, or taste-profile extraction — it exists purely as a network/quota safety net so the rest of the application stays navigable during evaluation, not as an equivalent of the real concierge.
 
 ---
 
@@ -58,9 +58,11 @@ python app.py               # start the development server
 
 Then open `http://127.0.0.1:5000/`.
 
-### No Gemini API key required
+### Gemini API key — recommended for full evaluation
 
-**The AI Concierge works with no API key.** If `GEMINI_API_KEY` is unset (or a call fails), the concierge automatically falls back to a local heuristic matcher grounded in the same SQLite catalog. Every feature — including the in-chat booking cards and the taste profile — remains fully demonstrable offline. To exercise the real Gemini RAG path, set `GEMINI_API_KEY` in `.env` (model is `gemini-2.5-flash`, overridable via `GEMINI_MODEL`).
+The AI Cultural Concierge (Module 4) is the project's core feature, and it runs on the Google Gemini API. **To evaluate it properly, set a key:** get a free one from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes) and put it in `.env` as `GEMINI_API_KEY` (model defaults to `gemini-2.5-flash`, overridable via `GEMINI_MODEL`). With a key, the concierge does RAG grounding on the live catalog and extracts a persistent taste profile from the conversation.
+
+**Without a key the app still starts and every other module works**, but the concierge drops to a labelled *offline demo mode*: a deterministic keyword matcher that returns one templated recommendation card and performs **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. The fallback is a deliberate resilience feature (network/quota safety net), not a substitute for the real concierge.
 
 ### Demo account
 
@@ -78,7 +80,7 @@ You may also register a fresh account at `/register`.
 
 ## 3. Contributions and Roles
 
-This is a **single-person group** (Group-11). Alessio Manera has **end-to-end ownership of the entire project** — every line of application code, every template, the database schema, the test suite, and all documentation were designed and written from scratch by the sole author. There are no other contributors.
+This is a **single-person group** (Group-11). Alessio Manera has **end-to-end ownership of the entire project** — every line of application code, every template, the database schema, the test suite, and all documentation were designed and written from scratch by the sole author. There are no other people involved.
 
 For clarity, the work breaks down by workstream as follows, all performed by the same person:
 
@@ -88,7 +90,7 @@ For clarity, the work breaks down by workstream as follows, all performed by the
 | **Backend & REST API** | `app.py` (application factory, 400/404/500 handlers); `routes.py` (page routes + `/api/book`, `/api/chat`, `/api/feedback`, `/api/profile/reset-memory`); `auth.py` (registration, login, logout, `@login_required`, safe `next` redirect handling). 100% parameterized SQL throughout. |
 | **AI / RAG integration** | `_call_gemini_concierge()` in `routes.py`: RAG prompt construction grounded on the live catalog, the `[RECOMMEND: …]` in-band protocol, Markdown taste-profile extraction and persistence, and the local heuristic fallback matcher. |
 | **Frontend & design system** | 13 Jinja2 templates extending `base.html`; the vanilla Neubrutalist CSS system (`variables.css`, `layout.css`, `components.css`, `utilities.css`); vanilla ES6 modules (`main.js`, `api.js`, `ui.js`, `bookingWizard.js`, `concierge.js`, `profile.js`); the anti-FOUC theme bootstrap and the light/dark toggle. |
-| **QA & test suite** | `tests/` — 51 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
+| **QA & test suite** | `tests/` — 52 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
 | **Documentation** | `README.md`, `DOCS/PROJECT_PROPOSAL.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `DOCS/IMAGE_CREDITS.md`, `LICENSE`, and this report. |
 
 Because there is no team to divide work across, the grading dimension of *collaboration and group structure* is satisfied here by demonstrating **complete, legible, individual authorship** of a coherent full-stack system, with a development history (30+ commits) that evidences incremental work.
@@ -130,7 +132,7 @@ Parameterized SQL  ( ? placeholders only — no string interpolation anywhere )
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-**51 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
+**52 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
 
 | Module | What it proves |
 | :--- | :--- |
