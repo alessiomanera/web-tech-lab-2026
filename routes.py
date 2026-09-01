@@ -10,8 +10,9 @@ import os
 import random
 import string
 import json
+import sqlite3
 from datetime import datetime, timezone
-from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash, abort
 from auth import login_required
 from database import get_db
 
@@ -19,9 +20,9 @@ main_bp = Blueprint('main', __name__)
 
 
 def generate_booking_code():
-    """Generates a memorable unique booking reference code, e.g., EXP-2026-A91F."""
+    """Generates a memorable booking reference code, e.g. EXP-2026-A91F7Q."""
     chars = string.ascii_uppercase + string.digits
-    suffix = ''.join(random.choices(chars, k=4))
+    suffix = ''.join(random.choices(chars, k=6))
     return f"EXP-2026-{suffix}"
 
 
@@ -92,19 +93,30 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     addons_total = sum(float(a.get('price', 0)) for a in addons_list if isinstance(a, dict)) * guests_count
     total_price = base_total + addons_total
 
-    booking_code = generate_booking_code()
     addons_json_str = json.dumps(addons_list)
 
-    db.execute(
-        """INSERT INTO tickets
-           (booking_code, user_id, experience_id, visit_date, time_slot,
-            guests_count, selected_addons_json, total_price, status)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (booking_code, user_id, exp['id'], visit_date_str,
-         time_slot, guests_count, addons_json_str,
-         total_price, 'Confirmed')
-    )
-    db.commit()
+    # booking_code is UNIQUE; retry on the rare collision instead of 500-ing.
+    booking_code = None
+    for _ in range(5):
+        candidate = generate_booking_code()
+        try:
+            db.execute(
+                """INSERT INTO tickets
+                   (booking_code, user_id, experience_id, visit_date, time_slot,
+                    guests_count, selected_addons_json, total_price, status)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (candidate, user_id, exp['id'], visit_date_str,
+                 time_slot, guests_count, addons_json_str,
+                 total_price, 'Confirmed')
+            )
+            db.commit()
+            booking_code = candidate
+            break
+        except sqlite3.IntegrityError:
+            continue
+
+    if booking_code is None:
+        return None, 'Could not generate a unique booking code. Please try again.'
 
     # Fetch the inserted ticket for return
     ticket_row = db.execute(
@@ -194,7 +206,7 @@ def experience_detail(exp_id):
     ).fetchone()
 
     if row is None:
-        return "Experience not found", 404
+        abort(404)
 
     exp = _exp_row_to_dict(row)
     return render_template('experience_detail.html', exp=exp)

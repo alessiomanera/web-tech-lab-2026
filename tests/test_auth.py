@@ -90,3 +90,21 @@ class AuthTestCase(BaseTestCase):
             response = self.client.get(route)
             self.assertEqual(response.status_code, 302)
             self.assertIn('/login', response.headers['Location'])
+
+    def test_login_honours_relative_next_parameter(self):
+        """After login the user lands on the page they originally requested."""
+        response = self.client.post(
+            '/login?next=/profile',
+            data={'email': 'explorer@test.com', 'password': 'Password123!'}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.headers['Location'].endswith('/profile'))
+
+    def test_login_rejects_absolute_next_parameter(self):
+        """An off-site next target is ignored (open-redirect protection)."""
+        response = self.client.post(
+            '/login?next=https://evil.example.com/steal',
+            data={'email': 'explorer@test.com', 'password': 'Password123!'}
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn('evil.example.com', response.headers['Location'])
