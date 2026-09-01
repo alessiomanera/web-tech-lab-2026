@@ -39,5 +39,9 @@ _*
 /AGENTS.md
 /agents.md
 
+# Agent workspaces (kept locally, never published)
+.agents/
+.claude/
+
 # Environment variables
 .env
