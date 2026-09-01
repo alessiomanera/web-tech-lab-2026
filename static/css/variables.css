@@ -90,7 +90,7 @@
     --box-shadow-hard-sm: 2px 2px 0px 0px #FFFFFF;
     --box-shadow-hard-lg: 6px 6px 0px 0px #FFFFFF;
 
-    /* Inverted White Cursors for Dark Mode visibility */
-    --cursor-default: url('/static/images/cursor-pointer.svg') 2 2, auto;
+    /* Dark-mode cursors: arrow stays the default, hand only for interactive elements */
+    --cursor-default: url('/static/images/cursor.svg') 2 2, auto;
     --cursor-pointer: url('/static/images/cursor-pointer.svg') 14 2, pointer;
 }
