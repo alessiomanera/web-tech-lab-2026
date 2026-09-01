@@ -58,6 +58,12 @@ class CatalogTestCase(BaseTestCase):
         response = self.client.get('/experiences/999')
         self.assertEqual(response.status_code, 404)
 
+    def test_missing_experience_renders_custom_404_page(self):
+        """A nonexistent experience id renders the branded 404 template."""
+        response = self.client.get('/experiences/9999')
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('Page Not Found', response.get_data(as_text=True))
+
     def test_museums_directory(self):
         """GET /museums renders the list of baseline cultural institutions."""
         response = self.client.get('/museums')

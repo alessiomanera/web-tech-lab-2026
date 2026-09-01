@@ -5,6 +5,7 @@ Authentication blueprint managing user registration, login, logout, and session 
 Includes a decorator `login_required` to protect restricted routes.
 Uses raw sqlite3 with parameterized queries for all database access.
 """
+from urllib.parse import urlparse
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -21,9 +22,24 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('user_id') is None:
-            return redirect(url_for('auth.login', next=request.url))
+            return redirect(url_for('auth.login', next=request.path))
         return f(*args, **kwargs)
     return decorated_function
+
+
+def _safe_next_target(raw_target):
+    """
+    Returns raw_target only if it is a same-site relative path.
+    Blocks open-redirect attempts such as ?next=https://evil.example.com.
+    """
+    if not raw_target:
+        return None
+    parsed = urlparse(raw_target)
+    if parsed.scheme or parsed.netloc:
+        return None
+    if not raw_target.startswith('/') or raw_target.startswith('//'):
+        return None
+    return raw_target
 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -95,7 +111,8 @@ def login():
             return redirect(url_for('auth.login'))
 
         session['user_id'] = user['id']
-        return redirect(url_for('main.home'))
+        target = _safe_next_target(request.args.get('next') or request.form.get('next'))
+        return redirect(target or url_for('main.home'))
 
     return render_template('login.html')
 
