@@ -144,12 +144,24 @@ web-tech-lab-2026/
      ```bash
      cp .env.example .env
      ```
-   - Set your optional `GEMINI_API_KEY` and `FLASK_SECRET_KEY` in `.env`. (If no key is configured, the system automatically uses its built-in local heuristic matcher).
+   - Set your optional `GEMINI_API_KEY` and `FLASK_SECRET_KEY` in `.env`.
 
-5. **Seed the database (Optional but recommended):**
+   > **No Gemini API key? The app still works.** If `GEMINI_API_KEY` is unset, the AI Concierge automatically falls back to a local heuristic matcher grounded in the same SQLite catalog. Every feature — including the in-chat booking cards and the taste profile — remains fully demonstrable offline.
+
+5. **Seed the database (run once on first setup):**
    ```bash
    python seed.py
    ```
+
+   > **Warning:** `seed.py` **drops and recreates** every table. Any bookings or accounts created since the last seed are permanently deleted. Run it once on first setup, or whenever you want a clean demo state.
+
+   Seeding creates a demo account you can use immediately:
+
+   | Email | Password |
+   | :--- | :--- |
+   | `alessio@example.com` | `password123` |
+
+   The demo account ships with a pre-populated Cultural Taste Profile so the AI Concierge and profile dashboard are populated on first login. You may also register a fresh account at `/register`.
 
 6. **Run the application:**
    ```bash
