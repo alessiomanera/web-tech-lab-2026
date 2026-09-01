@@ -10,7 +10,7 @@ import os
 import random
 import string
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
 from auth import login_required
 from database import get_db
@@ -458,8 +458,16 @@ def api_feedback():
     rating = data.get('rating')
     comment = data.get('comment', '')
 
-    if not booking_id or not rating:
+    if not booking_id or rating is None:
         return jsonify({'error': 'Missing booking ID or rating.'}), 400
+
+    try:
+        rating_value = int(rating)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Rating must be a whole number between 1 and 5.'}), 400
+
+    if rating_value < 1 or rating_value > 5:
+        return jsonify({'error': 'Rating must be between 1 and 5 stars.'}), 400
 
     db = get_db()
     ticket = db.execute(
@@ -474,7 +482,7 @@ def api_feedback():
         """UPDATE tickets
            SET feedback_rating = ?, feedback_text = ?, feedback_date = ?
            WHERE id = ? AND user_id = ?""",
-        (int(rating), comment, datetime.utcnow().isoformat(),
+        (rating_value, comment, datetime.now(timezone.utc).isoformat(),
          booking_id, session['user_id'])
     )
     db.commit()
