@@ -58,8 +58,7 @@ web-tech-lab-2026/
 ├── DOCS/
 │   ├── 1-Page_Project_Proposal.md # 1-page A4 project proposal (Official Frozen Submission)
 │   ├── PROJECT_REPORT.md  # Moodle submission document (goals, run instructions, roles)
-│   ├── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
-│   └── AY2025_2026_project_guide.pdf # Official course & project guidelines
+│   └── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
 ├── tests/                 # Automated test suite (Standard Library unittest)
 │   ├── __init__.py        # Test package initializer
 │   ├── test_base.py       # BaseTestCase with isolated in-memory/temp SQLite database
