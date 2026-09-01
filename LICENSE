@@ -27,5 +27,6 @@ NOTE ON THIRD-PARTY ASSETS
 This licence covers the source code authored by Alessio Manera. It does not
 cover the photographic image assets under `static/images/museums/` and
 `static/images/experiences/`, which depict third-party cultural landmarks and
-artworks and are used here only for a non-commercial university coursework
-demonstration. See `DOCS/IMAGE_CREDITS.md`.
+artworks. Those photographs were sourced under free-to-use licences and are
+included here solely to illustrate a non-commercial university coursework
+project.

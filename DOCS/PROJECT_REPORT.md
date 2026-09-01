@@ -91,7 +91,7 @@ For clarity, the work breaks down by workstream as follows, all performed by the
 | **AI / RAG integration** | `_call_gemini_concierge()` in `routes.py`: RAG prompt construction grounded on the live catalog, the `[RECOMMEND: …]` in-band protocol, Markdown taste-profile extraction and persistence, and the local heuristic fallback matcher. |
 | **Frontend & design system** | 13 Jinja2 templates extending `base.html`; the vanilla Neubrutalist CSS system (`variables.css`, `layout.css`, `components.css`, `utilities.css`); vanilla ES6 modules (`main.js`, `api.js`, `ui.js`, `bookingWizard.js`, `concierge.js`, `profile.js`); the anti-FOUC theme bootstrap and the light/dark toggle. |
 | **QA & test suite** | `tests/` — 52 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
-| **Documentation** | `README.md`, `DOCS/PROJECT_PROPOSAL.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `DOCS/IMAGE_CREDITS.md`, `LICENSE`, and this report. |
+| **Documentation** | `README.md`, `DOCS/1-Page_Project_Proposal.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `LICENSE`, and this report. |
 
 Because there is no team to divide work across, the grading dimension of *collaboration and group structure* is satisfied here by demonstrating **complete, legible, individual authorship** of a coherent full-stack system, with a development history (30+ commits) that evidences incremental work.
 
@@ -153,7 +153,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | **SQL injection** | 100% parameterized queries (`?` placeholders) — verified across every statement in `routes.py`, `auth.py`, `database.py`, `seed.py`. No f-string or `%`-formatted SQL anywhere. |
 | **Password storage** | Werkzeug `generate_password_hash` / `check_password_hash` (PBKDF2-SHA256, per-user salt). Plaintext passwords are never stored or logged. |
 | **Authentication & authorisation** | Flask signed-cookie sessions; `@login_required` on the booking wizard, concierge, and profile; feedback writes verify `user_id` ownership of the target booking. |
-| **Server-side output escaping** | Jinja2 autoescaping on all templates. The one former `|safe` filter on user-controlled taste-profile text was removed and replaced with plain interpolation plus a CSS `white-space: pre-line` class. |
+| **Server-side output escaping** | Jinja2 autoescaping on all templates. The one former `\|safe` filter on user-controlled taste-profile text was removed and replaced with plain interpolation plus a CSS `white-space: pre-line` class. |
 | **Client-side output escaping** | `concierge.js` escapes every HTML-significant character in user chat input, model output, and the stored taste profile before it reaches the DOM (`escapeHtml`; taste profile written via `textContent`, not `innerHTML`). This closes a reflected/stored XSS vector in the chat renderer. |
 | **Open-redirect protection** | The post-login `?next=` target is accepted only if it is a same-site relative path; absolute URLs and protocol-relative `//` targets are discarded and the user is sent to the home page. |
 | **Booking-code collisions** | Booking codes are `EXP-2026-` + 6 random alphanumerics on a `UNIQUE` column; insertion retries on the rare `IntegrityError` instead of surfacing a 500. |
