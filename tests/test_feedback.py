@@ -84,3 +84,25 @@ class FeedbackTestCase(BaseTestCase):
             content_type='application/json'
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_feedback_rejects_non_numeric_rating(self):
+        """POST /api/feedback returns 400, not 500, when rating is not a number."""
+        response = self.client.post('/api/feedback', json={
+            'booking_id': 10, 'rating': 'five', 'comment': 'Lovely'
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.get_json())
+
+    def test_feedback_rejects_out_of_range_rating(self):
+        """POST /api/feedback rejects a rating above the 1-5 star scale."""
+        response = self.client.post('/api/feedback', json={
+            'booking_id': 10, 'rating': 999, 'comment': 'Lovely'
+        })
+        self.assertEqual(response.status_code, 400)
+
+    def test_feedback_rejects_zero_rating(self):
+        """POST /api/feedback rejects a rating below the 1-5 star scale."""
+        response = self.client.post('/api/feedback', json={
+            'booking_id': 10, 'rating': 0, 'comment': 'Lovely'
+        })
+        self.assertEqual(response.status_code, 400)
