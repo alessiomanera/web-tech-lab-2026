@@ -11,6 +11,7 @@ import random
 import string
 import json
 import sqlite3
+import logging
 from datetime import datetime, timezone
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash, abort
 from auth import login_required
@@ -547,7 +548,7 @@ CRITICAL INSTRUCTIONS:
 - **Favorite Cities:** <cities>
 """
 
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-3.7-flash")
+    model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
     candidate_models = [model_name, "gemini-2.5-flash", "gemini-flash-latest"]
     candidate_models = list(dict.fromkeys(candidate_models))
 
@@ -620,8 +621,10 @@ def api_chat():
                 'updated_profile': updated_profile or (user['preferences'] if user else None)
             })
         except Exception as err:
-            # Fall back to local matcher if external network error occurs
-            pass
+            # Grounded RAG is best-effort: on any API failure (no network,
+            # bad key, quota) we degrade to the local heuristic matcher below
+            # rather than failing the user's request.
+            logging.warning("Gemini Concierge unavailable, using local fallback: %s", err)
 
     # Heuristic fallback if API key is not present or failed
     matched_exp = None
