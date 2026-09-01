@@ -27,7 +27,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Create standardized project hierarchy: `/templates/`, `/static/css/`, `/static/js/`, `/static/images/`, `/DOCS/`, `/instance/`.
   - [x] Configure virtual environment (`venv`) and initial `requirements.txt` (`Flask`, `python-dotenv`, `google-generativeai`).
   - [x] Configure environment variables template (`.env.example`) and security ignores (`.gitignore`).
-- [x] **Draft Project Proposal (`DOCS/PROJECT_PROPOSAL.md`)**
+- [x] **Draft Project Proposal (`DOCS/1-Page_Project_Proposal.md`)**
   - [x] Formulate project purpose and dual core objectives (Ticketing + AI Concierge).
   - [x] Identify primary target audiences (tourists, families, cultural sites).
   - [x] Define the 4 core system modules (User Management, Catalog Directory, Ticketing Engine, AI Concierge).
@@ -38,7 +38,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Compile detailed market and competitor analysis report (`DOCS/Competitor_Analysis.md`).
   - [x] Synthesize course guidelines, exam rules, and architectural constraints (internal working notes).
 - [x] **Submit 1-Page Proposal to Professor on Moodle**
-  - [x] Generate clean A4 PDF from `DOCS/PROJECT_PROPOSAL.md` (`PROJECT_PROPOSAL.pdf`, emailed 19 Aug 2026).
+  - [x] Generate clean A4 PDF from `DOCS/1-Page_Project_Proposal.md` (`PROJECT_PROPOSAL.pdf`, emailed 19 Aug 2026).
   - [x] Submit on Moodle before the proposal deadline (uploaded 24 Aug 2026).
   - [x] Review professor feedback — approved 22 Aug 2026 with **no revision requests**; no adjustments required.
 
@@ -57,7 +57,6 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Mechanical button click press states (`translate(4px, 4px)` with shadow collapse).
   - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
-  - [x] Build main CSS aggregator (`static/css/style.css`).
 - [x] **Accessibility & Performance Standards**
   - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text and buttons).
   - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).

@@ -56,10 +56,9 @@ web-tech-lab-2026/
 ├── ROADMAP.md             # Phased development roadmap
 ├── LICENSE                # MIT licence
 ├── DOCS/
-│   ├── PROJECT_PROPOSAL.md # 1-page A4 project proposal (Official Frozen Submission)
+│   ├── 1-Page_Project_Proposal.md # 1-page A4 project proposal (Official Frozen Submission)
 │   ├── PROJECT_REPORT.md  # Moodle submission document (goals, run instructions, roles)
 │   ├── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
-│   ├── IMAGE_CREDITS.md   # Attribution for museum & experience photography
 │   └── AY2025_2026_project_guide.pdf # Official course & project guidelines
 ├── tests/                 # Automated test suite (Standard Library unittest)
 │   ├── __init__.py        # Test package initializer
@@ -73,7 +72,6 @@ web-tech-lab-2026/
 │   └── test_errors.py     # Custom HTTP error pages (400, 404, 500) & profile dashboard
 ├── static/
 │   ├── css/
-│   │   ├── style.css      # Master stylesheet aggregator
 │   │   ├── variables.css  # CSS custom properties (colors, borders, shadows, spacing, cursors)
 │   │   ├── layout.css     # Grid and Flexbox responsive layout containers & custom cursors
 │   │   ├── components.css # Neubrutalist UI components (cards, buttons, forms, alerts, wizard)
