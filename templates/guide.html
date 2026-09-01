@@ -25,27 +25,6 @@
                     Benvenuto! I am your AI Cultural Concierge. Tell me where you are traveling, who you are with, and what art or history speaks to you—I will tailor the perfect Italian experience for you.
                 </p>
             </div>
-
-            <!-- Pre-rendered Session History -->
-            {% if session.get('chat_history') %}
-                {% for msg in session['chat_history'] %}
-                    {% if msg.role == 'user' %}
-                    <div class="chat-msg chat-msg-user">
-                        <div class="msg-header-user">
-                            You
-                        </div>
-                        <p class="m-0">{{ msg.parts[0] }}</p>
-                    </div>
-                    {% else %}
-                    <div class="chat-msg chat-msg-model">
-                        <div class="msg-header-model">
-                            Concierge AI
-                        </div>
-                        <div class="model-msg-body">{{ msg.parts[0]|replace('\n', '<br>')|safe }}</div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
         </div>
 
         <!-- Quick Inspiration Prompt Chips -->
@@ -83,7 +62,7 @@
 
         <div id="memory-content-box" class="memory-box-sm">
             {% if user.preferences %}
-                <div id="memory-rendered-text">{{ user.preferences|replace('\n', '<br>')|safe }}</div>
+                <div id="memory-rendered-text" class="preserve-lines">{{ user.preferences }}</div>
             {% else %}
                 <p class="italic-secondary-m-0">
                     Start chatting with the Concierge to automatically build your Cultural Taste Profile!
@@ -96,142 +75,8 @@
         </button>
     </aside>
 </div>
+{% endblock %}
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
-    const chatMessages = document.getElementById('chat-messages');
-    const sendBtn = document.getElementById('send-btn');
-    const memoryBox = document.getElementById('memory-content-box');
-    const resetBtn = document.getElementById('btn-reset-memory');
-    const chips = document.querySelectorAll('.quick-chip');
-
-    // Scroll to bottom on load
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    // Quick chips click
-    chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            chatInput.value = chip.getAttribute('data-prompt');
-            chatForm.dispatchEvent(new Event('submit'));
-        });
-    });
-
-    // Reset Memory
-    if (resetBtn) {
-        resetBtn.addEventListener('click', async () => {
-            if (!confirm('Are you sure you want to reset your Cultural Taste Profile?')) return;
-            try {
-                const res = await fetch('/api/profile/reset-memory', { method: 'POST' });
-                if (res.ok) {
-                    memoryBox.innerHTML = '<p class="italic-secondary-m-0">Taste profile reset. Chat to rebuild!</p>';
-                }
-            } catch (e) {
-                alert('Error resetting profile.');
-            }
-        });
-    }
-
-    // Format special recommendation cards in AI messages
-    function formatRecommendationCards(text) {
-        // Look for [RECOMMEND: id=X, title="Y", city="Z", price=W]
-        const cardRegex = /\[RECOMMEND:\s*id=(\d+),\s*title="([^"]+)",\s*city="([^"]+)",\s*price=([\d\.]+)\]/g;
-        
-        let formatted = text.replace(cardRegex, function(match, id, title, city, price) {
-            return `
-            <div class="chat-exp-card">
-                <div class="flex-between-center mb-05">
-                    <span class="badge badge-yellow">${city}</span>
-                    <span class="font-bold-lg">€${parseFloat(price).toFixed(2)}</span>
-                </div>
-                <div class="card-heading d-block mb-1 font-bold">${title}</div>
-                <a href="/booking?exp_id=${id}" class="cta-button w-100">
-                    Book This Package &rarr;
-                </a>
-            </div>`;
-        });
-
-        // Basic bold & linebreaks
-        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        formatted = formatted.replace(/\n/g, '<br>');
-        return formatted;
-    }
-
-    // Chat Submission
-    chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const message = chatInput.value.trim();
-        if (!message) return;
-
-        // 1. Render User Message
-        const userDiv = document.createElement('div');
-        userDiv.className = 'chat-msg chat-msg-user';
-        userDiv.innerHTML = `
-            <div class="msg-header-user">You</div>
-            <p class="m-0">${message}</p>
-        `;
-        chatMessages.appendChild(userDiv);
-        chatInput.value = '';
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        // Disable input
-        chatInput.disabled = true;
-        sendBtn.disabled = true;
-
-        // Loading indicator
-        const loadDiv = document.createElement('div');
-        loadDiv.id = 'typing-indicator';
-        loadDiv.className = 'chat-msg chat-msg-model';
-        loadDiv.innerHTML = `
-            <div class="msg-header-model">Concierge AI</div>
-            <p class="italic-secondary-m-0">Consulting Italian cultural catalog...</p>
-        `;
-        chatMessages.appendChild(loadDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        try {
-            const res = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message })
-            });
-
-            const data = await res.json();
-            document.getElementById('typing-indicator').remove();
-
-            if (res.ok) {
-                const modelDiv = document.createElement('div');
-                modelDiv.className = 'chat-msg chat-msg-model';
-                modelDiv.innerHTML = `
-                    <div class="msg-header-model">Concierge AI</div>
-                    <div>${formatRecommendationCards(data.response)}</div>
-                `;
-                chatMessages.appendChild(modelDiv);
-
-                // Update memory box if returned
-                if (data.updated_profile) {
-                    memoryBox.innerHTML = `<div>${data.updated_profile.replace(/\n/g, '<br>')}</div>`;
-                }
-            } else {
-                const errDiv = document.createElement('div');
-                errDiv.className = 'chat-msg chat-msg-model';
-                errDiv.innerHTML = `<p class="error-text">Error: ${data.error || 'Unable to connect to Concierge.'}</p>`;
-                chatMessages.appendChild(errDiv);
-            }
-        } catch (err) {
-            document.getElementById('typing-indicator')?.remove();
-            const errDiv = document.createElement('div');
-            errDiv.className = 'chat-msg chat-msg-model';
-            errDiv.innerHTML = `<p class="error-text">Network error. Please try again.</p>`;
-            chatMessages.appendChild(errDiv);
-        } finally {
-            chatInput.disabled = false;
-            sendBtn.disabled = false;
-            chatInput.focus();
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    });
-});
-</script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/concierge.js') }}" defer></script>
 {% endblock %}
