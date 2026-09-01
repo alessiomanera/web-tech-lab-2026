@@ -18,7 +18,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom Neubrutalist design system loaded directly without build tools), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI state machines).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
 - **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine (Module 4):** Google Gemini API (`gemini-3.7-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog, accompanied by a resilient local heuristic fallback.
+- **AI Engine (Module 4):** Google Gemini API (`gemini-2.5-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog, accompanied by a resilient local heuristic fallback that runs with no API key.
 
 ---
 
@@ -29,13 +29,14 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 - **High-Contrast Canvas:** Stark white background (`#FFFFFF`) with solid black text and high-contrast `3px` solid black borders (`#000000`).
 - **Hard Offset Drop-Shadows:** `4px 4px 0px 0px #000000` with zero blur for distinct depth separation.
 - **Zero Border-Radius:** `0px` border-radius across all buttons, cards, modal dialogs, and input fields.
-- **Vibrant Primary & Accent Colors:**
-  - Primary Red: `#FF3333`
-  - Primary Blue: `#0055FF`
-  - Primary Yellow: `#FFCC00`
+- **Vibrant Primary & Accent Colors** (canonical values from `static/css/variables.css`):
+  - Coral Red: `#FF6B6B`
+  - Sky Blue: `#74B9FF`
+  - Bold Yellow: `#FFD23F` (micro-accents only, always on black text)
+  - Soft Green: `#88D498`
 - **Typography:** Strictly `Inter` (sans-serif) across all elements, with heavy font weights (800/900) for section headings and balanced typographic text-wrapping.
 - **Tactile Micro-interactions:** Mechanical button press effect (`transform: translate(4px, 4px)` with shadow collapse on click/active).
-- **Theme:** Strictly Light Mode to preserve stark contrast and print aesthetic.
+- **Theme:** Dual high-contrast Light and Dark mode, toggled from the header and persisted in `localStorage`. An inline bootstrap script in `<head>` applies the stored (or system-preferred) theme before first paint to eliminate flash-of-unstyled-content.
 - **Accessibility:** Strict WCAG AA contrast compliance across all interactive elements (with AAA on body text) and zero Cumulative Layout Shift (CLS).
 
 ---
@@ -52,11 +53,14 @@ web-tech-lab-2026/
 ├── seed.py                # Database population script with Top 12 Curated Italian Cultural Experiences
 ├── requirements.txt       # Python package dependencies
 ├── .env.example           # Template for environment variables (GEMINI_API_KEY, FLASK_SECRET_KEY)
+├── ROADMAP.md             # Phased development roadmap
+├── LICENSE                # MIT licence
 ├── DOCS/
 │   ├── PROJECT_PROPOSAL.md # 1-page A4 project proposal (Official Frozen Submission)
+│   ├── PROJECT_REPORT.md  # Moodle submission document (goals, run instructions, roles)
 │   ├── Competitor_Analysis.md # Comprehensive European/Italian market research & UX audit
-│   ├── AY2025_2026_project_guide.pdf # Official course & project guidelines
-│   └── AY2024_2025_project_outlines.pdf # Historical project topics reference
+│   ├── IMAGE_CREDITS.md   # Attribution for museum & experience photography
+│   └── AY2025_2026_project_guide.pdf # Official course & project guidelines
 ├── tests/                 # Automated test suite (Standard Library unittest)
 │   ├── __init__.py        # Test package initializer
 │   ├── test_base.py       # BaseTestCase with isolated in-memory/temp SQLite database
@@ -75,9 +79,11 @@ web-tech-lab-2026/
 │   │   ├── components.css # Neubrutalist UI components (cards, buttons, forms, alerts, wizard)
 │   │   └── utilities.css  # Utility classes
 │   ├── js/
-│   │   ├── main.js        # Global JavaScript coordinator
-│   │   ├── api.js         # API integration helpers (chat, feedback, reset taste profile)
-│   │   ├── ui.js          # Cursor injection and tactile UI state actions
+│   │   ├── main.js        # Global entry point
+│   │   ├── api.js         # Shared fetch layer used by concierge.js and profile.js (chat, feedback, reset taste profile)
+│   │   ├── ui.js          # Theme switcher, cursor injection, catalog view mode, tactile UI state
+│   │   ├── concierge.js   # AI Concierge chat controller with client-side HTML escaping
+│   │   ├── profile.js     # Dashboard feedback submission and taste-memory reset
 │   │   └── bookingWizard.js # 4-step wizard state machine and dynamic addon price calculations
 │   └── images/            # Static image assets & custom SVG cursors
 └── templates/
@@ -158,15 +164,16 @@ web-tech-lab-2026/
 The project includes an automated test suite implemented using Python's standard library `unittest` module, running against isolated temporary SQLite databases:
 
 ```bash
-# Run all 44 unit and integration tests with verbose output
+# Run all 51 unit and integration tests with verbose output
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
 ### Test Coverage Highlights
 - **`test_database.py`:** Verifies `PRAGMA foreign_keys = ON`, unique constraints on email/booking codes, and cascading deletions.
 - **`test_auth.py`:** Tests registration, Werkzeug PBKDF2 password hashing, login, session clearance on logout, and `@login_required` redirects.
-- **`test_catalog.py`:** Tests multi-filtering by city/theme, search query keywords, detail pages, and 404 handling.
+- **`test_catalog.py`:** Tests multi-filtering by city/theme, search query keywords, detail pages, and the branded custom 404 page for missing experiences.
+- **`test_auth.py` (redirects):** Also tests that a safe relative `?next=` target is honoured after login while an absolute off-site target is rejected (open-redirect protection).
 - **`test_booking.py`:** Tests 4-step wizard rendering, date bounds (+90 days), time-slot verification, guest count bounds (1-6), and pricing calculations with add-ons.
-- **`test_concierge.py`:** Tests grounded Gemini RAG mocking, recommendation card tags (`[RECOMMEND: ...]`), dynamic Markdown taste memory extraction, and taste resets.
-- **`test_feedback.py`:** Tests post-visit rating submissions (1-5 stars), review persistence, and user ownership security.
+- **`test_concierge.py`:** Tests grounded Gemini RAG mocking, recommendation card tags (`[RECOMMEND: ...]`), dynamic Markdown taste memory extraction, taste resets, and that a stored taste profile containing markup is HTML-escaped in the page.
+- **`test_feedback.py`:** Tests post-visit rating submissions (enforced 1-5 range), rejection of non-numeric and out-of-range ratings, review persistence, and user ownership security.
 - **`test_errors.py`:** Tests custom HTTP error pages (`400.html`, `404.html`, `500.html`) and user dashboard rendering.
