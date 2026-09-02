@@ -5,13 +5,58 @@ Authentication blueprint managing user registration, login, logout, and session 
 Includes a decorator `login_required` to protect restricted routes.
 Uses raw sqlite3 with parameterized queries for all database access.
 """
+import secrets
 from urllib.parse import urlparse
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import (Blueprint, render_template, request, redirect, url_for,
+                   session, flash, abort, jsonify)
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from database import get_db
 
 auth_bp = Blueprint('auth', __name__)
+
+# Methods that can change server state and therefore require a CSRF token.
+CSRF_PROTECTED_METHODS = ('POST', 'PUT', 'PATCH', 'DELETE')
+
+
+def csrf_token():
+    """
+    Returns this session's CSRF token, minting one on first use.
+
+    Registered as a Jinja global so every page can embed it. The token lives in
+    the signed session cookie: another origin's page can make the browser SEND
+    our cookie, but the same-origin policy stops it READING the token out of
+    our HTML — which is exactly what makes the comparison meaningful.
+    """
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = secrets.token_urlsafe(32)
+    return session['_csrf_token']
+
+
+def csrf_protect():
+    """
+    Rejects any state-changing request that does not carry this session's CSRF
+    token, supplied either as a hidden `csrf_token` form field or, for the JSON
+    endpoints, an `X-CSRFToken` header. Registered as a before_request hook by
+    create_app(), so it covers every blueprint without per-route decoration.
+
+    Compared with `secrets.compare_digest` so the check takes constant time and
+    cannot be probed a character at a time.
+    """
+    if request.method not in CSRF_PROTECTED_METHODS:
+        return None
+
+    submitted = request.form.get('csrf_token') or request.headers.get('X-CSRFToken')
+    expected = session.get('_csrf_token')
+
+    if not expected or not submitted or not secrets.compare_digest(submitted, expected):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'error': 'Invalid or missing security token. Please reload the page.'
+            }), 400
+        abort(400)
+
+    return None
 
 
 def login_required(f):

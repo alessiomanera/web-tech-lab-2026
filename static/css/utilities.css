@@ -46,7 +46,6 @@
 .text-center { text-align: center; }
 .mt-0 { margin-top: 0; }
 .mt-1 { margin-top: 1rem; }
-.mt-4 { margin-top: 4rem; }
 .mb-0 { margin-bottom: 0; }
 .mb-05 { margin-bottom: 0.5rem; }
 .mb-1 { margin-bottom: 1rem; }
@@ -60,9 +59,6 @@
 .text-lg { font-size: 1.1rem; }
 .d-block { display: block; }
 .text-center-block { text-align: center; }
-
-/* Preserves newlines in server-rendered plain text without requiring |safe */
-.preserve-lines { white-space: pre-line; }
 
 /* Toggled from JS instead of an inline style attribute */
 .is-hidden { display: none; }

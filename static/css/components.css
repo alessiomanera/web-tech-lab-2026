@@ -18,11 +18,6 @@
     flex-direction: column;
 }
 
-.card-clickable:hover {
-    transform: translate(4px, 4px);
-    box-shadow: 0px 0px 0px 0px var(--border-color);
-}
-
 .card-content {
     padding: 1.75rem;
     display: flex;
@@ -57,7 +52,7 @@
    --------------------------------------------------------- */
 .cta-button {
     background: var(--primary-color);
-    color: #FFFFFF;
+    color: var(--on-accent);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow-hard);
@@ -80,25 +75,27 @@
     transform: translate(4px, 4px);
     box-shadow: 0px 0px 0px 0px var(--border-color);
     background: var(--primary-hover);
-    color: #FFFFFF;
+    color: var(--on-accent);
 }
 
 .cta-button-blue {
     background: var(--accent-color);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 .cta-button-blue:hover, .cta-button-blue:active {
     background: var(--accent-hover);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 
-.cta-button-yellow {
-    background: var(--accent-yellow);
-    color: #000000 !important;
+/* Affirmative variant: the wizard's final "Confirm & Issue Pass" step, so the
+   one irreversible action reads differently from every other coral CTA. */
+.btn-success {
+    background: var(--success-color);
+    color: var(--on-accent) !important;
 }
-.cta-button-yellow:hover, .cta-button-yellow:active {
-    background: var(--accent-yellow-hover);
-    color: #000000 !important;
+.btn-success:hover, .btn-success:active {
+    background: var(--success-hover);
+    color: var(--on-accent) !important;
 }
 
 .cta-button-outline {
@@ -141,8 +138,8 @@
 }
 
 .badge-yellow { background: var(--accent-yellow); color: #000000 !important; }
-.badge-blue { background: var(--accent-color); color: #FFFFFF !important; }
-.badge-red { background: var(--primary-hover); color: #FFFFFF !important; }
+.badge-blue { background: var(--accent-color); color: var(--on-accent) !important; }
+.badge-red { background: var(--primary-hover); color: var(--on-accent) !important; }
 .badge-white { background: var(--surface-color); color: var(--text-primary) !important; }
 
 .filter-pills-bar {
@@ -236,7 +233,7 @@
 
 .experience-perks-list li::before {
     content: "■";
-    color: var(--primary-hover);
+    color: var(--primary-text);
     font-size: 0.75rem;
 }
 
@@ -299,7 +296,7 @@
 
 /* Compact View Grid Modifications */
 .grid-auto.view-compact {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
     gap: 1.25rem;
 }
 
@@ -442,11 +439,11 @@
 }
 
 .wizard-step-node.active {
-    color: var(--primary-hover);
+    color: var(--primary-text);
 }
 
 .wizard-step-node.completed {
-    color: var(--accent-color);
+    color: var(--accent-text);
 }
 
 .wizard-step-badge {
@@ -469,7 +466,7 @@
 
 .wizard-step-node.completed .wizard-step-badge {
     background: var(--accent-color);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 
 .wizard-panel {
@@ -530,7 +527,7 @@
 .addon-price {
     font-weight: 900;
     font-size: 1rem;
-    color: var(--primary-color);
+    color: var(--primary-text);
 }
 
 .time-slot-grid {
@@ -541,6 +538,11 @@
 }
 
 .time-slot-pill {
+    /* Rendered as a <button> so it is reachable and operable by keyboard;
+       these reset the user-agent button styling back to the pill design. */
+    width: 100%;
+    font-family: inherit;
+    appearance: none;
     padding: 0.85rem;
     text-align: center;
     font-weight: 800;
@@ -551,6 +553,11 @@
     color: var(--text-primary);
     cursor: pointer;
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.time-slot-pill:focus-visible {
+    outline: 2px dashed var(--text-primary);
+    outline-offset: 4px;
 }
 
 .time-slot-pill:hover, .time-slot-pill.active {
@@ -606,10 +613,6 @@
     .chat-container {
         grid-template-columns: 1fr;
     }
-    .profile-layout {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
 }
 
 .chat-stream-box {
@@ -619,6 +622,9 @@
     display: flex;
     flex-direction: column;
     height: 580px;
+    /* Grid and flex items default to min-width:auto, which floors this box at
+       the intrinsic width of the input bar and overflows narrow phones. */
+    min-width: 0;
 }
 
 /* Offline-demo-mode notice above the chat log. Visual treatment comes from
@@ -739,7 +745,9 @@
 }
 
 .hero-title {
-    font-size: 4rem;
+    /* Fluid rather than fixed: the `h1` media query in layout.css is an element
+       selector and loses to this class, so a hard 4rem overflowed narrow phones. */
+    font-size: clamp(2.25rem, 9vw, 4rem);
     font-family: var(--font-heading);
     font-weight: 900;
     margin: 0;
@@ -787,7 +795,7 @@
     font-size: 1.25rem;
     border: var(--border-width) solid var(--border-color);
     background: var(--primary-color);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
     box-shadow: 2px 2px 0px 0px var(--border-color);
     margin-bottom: 1rem;
 }
@@ -813,18 +821,13 @@
 }
 
 .text-primary-color {
-    color: var(--primary-hover);
+    color: var(--primary-text);
     font-weight: 800;
     text-decoration: underline;
 }
 
 .text-primary-color:hover {
     color: var(--text-primary);
-}
-
-.text-accent-color {
-    color: var(--accent-color);
-    font-weight: 800;
 }
 
 /* Hero actions & Section styles */
@@ -875,7 +878,7 @@
 
 .step-num-blue {
     background: var(--accent-color);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 
 .step-num-yellow {
@@ -989,7 +992,7 @@
     font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: var(--primary-hover);
+    color: var(--primary-text);
     display: block;
     margin-bottom: 0.5rem;
 }
@@ -1103,7 +1106,7 @@
 .summary-total-price-val {
     font-size: 1.75rem;
     font-weight: 900;
-    color: var(--primary-color);
+    color: var(--primary-text);
 }
 
 .pass-grid {
@@ -1152,6 +1155,16 @@
     grid-template-columns: 1.5fr 1fr;
     gap: 2.5rem;
     margin-top: 2rem;
+}
+
+/* Must stay BELOW the .profile-layout rule above: both selectors have the
+   same specificity, so a media query placed earlier in the file loses on
+   source order and silently never applies. */
+@media (max-width: 900px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
 }
 
 .profile-section-title {
@@ -1227,11 +1240,11 @@
 
 .review-label {
     font-weight: 800;
-    color: var(--accent-color);
+    color: var(--accent-text);
 }
 
 .review-stars {
-    color: var(--accent-yellow);
+    color: var(--accent-yellow-text);
     font-size: 1.1rem;
 }
 
@@ -1248,7 +1261,7 @@
     font-weight: 800;
     font-size: 0.9rem;
     text-transform: uppercase;
-    color: var(--primary-hover);
+    color: var(--primary-text);
 }
 
 .flex-column-gap {
@@ -1307,12 +1320,6 @@
     margin-bottom: 1rem;
 }
 
-.side-card-title {
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    margin: 0;
-}
-
 .side-card-description {
     font-size: 0.85rem;
     color: var(--text-secondary);
@@ -1357,7 +1364,7 @@
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--accent-color);
+    color: var(--accent-text);
 }
 
 .taste-value {
@@ -1376,11 +1383,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-}
-
-.cta-button-blue-sm {
-    padding: 0.75rem;
-    font-size: 0.85rem;
 }
 
 .cta-button-outline-sm {
@@ -1420,7 +1422,7 @@
     font-size: 0.95rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: var(--primary-hover);
+    color: var(--primary-text);
     display: block;
     margin-bottom: 1.25rem;
 }
@@ -1483,7 +1485,7 @@
 /* Scoped to this section only — a bare `.addon-price` rule already exists
    under "6. 4-Step Booking Wizard Components"; this one must not win there. */
 .addon-preview-box .addon-price {
-    color: var(--primary-hover);
+    color: var(--primary-text);
     font-weight: 800;
     font-size: 0.9rem;
 }
@@ -1512,7 +1514,7 @@
     font-weight: 900;
     text-transform: uppercase;
     font-size: 0.75rem;
-    color: var(--accent-color) !important;
+    color: var(--accent-text) !important;
     margin-bottom: 0.35rem;
     letter-spacing: 0.05em;
 }
@@ -1538,6 +1540,7 @@
 .chat-input-field {
     flex: 1;
     margin: 0;
+    min-width: 0;
 }
 
 .side-card-title-sm {

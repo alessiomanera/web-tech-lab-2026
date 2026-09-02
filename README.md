@@ -17,8 +17,8 @@ A full-stack web application designed for discovering and booking tickets to mus
 
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom Neubrutalist design system loaded directly without build tools), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI state machines).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
-- **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-2.5-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
+- **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`: `users`, `museums`, `exhibitions`, `experiences`, `tickets`). The `exhibitions` table is seeded with sample data but not yet surfaced by any route, template, or the concierge's RAG grounding — see Known Limitations in `DOCS/PROJECT_REPORT.md`.
+- **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-flash-lite-latest`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
 
 ---
 
@@ -37,7 +37,7 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 - **Typography:** Strictly `Inter` (sans-serif) across all elements, with heavy font weights (800/900) for section headings and balanced typographic text-wrapping.
 - **Tactile Micro-interactions:** Mechanical button press effect (`transform: translate(4px, 4px)` with shadow collapse on click/active).
 - **Theme:** Dual high-contrast Light and Dark mode, toggled from the header and persisted in `localStorage`. An inline bootstrap script in `<head>` applies the stored (or system-preferred) theme before first paint to eliminate flash-of-unstyled-content.
-- **Accessibility:** Strict WCAG AA contrast compliance across all interactive elements (with AAA on body text) and zero Cumulative Layout Shift (CLS).
+- **Accessibility:** WCAG AA contrast across every rendered text/background pair in both themes (verified by measuring computed colours against composited backgrounds on all pages, not by inspecting the stylesheet); AAA on body text. Accent colours have separate darkened variants (`--primary-text`, `--accent-text`, `--accent-yellow-text`) for text on the page ground, while text on a coloured fill is black (`--on-accent`). No horizontal scrolling at 320px (WCAG 1.4.10 Reflow), and zero Cumulative Layout Shift (CLS).
 
 ---
 
@@ -47,7 +47,7 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 web-tech-lab-2026/
 ├── app.py                 # Application factory and entry point
 ├── database.py            # SQLite connection context manager & initialization
-├── schema.sql             # SQL database definition (tables for users, museums, experiences, tickets)
+├── schema.sql             # SQL database definition (tables for users, museums, exhibitions, experiences, tickets)
 ├── routes.py              # Main Blueprint: page routes and API endpoints (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication Blueprint: registration, login, logout, @login_required
 ├── seed.py                # Database population script with Top 12 Curated Italian Cultural Experiences
@@ -105,21 +105,25 @@ web-tech-lab-2026/
 
 ### Prerequisites
 - Python 3.10+ installed on your system.
-- Git.
+- Git — only needed for Step 1 if you're cloning. If you already have the project as a folder (e.g. unzipped from a Moodle submission), skip Git entirely.
+- An internet connection (to install dependencies in Step 3, and optionally to reach the Gemini API in Step 4).
 
 ### Setup Steps
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/alessiomanera/web-tech-lab-2026.git
-   cd web-tech-lab-2026
-   ```
+1. **Get the code.**
+   - **Cloning from GitHub:**
+     ```bash
+     git clone https://github.com/alessiomanera/web-tech-lab-2026.git
+     cd web-tech-lab-2026
+     ```
+   - **Already have it as a folder or a `.zip`?** Extract it if needed, then open a terminal *inside* that folder (the one containing `app.py`) and skip straight to Step 2.
 
-2. **Create and activate a virtual environment:**
+2. **Create and activate a virtual environment.** A virtual environment is a private, isolated copy of Python for this project only — it keeps this project's dependencies from clashing with anything else on your machine, and nothing here touches your system-wide Python.
    - **Windows (PowerShell):**
      ```powershell
      python -m venv venv
      .\venv\Scripts\Activate.ps1
      ```
+     > **If you see "running scripts is disabled on this system":** PowerShell blocks script execution by default on many machines. Run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` once in the same terminal — this only changes the policy for this one terminal window, not your whole system — then retry the `Activate.ps1` line above.
    - **Windows (Command Prompt):**
      ```cmd
      python -m venv venv
@@ -130,19 +134,36 @@ web-tech-lab-2026/
      python3 -m venv venv
      source venv/bin/activate
      ```
+   - **How do I know it worked?** Your terminal prompt now starts with `(venv)`. If you close and reopen the terminal, you'll need to run the *activate* line again (not the whole setup) before continuing.
 
 3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
+   This installs exactly three packages (`Flask`, `python-dotenv`, `google-generativeai`) — everything else the app uses is Python's own standard library.
 
-4. **Configure environment variables:**
-   - Copy `.env.example` to `.env`:
+4. **Configure environment variables.** This project reads its secrets and settings from a file named `.env`, which you create by copying the provided template:
+   - **macOS / Linux / Git Bash:**
      ```bash
      cp .env.example .env
      ```
-   - Set `FLASK_SECRET_KEY` in `.env`.
-   - **Recommended for full evaluation:** set `GEMINI_API_KEY`. The AI Cultural Concierge (Module 4) is the project's core feature and runs on the Google Gemini API. Get a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes). With a key, the concierge performs RAG grounding on the live catalog and extracts a persistent taste profile from the conversation. The default model is `gemini-2.5-flash` (`GEMINI_MODEL`).
+   - **Windows (Command Prompt or PowerShell):**
+     ```cmd
+     copy .env.example .env
+     ```
+   - Open the new `.env` file in any text editor. It has two settings:
+     - **`FLASK_SECRET_KEY`** — signs login session cookies. **You do not need to change this to run or evaluate the project** — the placeholder value works fine locally. (It only matters for a real internet-facing deployment; see the comment inside `.env.example` if you're curious.)
+     - **`GEMINI_API_KEY`** — **recommended for full evaluation.** The AI Cultural Concierge (Module 4) is the project's core feature and runs on the Google Gemini API. Without a real key here, the concierge still works, but in a deliberately limited fallback mode (see the box below).
+
+     **To get a free key (about 2 minutes, no credit card):**
+
+     1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey) and sign in with any Google account.
+     2. Click **Create API key** (or **Get API key** → **Create API key**).
+     3. Copy the key it shows you.
+     4. Paste it into `.env` in place of `your_gemini_api_key_here`, so the line reads `GEMINI_API_KEY=AIza...` (your actual key).
+     5. Save the file. No restart needed yet — you haven't started the server.
+
+     With a key, the concierge performs RAG grounding on the live catalog and extracts a persistent taste profile from the conversation. The default model is `gemini-flash-lite-latest` (`GEMINI_MODEL`); if it is unavailable the client falls back to `gemini-3.6-flash` before dropping to offline mode.
 
    > **No key = offline demo mode.** The app still starts and every other module works, but the concierge drops to a deterministic keyword-matching mode: it returns a single templated recommendation card and does **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. This fallback is a deliberate network/quota safety net, not a substitute for the real concierge — evaluate with a key set.
 
@@ -150,6 +171,7 @@ web-tech-lab-2026/
    ```bash
    python seed.py
    ```
+   You should see output ending in `Database successfully seeded with Top 12 Experiences and demo user!` — that confirms it worked. (`instance/app.db` is created automatically; you don't need to create any folder or file yourself.)
 
    > **Warning:** `seed.py` **drops and recreates** every table. Any bookings or accounts created since the last seed are permanently deleted. Run it once on first setup, or whenever you want a clean demo state.
 
@@ -165,7 +187,21 @@ web-tech-lab-2026/
    ```bash
    python app.py
    ```
-   Open your browser and navigate to `http://127.0.0.1:5000/`.
+   You should see Flask log a line like `Running on http://127.0.0.1:5000`. Open your browser and navigate to `http://127.0.0.1:5000/`.
+
+   > **Port 5000 already in use / "Address already in use"?** Something else on your machine is using that port (on recent macOS, it's often the AirPlay Receiver). Either free port 5000 (macOS: System Settings → General → AirDrop & Handoff → turn off AirPlay Receiver), or run the app on a different port: `python -c "from app import create_app; create_app().run(port=5001)"`, then open `http://127.0.0.1:5001/` instead.
+
+   > Debug mode (Werkzeug's interactive debugger and auto-reload) is opt-in and off by default, so the branded `500.html` error page always renders. Enable it with `FLASK_DEBUG=1 python app.py` (PowerShell: `$env:FLASK_DEBUG=1; python app.py`) if you need tracebacks while developing.
+
+### If something doesn't work
+
+| Symptom | Likely cause | Fix |
+| :--- | :--- | :--- |
+| `ModuleNotFoundError: No module named 'flask'` | The virtual environment isn't active in this terminal | Re-run the *activate* line from Step 2 (your prompt should show `(venv)`) |
+| PowerShell: "running scripts is disabled on this system" | Windows' default script-execution policy | See the box under Step 2 |
+| `Address already in use` when running `python app.py` | Another program is already using port 5000 | See the box under Step 6 |
+| Concierge shows a yellow "offline mode" banner | No valid `GEMINI_API_KEY` in `.env`, or it's still the placeholder | Follow the 5 numbered steps under Step 4 to get a free key |
+| Login fails with the demo account | The database was never seeded, or was reseeded after you registered a different account | Re-run `python seed.py`, then log in with `alessio@example.com` / `password123` |
 
 ---
 
@@ -174,13 +210,13 @@ web-tech-lab-2026/
 The project includes an automated test suite implemented using Python's standard library `unittest` module, running against isolated temporary SQLite databases:
 
 ```bash
-# Run all 52 unit and integration tests with verbose output
+# Run all 61 unit and integration tests with verbose output
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
 ### Test Coverage Highlights
 - **`test_database.py`:** Verifies `PRAGMA foreign_keys = ON`, unique constraints on email/booking codes, and cascading deletions.
-- **`test_auth.py`:** Tests registration, Werkzeug PBKDF2 password hashing, login, session clearance on logout, and `@login_required` redirects.
+- **`test_auth.py`:** Tests registration, Werkzeug PBKDF2 password hashing, login, session clearance on logout, `@login_required` redirects, and CSRF protection (a POST with a missing or forged token is rejected on both the HTML forms and the JSON API, while GET requests are untouched).
 - **`test_catalog.py`:** Tests multi-filtering by city/theme, search query keywords, detail pages, and the branded custom 404 page for missing experiences.
 - **`test_auth.py` (redirects):** Also tests that a safe relative `?next=` target is honoured after login while an absolute off-site target is rejected (open-redirect protection).
 - **`test_booking.py`:** Tests 4-step wizard rendering, date bounds (+90 days), time-slot verification, guest count bounds (1-6), and pricing calculations with add-ons.

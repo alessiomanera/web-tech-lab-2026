@@ -13,7 +13,7 @@ import json
 import sqlite3
 import logging
 from datetime import datetime, timezone
-from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, abort
 from auth import login_required
 from database import get_db
 
@@ -49,6 +49,17 @@ def _safe_int(value):
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _current_user(db):
+    """
+    Returns the logged-in user's row, or None if the id in the session no
+    longer exists. Only reached from @login_required views, so session
+    ['user_id'] is always set by the time this runs.
+    """
+    return db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
 
 
 def _lookup_experience_by_id(db, raw_id):
@@ -104,17 +115,33 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     # Handle selected_addons if passed as JSON string or list
     if isinstance(selected_addons, str):
         try:
-            addons_list = json.loads(selected_addons)
-        except Exception:
-            addons_list = []
+            requested_addons = json.loads(selected_addons)
+        except (json.JSONDecodeError, TypeError):
+            requested_addons = []
     elif isinstance(selected_addons, list):
-        addons_list = selected_addons
+        requested_addons = selected_addons
     else:
-        addons_list = []
+        requested_addons = []
 
-    # Calculate total price
+    # Never price a booking from the client's numbers. The request only gets to
+    # say WHICH add-ons it wants; the name and price are re-read from this
+    # experience's own catalog entry. Unknown ids are dropped, and duplicates
+    # are collapsed, so a crafted payload cannot invent an add-on or discount.
+    catalog_addons = {
+        addon['id']: addon for addon in exp['available_addons']
+        if isinstance(addon, dict) and 'id' in addon
+    }
+    addons_list = []
+    for requested in requested_addons:
+        if not isinstance(requested, dict):
+            continue
+        addon = catalog_addons.get(requested.get('id'))
+        if addon is not None and addon not in addons_list:
+            addons_list.append(addon)
+
+    # Calculate total price from the catalog values only
     base_total = exp['base_price'] * guests_count
-    addons_total = sum(float(a.get('price', 0)) for a in addons_list if isinstance(a, dict)) * guests_count
+    addons_total = sum(float(a.get('price', 0)) for a in addons_list) * guests_count
     total_price = base_total + addons_total
 
     addons_json_str = json.dumps(addons_list)
@@ -261,9 +288,7 @@ def booking():
     rows = db.execute("SELECT * FROM experiences").fetchall()
     all_experiences = [_exp_row_to_dict(row) for row in rows]
 
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     selected_exp = None
     ticket = None
@@ -315,11 +340,11 @@ def concierge():
     Loads the user's live Markdown Cultural Taste Profile from SQLite.
     """
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
-    return render_template('guide.html', user=user)
+    taste_items = _parse_taste_profile(user['preferences'] if user else '')
+
+    return render_template('guide.html', user=user, taste_items=taste_items)
 
 
 # Backward compatibility route
@@ -361,9 +386,7 @@ def profile():
     past visit history, review submission forms, and the live Cultural Taste Profile.
     """
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     bookings = db.execute(
         """SELECT t.*, e.title AS experience_title, e.city AS experience_city,
@@ -541,6 +564,8 @@ CRITICAL INSTRUCTIONS:
    [RECOMMEND: id=<ID>, title="<TITLE>", city="<CITY>", price=<PRICE>]
    For example: [RECOMMEND: id=1, title="Uffizi VIP Masterpieces Tour", city="Florence", price=65.00]
 3. Keep recommendations concise, vivid, and helpful (2-3 short paragraphs max).
+   Use plain prose. For emphasis use **bold** or *italic* only — no headings,
+   bullet lists, tables, or code blocks; the chat renders only those two.
 4. At the very end of your response, if the user revealed new tastes, preferences, group details, or favorite cities, provide an updated Markdown Taste Profile starting exactly with the delimiter:
 ---TASTE_PROFILE---
 ### Cultural Taste Profile
@@ -551,8 +576,12 @@ CRITICAL INSTRUCTIONS:
 - **Favorite Cities:** <cities>
 """
 
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
-    candidate_models = [model_name, "gemini-2.5-flash", "gemini-flash-latest"]
+    # "-latest" aliases track Google's current release, so a pinned id cannot
+    # go stale underneath us the way gemini-2.5-flash did. Both fallbacks are
+    # verified reachable; the list is de-duplicated so an explicit GEMINI_MODEL
+    # equal to one of them is not retried twice.
+    model_name = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
+    candidate_models = [model_name, "gemini-flash-lite-latest", "gemini-3.6-flash"]
     candidate_models = list(dict.fromkeys(candidate_models))
 
     last_error = None
@@ -595,9 +624,7 @@ def api_chat():
         return jsonify({'error': 'Please enter a message.'}), 400
 
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     all_exp_rows = db.execute("SELECT * FROM experiences").fetchall()
     all_experiences = [_exp_row_to_dict(row) for row in all_exp_rows]

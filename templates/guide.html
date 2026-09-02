@@ -66,8 +66,17 @@
         </p>
 
         <div id="memory-content-box" class="memory-box-sm">
-            {% if user.preferences %}
-                <div id="memory-rendered-text" class="preserve-lines">{{ user.preferences }}</div>
+            {% if taste_items %}
+                <ul class="taste-profile-list">
+                    {% for item in taste_items %}
+                    <li class="taste-item">
+                        {% if item.label %}
+                        <span class="taste-label">{{ item.label }}</span>
+                        {% endif %}
+                        <span class="taste-value">{{ item.value }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
             {% else %}
                 <p class="italic-secondary-m-0">
                     Start chatting with the Concierge to automatically build your Cultural Taste Profile!

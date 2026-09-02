@@ -7,7 +7,7 @@ actionable booking recommendation tags, dynamic taste memory extraction,
 and taste profile resets.
 """
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import database
 from tests.test_base import BaseTestCase
 
