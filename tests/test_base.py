@@ -26,8 +26,7 @@ class BaseTestCase(unittest.TestCase):
         self.app = create_app({
             'TESTING': True,
             'DATABASE': self.db_path,
-            'SECRET_KEY': 'test-secret-key-do-not-use-in-production',
-            'WTF_CSRF_ENABLED': False
+            'SECRET_KEY': 'test-secret-key-do-not-use-in-production'
         })
         self.client = self.app.test_client()
 
