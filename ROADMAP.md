@@ -199,10 +199,10 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Align implementation details with technical evaluation criteria.
   - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
   - [x] **High-Contrast Light/Dark Theme System (shipped in `e5c499f`):** canonical Neubrutalist palette (Coral Red `#FF6B6B`, Sky Blue `#74B9FF`, Bold Yellow `#FFD23F`, Soft Green `#88D498`) with a header toggle, `localStorage` persistence, SVG sun/moon icons, and an anti-FOUC bootstrap script in `<head>`.
-  - [x] Document potential future enhancements:
-    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and `.ics` calendar sync integration.
-    - [ ] **Multi-turn Concierge:** send a running conversation history to Gemini (currently single-turn; only the persisted taste profile carries context).
-    - [ ] **Extended RAG grounding:** ground the concierge on `museums` and `exhibitions`, not only the `experiences` catalog.
+  - [x] Document known scope boundaries (not part of any further development plan — see `DOCS/PROJECT_REPORT.md` §7):
+    - **Digital passes** render no QR code and export to no calendar format.
+    - **The concierge is single-turn** — no running conversation history is sent to Gemini; only the persisted taste profile carries context.
+    - **RAG grounding covers the `experiences` table only**, not `museums` or `exhibitions`.
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
   - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.
