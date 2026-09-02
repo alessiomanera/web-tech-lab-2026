@@ -17,7 +17,7 @@ Booking a cultural visit in Italy is fragmented and high-friction. Ticketing is 
 
 ### The solution
 
-This project is a full-stack web application that does both. It presents a curated catalog of 12 bookable cultural experiences across six Italian cities (Florence, Rome, Venice, Milan, Turin, Naples), backed by 10 museums and cultural sites, and pairs it with a conversational AI concierge that recommends experiences from that same catalog and can drop a ready-to-book card directly into the chat. Recommendations are grounded in the application's own relational database rather than the model's open-ended knowledge, so the assistant only ever suggests things that actually exist and are actually bookable.
+This project is a full-stack web application that does both. It presents a curated catalog of 12 bookable cultural experiences across six Italian cities (Florence, Rome, Venice, Milan, Turin, Naples), backed by 12 museums and cultural sites, one per experience, and pairs it with a conversational AI concierge that recommends experiences from that same catalog and can drop a ready-to-book card directly into the chat. Recommendations are grounded in the application's own relational database rather than the model's open-ended knowledge, so the assistant only ever suggests things that actually exist and are actually bookable.
 
 ### The four modules
 
@@ -86,11 +86,11 @@ For clarity, the work breaks down by workstream as follows, all performed by the
 
 | Workstream | Concrete artifacts produced |
 | :--- | :--- |
-| **Database & schema design** | `schema.sql` (relational DDL: `users`, `museums`, `exhibitions`, `experiences`, `tickets`; `ON DELETE CASCADE` on tickets, `ON DELETE SET NULL` on `experiences.museum_id`); `database.py` (per-request `sqlite3` connection context manager with `PRAGMA foreign_keys = ON`); `seed.py` (10 museums, 12 curated experiences across 6 cities, demo account). |
+| **Database & schema design** | `schema.sql` (relational DDL: `users`, `museums`, `exhibitions`, `experiences`, `tickets`; `ON DELETE CASCADE` on tickets, `ON DELETE SET NULL` on `experiences.museum_id`); `database.py` (per-request `sqlite3` connection context manager with `PRAGMA foreign_keys = ON`); `seed.py` (12 museums, 12 curated experiences across 6 cities, demo account). |
 | **Backend & REST API** | `app.py` (application factory, 400/404/500 handlers); `routes.py` (page routes + `/api/book`, `/api/chat`, `/api/feedback`, `/api/profile/reset-memory`); `auth.py` (registration, login, logout, `@login_required`, safe `next` redirect handling). 100% parameterized SQL throughout. |
 | **AI / RAG integration** | `_call_gemini_concierge()` in `routes.py`: RAG prompt construction grounded on the live catalog, the `[RECOMMEND: …]` in-band protocol, Markdown taste-profile extraction and persistence, and the local heuristic fallback matcher. |
 | **Frontend & design system** | 13 Jinja2 templates extending `base.html`; the vanilla Neubrutalist CSS system (`variables.css`, `layout.css`, `components.css`, `utilities.css`); vanilla ES6 modules (`main.js`, `api.js`, `ui.js`, `bookingWizard.js`, `concierge.js`, `profile.js`); the anti-FOUC theme bootstrap and the light/dark toggle. |
-| **QA & test suite** | `tests/` — 54 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
+| **QA & test suite** | `tests/` — 61 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
 | **Documentation** | `README.md`, `DOCS/1-Page_Project_Proposal.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `LICENSE`, and this report. |
 
 Because there is no team to divide work across, the grading dimension of *collaboration and group structure* is satisfied here by demonstrating **complete, legible, individual authorship** of a coherent full-stack system, with a development history (30+ commits) that evidences incremental work.
@@ -132,12 +132,12 @@ Parameterized SQL  ( ? placeholders only — no string interpolation anywhere )
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-**54 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
+**61 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
 
 | Module | What it proves |
 | :--- | :--- |
 | `test_database.py` | `PRAGMA foreign_keys = ON` is active per connection; `UNIQUE` constraints on email and booking code; `ON DELETE CASCADE` / `SET NULL` behave as declared. |
-| `test_auth.py` | Registration, Werkzeug PBKDF2 hashing (password never stored in clear), login success/failure, session cleared on logout, `@login_required` redirects, and safe vs. rejected `?next=` redirect targets (open-redirect protection). |
+| `test_auth.py` | Registration, Werkzeug PBKDF2 hashing (password never stored in clear), login success/failure, session cleared on logout, `@login_required` redirects, safe vs. rejected `?next=` redirect targets (open-redirect protection), and CSRF enforcement — a POST with a missing or forged token is rejected on both the HTML forms and the JSON API, GET requests are unaffected, and the same request succeeds once the token is presented. |
 | `test_catalog.py` | City / theme / keyword filtering produce the correct subset; detail pages render; a missing experience id renders the branded custom 404 page. |
 | `test_booking.py` | 4-step wizard rendering, visit-date bounds, time-slot validation, guest-count bounds (1–6), add-on pricing arithmetic, and that add-on prices are taken from the catalog rather than the request payload. |
 | `test_concierge.py` | Grounded Gemini RAG (mocked) parses `[RECOMMEND: …]` tags and persists the extracted taste profile; the offline heuristic fallback matches by city and by theme; empty messages are rejected; a stored taste profile containing markup is escaped, never rendered as HTML. |
@@ -155,6 +155,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | **Authentication & authorisation** | Flask signed-cookie sessions; `@login_required` on the booking wizard, concierge, and profile; feedback writes verify `user_id` ownership of the target booking. |
 | **Server-side output escaping** | Jinja2 autoescaping on all templates. The one former `\|safe` filter on user-controlled taste-profile text was removed and replaced with plain interpolation plus a CSS `white-space: pre-line` class. |
 | **Client-side output escaping** | `concierge.js` escapes every HTML-significant character in user chat input, model output, and the stored taste profile before it reaches the DOM (`escapeHtml`; taste profile written via `textContent`, not `innerHTML`). This closes a reflected/stored XSS vector in the chat renderer. |
+| **Cross-site request forgery (CSRF)** | Every state-changing request must present a per-session token minted with `secrets.token_urlsafe(32)` and compared with `secrets.compare_digest`. It reaches the server as a hidden `csrf_token` field on the HTML forms and an `X-CSRFToken` header on the JSON endpoints, enforced centrally by a `before_request` hook rather than per-route. Implemented directly rather than via Flask-WTF, so the mechanism is visible in the codebase. Second layer: the session cookie is set `HttpOnly` and `SameSite=Lax` explicitly, so the browser will not attach it to a cross-site POST in the first place. |
 | **Open-redirect protection** | The post-login `?next=` target is accepted only if it is a same-site relative path; absolute URLs and protocol-relative `//` targets are discarded and the user is sent to the home page. |
 | **Server-side pricing integrity** | A booking request may only name *which* add-ons it wants. `create_booking()` re-reads each add-on's name and price from the chosen experience's own catalog entry, drops unknown ids and collapses duplicates, so a crafted payload cannot invent an add-on or discount the total. Covered by two regression tests. |
 | **Booking-code collisions** | Booking codes are `EXP-2026-` + 6 random alphanumerics on a `UNIQUE` column; insertion retries on the rare `IntegrityError` instead of surfacing a 500. |
@@ -165,6 +166,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 
 Honest scope boundaries of the delivered system:
 
+- **Session-scoped CSRF tokens.** The token lives in the signed session cookie and lasts as long as the session, rather than rotating per form. That is the standard trade-off for a server-rendered app of this size; per-request rotation would break the back button and concurrent tabs without meaningfully raising the bar here.
 - **The concierge is single-turn.** No running conversation history is sent to Gemini; continuity between messages is carried only by the persisted Cultural Taste Profile. A true multi-turn history buffer is future work.
 - **RAG grounding covers the `experiences` table only** — the 12 bookable packages. It does not ground on `museums` or `exhibitions`, and does not know venue logistics such as street addresses, general opening hours, or physical accessibility.
 - **No payment integration.** Booking issues a digital pass and a booking code; no money changes hands.
