@@ -104,17 +104,33 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     # Handle selected_addons if passed as JSON string or list
     if isinstance(selected_addons, str):
         try:
-            addons_list = json.loads(selected_addons)
-        except Exception:
-            addons_list = []
+            requested_addons = json.loads(selected_addons)
+        except (json.JSONDecodeError, TypeError):
+            requested_addons = []
     elif isinstance(selected_addons, list):
-        addons_list = selected_addons
+        requested_addons = selected_addons
     else:
-        addons_list = []
+        requested_addons = []
 
-    # Calculate total price
+    # Never price a booking from the client's numbers. The request only gets to
+    # say WHICH add-ons it wants; the name and price are re-read from this
+    # experience's own catalog entry. Unknown ids are dropped, and duplicates
+    # are collapsed, so a crafted payload cannot invent an add-on or discount.
+    catalog_addons = {
+        addon['id']: addon for addon in exp['available_addons']
+        if isinstance(addon, dict) and 'id' in addon
+    }
+    addons_list = []
+    for requested in requested_addons:
+        if not isinstance(requested, dict):
+            continue
+        addon = catalog_addons.get(requested.get('id'))
+        if addon is not None and addon not in addons_list:
+            addons_list.append(addon)
+
+    # Calculate total price from the catalog values only
     base_total = exp['base_price'] * guests_count
-    addons_total = sum(float(a.get('price', 0)) for a in addons_list if isinstance(a, dict)) * guests_count
+    addons_total = sum(float(a.get('price', 0)) for a in addons_list) * guests_count
     total_price = base_total + addons_total
 
     addons_json_str = json.dumps(addons_list)
