@@ -133,7 +133,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Add comprehensive docstrings and inline comments across all functions and route handlers.
   - [x] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
 - [x] **Automated Test Suite Scaffold & Execution**
-  - [x] Built comprehensive 52-test automated test suite using Python standard library `unittest`.
+  - [x] Built comprehensive automated test suite using Python standard library `unittest` — **61 tests**, grown from the original 52 by the CSRF enforcement and server-side pricing-integrity regression tests added in the 2026-09-02 audit.
   - [x] Isolated test databases with full foreign key constraint checks (`test_database.py`).
   - [x] Authentication and PBKDF2 hashing verification (`test_auth.py`).
   - [x] Catalog search and multi-filtering tests (`test_catalog.py`).
