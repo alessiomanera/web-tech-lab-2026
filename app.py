@@ -11,7 +11,7 @@ from flask import Flask
 from dotenv import load_dotenv
 import database
 from routes import main_bp
-from auth import auth_bp
+from auth import auth_bp, csrf_token, csrf_protect
 
 
 def create_app(test_config=None):
@@ -32,6 +32,14 @@ def create_app(test_config=None):
         'FLASK_SECRET_KEY', 'dev-secret-key-change-in-production'
     )
 
+    # Session cookie hardening. HttpOnly keeps the cookie away from JavaScript;
+    # SameSite=Lax stops the browser attaching it to cross-site POSTs at all.
+    # Current browsers default to Lax, but relying on a browser default is not
+    # a decision — setting it here makes it one, and is the second layer under
+    # the CSRF token below.
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
     # Apply test configuration overrides if provided
     if test_config is not None:
         app.config.update(test_config)
@@ -42,6 +50,11 @@ def create_app(test_config=None):
     # Create database tables if they don't exist
     with app.app_context():
         database.init_db()
+
+    # CSRF protection: every state-changing request must present the session
+    # token, and every template can embed it via {{ csrf_token() }}.
+    app.before_request(csrf_protect)
+    app.jinja_env.globals['csrf_token'] = csrf_token
 
     # Register Blueprints for routing
     app.register_blueprint(main_bp)

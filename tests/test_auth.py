@@ -108,3 +108,69 @@ class AuthTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertNotIn('evil.example.com', response.headers['Location'])
+
+    # ------------------------------------------------------------------
+    # CSRF protection
+    #
+    # These use `self.raw_post` (the unwrapped test client) so the request
+    # arrives without a token — which is exactly what a cross-site forgery
+    # looks like, since another origin can make the browser send our session
+    # cookie but cannot read the token out of our HTML.
+    # ------------------------------------------------------------------
+
+    def test_csrf_token_is_rendered_for_the_client(self):
+        """Every page exposes the session token for forms and fetch calls."""
+        html = self.client.get('/login').get_data(as_text=True)
+        self.assertIn('name="csrf-token"', html)
+        self.assertIn('name="csrf_token"', html)
+        self.assertTrue(self.csrf_token())
+
+    def test_csrf_blocks_form_post_without_token(self):
+        """A form POST carrying no CSRF token is rejected."""
+        response = self.raw_post(
+            '/login', data={'email': 'explorer@test.com', 'password': 'Password123!'}
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_csrf_blocks_form_post_with_wrong_token(self):
+        """A forged token does not pass the constant-time comparison."""
+        self.csrf_token()  # establish a session token first
+        response = self.raw_post(
+            '/login',
+            data={'email': 'explorer@test.com',
+                  'password': 'Password123!',
+                  'csrf_token': 'not-the-real-token'}
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_csrf_blocks_booking_post_without_token(self):
+        """The booking wizard's POST is protected too, not just auth."""
+        self.login()
+        response = self.raw_post('/booking', data={'experience_id': 1})
+        self.assertEqual(response.status_code, 400)
+
+    def test_csrf_blocks_json_api_and_answers_in_json(self):
+        """A JSON endpoint refuses an untokened POST and replies with JSON, not HTML."""
+        self.login()
+        response = self.raw_post(
+            '/api/feedback', json={'booking_id': 1, 'rating': 5}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('security token', response.get_json()['error'])
+
+    def test_csrf_allows_post_with_valid_token(self):
+        """The same request succeeds once the token is presented."""
+        response = self.raw_post(
+            '/login',
+            data={'email': 'explorer@test.com',
+                  'password': 'Password123!',
+                  'csrf_token': self.csrf_token()}
+        )
+        self.assertEqual(response.status_code, 302)
+        with self.client.session_transaction() as sess:
+            self.assertIn('user_id', sess)
+
+    def test_csrf_does_not_interfere_with_get_requests(self):
+        """Read-only requests are never blocked."""
+        for path in ('/', '/experiences', '/museums', '/login', '/register'):
+            self.assertEqual(self.client.get(path).status_code, 200, path)
