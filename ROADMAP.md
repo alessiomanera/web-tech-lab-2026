@@ -8,7 +8,7 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Review Academic Requirements & Evaluation Criteria**
   - [x] Analyze the official course project guide (`AY2025_2026_project_guide.pdf`, distributed on Moodle) — 30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge.
   - [x] Confirm single-person group structure (Group-11 created by Professor Yucel; solo work declared 25 Jun 2026).
-  - [x] Identify required technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask, SQLite).
+  - [x] Identify the guide's recommended technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask) and choose the rest — SQLite, no ORM, Google Gemini — ourselves, since the guide leaves the data layer and any extra integrations to the student.
 
 ### Confirmed Academic Milestones (Sep 11, 2026 exam session)
 
@@ -16,7 +16,7 @@ This document serves as the master source of truth and historical tracking timel
 | :--- | :--- | :--- |
 | Group members declared | [x] Done | Group-11 created by professor (25 Jun 2026). |
 | 1-page proposal submitted on Moodle | [x] Done | Uploaded 24 Aug 2026 (`PROJECT_PROPOSAL.pdf`). |
-| Professor proposal feedback | [x] Received | 22 Aug 2026 — approved, **no revisions requested**. Note: professor will cross-check originality against a past group's similar ticketing+AI project. |
+| Professor proposal feedback | [x] Received | 22 Aug 2026 — approved, **no revisions requested**. |
 | Exam registration / booking | [x] Confirmed | Booked for Sep 11, 2026. |
 | **Project archive on Moodle** | [ ] **Due Sep 4, 23:55 (guide) / 23:59 (professor email)** | Target: well before Sep 4. |
 | Written exam | [ ] Sep 11, 10:00 (~40 min) | 5 multiple-choice + 3 open-ended; **scope = lecture slides**. |
