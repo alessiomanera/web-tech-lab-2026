@@ -35,7 +35,7 @@ def create_app(test_config=None):
     # Session cookie hardening. HttpOnly keeps the cookie away from JavaScript;
     # SameSite=Lax stops the browser attaching it to cross-site POSTs at all.
     # Current browsers default to Lax, but relying on a browser default is not
-    # a decision — setting it here makes it one, and is the second layer under
+    # a decision; setting it here makes it one, and is the second layer under
     # the CSRF token below.
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'

@@ -21,7 +21,7 @@
     --accent-color: #74B9FF; /* Canonical Sky Blue */
     --accent-hover: #54A0FF;
     
-    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY — Always with Black Text) */
+    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY: Always with Black Text) */
     --accent-yellow: #FFD23F; /* Canonical Bold Yellow */
     --accent-yellow-hover: #ECC02F;
     
@@ -33,13 +33,13 @@
     --review-bg: #EBF4FF;
 
     /* Text-on-ground variants of the accent colours.
-       The fills above stay vivid — these are the darkened versions used
+       The fills above stay vivid; these are the darkened versions used
        wherever an accent is applied to TEXT sitting on the page background,
        so the text still clears WCAG AA contrast. Text placed ON one of the
        vivid fills uses --on-accent instead. */
-    --primary-text: #B5342A;        /* Coral, darkened for text — 6.02:1 on white */
-    --accent-text: #1B6AB8;         /* Sky blue, darkened for text — 5.53:1 on white */
-    --accent-yellow-text: #8A6212;  /* Bold yellow, darkened for text — 5.47:1 on white */
+    --primary-text: #B5342A;        /* Coral, darkened for text: 6.02:1 on white */
+    --accent-text: #1B6AB8;         /* Sky blue, darkened for text: 5.53:1 on white */
+    --accent-yellow-text: #8A6212;  /* Bold yellow, darkened for text: 5.47:1 on white */
     --on-accent: #000000;           /* Text sitting on a coral/blue/yellow fill */
 
     /* Neo-Brutalist Metrics */
@@ -76,7 +76,7 @@
     --accent-color: #74B9FF; /* Canonical Sky Blue */
     --accent-hover: #54A0FF;
     
-    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY — Always with Black Text) */
+    /* Canonical Tertiary Accent (Micro-Elements / Badges ONLY: Always with Black Text) */
     --accent-yellow: #FFD23F; /* Canonical Bold Yellow */
     --accent-yellow-hover: #ECC02F;
     

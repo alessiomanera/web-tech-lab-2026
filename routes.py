@@ -19,7 +19,7 @@ from database import get_db
 
 main_bp = Blueprint('main', __name__)
 
-# Single source of truth for bookable time slots — validated here, and the
+# Single source of truth for bookable time slots, validated here and
 # only place `booking()` reads them from before handing them to the template.
 VALID_TIME_SLOTS = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
 
@@ -564,7 +564,7 @@ CRITICAL INSTRUCTIONS:
    [RECOMMEND: id=<ID>, title="<TITLE>", city="<CITY>", price=<PRICE>]
    For example: [RECOMMEND: id=1, title="Uffizi VIP Masterpieces Tour", city="Florence", price=65.00]
 3. Keep recommendations concise, vivid, and helpful (2-3 short paragraphs max).
-   Use plain prose. For emphasis use **bold** or *italic* only — no headings,
+   Use plain prose. For emphasis use **bold** or *italic* only; no headings,
    bullet lists, tables, or code blocks; the chat renders only those two.
 4. At the very end of your response, if the user revealed new tastes, preferences, group details, or favorite cities, provide an updated Markdown Taste Profile starting exactly with the delimiter:
 ---TASTE_PROFILE---
@@ -680,7 +680,7 @@ def api_chat():
     else:
         ai_response_text = (
             "Benvenuto! I'm your AI Cultural Concierge. Tell me what kind of art or history "
-            "you love in Italy — try mentioning a city like Florence, Rome, or Venice, or a theme "
+            "you love in Italy. Try mentioning a city like Florence, Rome, or Venice, or a theme "
             "like Renaissance, Ancient Roman, or Food & Wine."
         )
 

@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update preview
         previewBox.classList.remove('is-hidden');
-        previewTitle.textContent = selectedOption.text.split('—')[0].trim();
+        previewTitle.textContent = selectedOption.text.split('|')[0].trim();
         state.experienceTitle = previewTitle.textContent;
         previewCity.textContent = state.city;
         previewDesc.textContent = `Curated ${state.duration}-minute journey with priority access.`;

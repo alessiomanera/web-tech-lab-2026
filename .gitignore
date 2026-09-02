@@ -31,7 +31,7 @@ build/
 Thumbs.db
 
 # Project-specific private / untracked directories
-# NOTE: the wildcard is root-anchored (/_*) on purpose — an unanchored _*
+# NOTE: the wildcard is root-anchored (/_*) on purpose. An unanchored _*
 # also matches tests/__init__.py and would drop it from every clone.
 _PERSONAL/
 _CLASS_RESOURCES/
