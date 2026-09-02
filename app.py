@@ -67,4 +67,9 @@ def create_app(test_config=None):
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True)
+    # Debug mode is opt-in. With it on, Flask hands exceptions to the Werkzeug
+    # debugger instead of the registered error handlers, so the branded
+    # 500.html page never renders. Enable it deliberately while developing:
+    #   Windows PowerShell:  $env:FLASK_DEBUG=1; python app.py
+    #   macOS / Linux:       FLASK_DEBUG=1 python app.py
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1')
