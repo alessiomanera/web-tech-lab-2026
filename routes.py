@@ -19,6 +19,10 @@ from database import get_db
 
 main_bp = Blueprint('main', __name__)
 
+# Single source of truth for bookable time slots — validated here, and the
+# only place `booking()` reads them from before handing them to the template.
+VALID_TIME_SLOTS = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
+
 
 def generate_booking_code():
     """Generates a memorable booking reference code, e.g. EXP-2026-A91F7Q."""
@@ -39,6 +43,34 @@ def _parse_json_column(value, default=None):
         return default
 
 
+def _safe_int(value):
+    """Returns int(value), or None if value is missing, empty, or non-numeric."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _lookup_experience_by_id(db, raw_id):
+    """Resolves a raw (possibly missing/non-numeric) experience id to a dict, or None."""
+    exp_id = _safe_int(raw_id)
+    if exp_id is None:
+        return None
+    row = db.execute("SELECT * FROM experiences WHERE id = ?", (exp_id,)).fetchone()
+    return _exp_row_to_dict(row) if row else None
+
+
+def _lookup_experience_by_museum(db, raw_museum_id):
+    """Resolves a raw museum id to its first bookable experience, or None."""
+    museum_id = _safe_int(raw_museum_id)
+    if museum_id is None:
+        return None
+    row = db.execute(
+        "SELECT * FROM experiences WHERE museum_id = ? LIMIT 1", (museum_id,)
+    ).fetchone()
+    return _exp_row_to_dict(row) if row else None
+
+
 def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=1, selected_addons=None):
     """
     Validates booking parameters and inserts a new Ticket record in SQLite.
@@ -55,17 +87,9 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     except (ValueError, TypeError):
         return None, 'Invalid guest count.'
 
-    try:
-        exp_id_int = int(exp_id)
-    except (ValueError, TypeError):
+    exp = _lookup_experience_by_id(db, exp_id)
+    if exp is None:
         return None, 'Selected experience not found.'
-
-    exp_row = db.execute(
-        "SELECT * FROM experiences WHERE id = ?", (exp_id_int,)
-    ).fetchone()
-    if not exp_row:
-        return None, 'Selected experience not found.'
-    exp = _exp_row_to_dict(exp_row)
 
     try:
         visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
@@ -74,8 +98,7 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     except (ValueError, TypeError):
         return None, 'Invalid date format. Expected YYYY-MM-DD.'
 
-    valid_slots = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
-    if time_slot not in valid_slots:
+    if time_slot not in VALID_TIME_SLOTS:
         return None, 'Invalid time slot selected.'
 
     # Handle selected_addons if passed as JSON string or list
@@ -254,14 +277,7 @@ def booking():
         selected_addons_json = request.form.get('selected_addons_json', '[]')
 
         if exp_id:
-            try:
-                exp_row = db.execute(
-                    "SELECT * FROM experiences WHERE id = ?", (int(exp_id),)
-                ).fetchone()
-                if exp_row:
-                    selected_exp = _exp_row_to_dict(exp_row)
-            except (ValueError, TypeError):
-                pass
+            selected_exp = _lookup_experience_by_id(db, exp_id)
 
         ticket, error = create_booking(
             db=db,
@@ -276,23 +292,9 @@ def booking():
         preselected_id = request.args.get('exp_id')
         preselected_museum_id = request.args.get('museum_id')
         if preselected_id:
-            try:
-                sel_row = db.execute(
-                    "SELECT * FROM experiences WHERE id = ?", (int(preselected_id),)
-                ).fetchone()
-                if sel_row:
-                    selected_exp = _exp_row_to_dict(sel_row)
-            except (ValueError, TypeError):
-                selected_exp = None
+            selected_exp = _lookup_experience_by_id(db, preselected_id)
         elif preselected_museum_id:
-            try:
-                sel_row = db.execute(
-                    "SELECT * FROM experiences WHERE museum_id = ? LIMIT 1", (int(preselected_museum_id),)
-                ).fetchone()
-                if sel_row:
-                    selected_exp = _exp_row_to_dict(sel_row)
-            except (ValueError, TypeError):
-                selected_exp = None
+            selected_exp = _lookup_experience_by_museum(db, preselected_museum_id)
 
     return render_template(
         'booking.html',
@@ -300,7 +302,8 @@ def booking():
         selected_exp=selected_exp,
         user=user,
         ticket=ticket,
-        error=error
+        error=error,
+        time_slots=VALID_TIME_SLOTS
     )
 
 

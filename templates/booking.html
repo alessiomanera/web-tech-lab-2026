@@ -18,7 +18,7 @@
     <form id="booking-form" method="POST" action="{{ url_for('main.booking') }}">
         <input type="hidden" name="experience_id" id="hidden-experience-id" value="{{ selected_exp.id if selected_exp else '' }}">
         <input type="hidden" name="visit_date" id="hidden-visit-date">
-        <input type="hidden" name="time_slot" id="hidden-time-slot" value="09:30 - 11:00">
+        <input type="hidden" name="time_slot" id="hidden-time-slot" value="{{ time_slots[0] }}">
         <input type="hidden" name="guests_count" id="hidden-guests-count" value="1">
         <input type="hidden" name="selected_addons_json" id="hidden-selected-addons-json" value="[]">
 
@@ -110,10 +110,9 @@
             <div class="form-group">
                 <label class="form-label">3. Dedicated Time Slot</label>
                 <div class="time-slot-grid" id="time-slots-container">
-                    <div class="time-slot-pill active" data-slot="09:30 - 11:00">09:30 - 11:00</div>
-                    <div class="time-slot-pill" data-slot="11:30 - 13:00">11:30 - 13:00</div>
-                    <div class="time-slot-pill" data-slot="14:30 - 16:00">14:30 - 16:00</div>
-                    <div class="time-slot-pill" data-slot="16:30 - 18:00">16:30 - 18:00</div>
+                    {% for slot in time_slots %}
+                    <div class="time-slot-pill{% if loop.first %} active{% endif %}" data-slot="{{ slot }}">{{ slot }}</div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -140,7 +139,7 @@
                     </div>
                     <div>
                         <span class="text-secondary-block">Time Slot:</span>
-                        <strong id="summary-slot">09:30 - 11:00</strong>
+                        <strong id="summary-slot">{{ time_slots[0] }}</strong>
                     </div>
                     <div>
                         <span class="text-secondary-block">Guests:</span>
@@ -190,7 +189,7 @@
                     </div>
                     <div>
                         <span class="pass-label">Reserved Slot</span>
-                        <strong id="pass-slot">{{ ticket.time_slot if ticket else '10:00 - 11:30' }}</strong>
+                        <strong id="pass-slot">{{ ticket.time_slot if ticket else time_slots[0] }}</strong>
                     </div>
                     <div>
                         <span class="pass-label">Total Paid</span>
