@@ -17,7 +17,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom Neubrutalist design system loaded directly without build tools), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI state machines).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
-- **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
+- **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`: `users`, `museums`, `exhibitions`, `experiences`, `tickets`). The `exhibitions` table is seeded with sample data but not yet surfaced by any route, template, or the concierge's RAG grounding — see Known Limitations in `DOCS/PROJECT_REPORT.md`.
 - **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-flash-lite-latest`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
 
 ---
@@ -47,7 +47,7 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 web-tech-lab-2026/
 ├── app.py                 # Application factory and entry point
 ├── database.py            # SQLite connection context manager & initialization
-├── schema.sql             # SQL database definition (tables for users, museums, experiences, tickets)
+├── schema.sql             # SQL database definition (tables for users, museums, exhibitions, experiences, tickets)
 ├── routes.py              # Main Blueprint: page routes and API endpoints (/booking, /api/chat, /api/feedback)
 ├── auth.py                # Authentication Blueprint: registration, login, logout, @login_required
 ├── seed.py                # Database population script with Top 12 Curated Italian Cultural Experiences
@@ -166,6 +166,8 @@ web-tech-lab-2026/
    python app.py
    ```
    Open your browser and navigate to `http://127.0.0.1:5000/`.
+
+   > Debug mode (Werkzeug's interactive debugger and auto-reload) is opt-in and off by default, so the branded `500.html` error page always renders. Enable it with `FLASK_DEBUG=1 python app.py` (PowerShell: `$env:FLASK_DEBUG=1; python app.py`) if you need tracebacks while developing.
 
 ---
 
