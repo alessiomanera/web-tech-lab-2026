@@ -18,7 +18,7 @@ A full-stack web application for discovering and booking tickets to museums and 
 | Backend | Python 3 and Flask, application-factory pattern, two Blueprints (`routes.py`, `auth.py`) |
 | Database | Raw SQLite3 with parameterized queries via the standard library `sqlite3`. No ORM. Tables: `users`, `museums`, `exhibitions`, `experiences`, `tickets` |
 | AI | Google Gemini (`gemini-flash-lite-latest`, set via `GEMINI_MODEL`) through the `google-generativeai` SDK, with RAG grounding on the live `experiences` catalog |
-| Tests | 61 integration tests using the standard library `unittest` |
+| Tests | 65 integration tests using the standard library `unittest` |
 
 ---
 
@@ -76,7 +76,7 @@ Without a key the app still starts and every other module works, but the concier
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-61 tests, all passing. They run at integration level against an isolated temporary SQLite database created and destroyed per test, covering database constraints, authentication and CSRF, catalog filtering, booking and pricing arithmetic, the concierge's RAG and fallback paths, the feedback loop, and the custom error pages. Per-module detail is in section 5 of the project report.
+65 tests, all passing. They run at integration level against an isolated temporary SQLite database created and destroyed per test, covering database constraints, authentication and CSRF, catalog filtering, booking and pricing arithmetic, the concierge's RAG and fallback paths, the feedback loop, and the custom error pages. Per-module detail is in section 5 of the project report.
 
 ---
 
@@ -89,10 +89,10 @@ schema.sql        # table definitions
 routes.py         # main Blueprint: pages plus /api/book, /api/chat, /api/feedback
 auth.py           # auth Blueprint: register, login, logout, @login_required
 seed.py           # populates 12 museums, 12 experiences, demo account
-templates/        # 13 Jinja2 templates, all extending base.html
+templates/        # 13 Jinja2 templates: base.html plus 12 that extend it
 static/css/       # variables, layout, components, utilities
 static/js/        # main, api, ui, bookingWizard, concierge, profile
-tests/            # 61 unittest integration tests
+tests/            # 65 unittest integration tests
 DOCS/             # project report, 1-page proposal, competitor analysis
 ROADMAP.md        # phased development log
 ```

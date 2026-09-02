@@ -133,7 +133,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Add comprehensive docstrings and inline comments across all functions and route handlers.
   - [x] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
 - [x] **Automated Test Suite Scaffold & Execution**
-  - [x] Built comprehensive automated test suite using Python standard library `unittest`, **61 tests**, grown from the original 52 by the CSRF enforcement and server-side pricing-integrity regression tests added in the 2026-09-02 audit.
+  - [x] Built comprehensive automated test suite using Python standard library `unittest`, **65 tests**, grown from the original 52 by the CSRF and pricing-integrity regression tests from the 2026-09-02 self-audit, then by the booking-window, guest-count and logout-method tests from the independent review that followed.
   - [x] Isolated test databases with full foreign key constraint checks (`test_database.py`).
   - [x] Authentication and PBKDF2 hashing verification (`test_auth.py`).
   - [x] Catalog search and multi-filtering tests (`test_catalog.py`).
@@ -178,6 +178,13 @@ This document serves as the master source of truth and historical tracking timel
   - [x] **Dead CSS removed:** six unreferenced rules (`.card-clickable`, `.cta-button-yellow`, `.cta-button-blue-sm`, `.text-accent-color`, `.side-card-title`, `.mt-4`, plus `.preserve-lines` once the taste panel stopped needing it) and six unread custom properties. `.sr-only` was kept deliberately as a standard accessibility utility.
   - [x] **`_current_user(db)`:** collapsed the session-user lookup that was repeated identically in four route handlers.
 
+- [x] **Independent third-party review (2026-09-02)** after the internal audit had closed, to catch what a self-review would not. Every documented claim was re-verified against the code (test count, route and table counts, SQL call sites, hashing, CSRF, cookie flags, open-redirect guard, pricing integrity, foreign-key actions) and all held. Four real defects were found and fixed, each with a regression test:
+  - [x] **Booking window not enforced server-side:** the +90-day limit existed only as a `max` attribute on the date picker, so a request that bypassed the picker could book any future date. `create_booking()` now enforces it via `MAX_BOOKING_DAYS_AHEAD`, with the client-side bound kept as a convenience rather than a control.
+  - [x] **Logout accepted GET:** any third-party page could end a visitor's session simply by loading the URL, since the CSRF hook only guards POST, PUT, PATCH and DELETE. Logout is now POST-only and sits behind that hook; the nav link became a small form carrying the token, styled to match the surrounding links.
+  - [x] **Fractional guest counts truncated:** `int()` turns a JSON `1.9` into `1` rather than failing, so a booking silently confirmed for a different party size. A fractional float is now rejected; a fractional string already failed inside `int()`.
+  - [x] **Template count misstated:** the report said "13 templates extending `base.html`" when 13 exist and 12 extend it.
+  - [x] Two of the four new tests fail against the previous code, confirming the fixes rather than assuming them; a third asserts the 90th day itself still books, guarding the new bound against an off-by-one.
+
 - [x] **Cross-Device & Responsive Usability Testing**
   - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages; no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
   - [x] Verify keyboard navigation and screen-reader accessibility. Booking time slots are real `<button>` elements with `aria-pressed`, reachable and operable by keyboard (they were non-focusable `<div>`s until 2026-09-02).
@@ -200,6 +207,6 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
   - [x] **High-Contrast Light/Dark Theme System (shipped in `e5c499f`):** canonical Neubrutalist palette (Coral Red `#FF6B6B`, Sky Blue `#74B9FF`, Bold Yellow `#FFD23F`, Soft Green `#88D498`) with a header toggle, `localStorage` persistence, SVG sun/moon icons, and an anti-FOUC bootstrap script in `<head>`.
 - [ ] **Moodle Submission Packaging**
-  - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
-  - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.
+  - [x] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
+  - [x] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide. Built from a clean clone of the release tag and verified: no environment files, virtualenv, caches or version-control metadata, and the full test suite passes inside the extracted archive.
   - [ ] Submit on Moodle ahead of the deadline.
