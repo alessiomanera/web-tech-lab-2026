@@ -162,10 +162,15 @@ def login():
     return render_template('login.html')
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/logout', methods=['POST'])
 def logout():
     """
     Logs out the user by clearing all session data.
+
+    POST rather than GET on purpose: a GET logout can be fired cross-site by
+    anything that loads a URL (an <img> tag on someone else's page is enough),
+    which lets a third party end a visitor's session without their consent.
+    As a POST it goes through the CSRF hook like every other state change.
     """
     session.clear()
     return redirect(url_for('main.home'))

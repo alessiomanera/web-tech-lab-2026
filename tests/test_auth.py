@@ -75,8 +75,22 @@ class AuthTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Please check your login details', response.data)
 
+    def test_logout_rejects_get(self):
+        """GET /logout is refused, so it cannot be fired cross-site.
+
+        A GET logout can be triggered by anything that loads a URL, including
+        an <img> tag on a third-party page, which would end a visitor's
+        session without their consent. Only POST is accepted, which puts it
+        behind the CSRF hook.
+        """
+        self.login()
+        response = self.client.get('/logout')
+        self.assertEqual(response.status_code, 405)
+        # The session must survive the refused request.
+        self.assertEqual(self.client.get('/profile').status_code, 200)
+
     def test_logout(self):
-        """GET /logout clears user session."""
+        """POST /logout clears user session."""
         self.login('explorer@test.com', 'Password123!')
         response = self.logout()
         self.assertEqual(response.status_code, 200)
