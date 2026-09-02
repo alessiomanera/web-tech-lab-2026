@@ -22,7 +22,7 @@ function escapeHtml(value) {
 /**
  * Renders the small subset of Markdown the model actually emits, on text that
  * is ALREADY escaped. Order matters: the three-asterisk form has to be consumed
- * before the two-asterisk form, which has to be consumed before the single —
+ * before the two-asterisk form, which has to be consumed before the single.
  * otherwise `***Benvenuto!***` matches the `**` rule first and leaves a stray
  * asterisk behind. Anything the model emits that is not handled here stays
  * visible as literal text rather than being trusted as markup.

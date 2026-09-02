@@ -56,7 +56,7 @@
                             data-duration="{{ exp.duration_minutes }}"
                             data-addons='{{ exp.available_addons_json }}'
                             {% if selected_exp and selected_exp.id == exp.id %}selected{% endif %}>
-                        [{{ exp.city }}] {{ exp.title }} — €{{ "%.2f"|format(exp.base_price) }} ({{ exp.duration_minutes }}m)
+                        [{{ exp.city }}] {{ exp.title }} | €{{ "%.2f"|format(exp.base_price) }} ({{ exp.duration_minutes }}m)
                     </option>
                     {% endfor %}
                 </select>

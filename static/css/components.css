@@ -1482,7 +1482,7 @@
     font-size: 0.95rem;
 }
 
-/* Scoped to this section only — a bare `.addon-price` rule already exists
+/* Scoped to this section only. A bare `.addon-price` rule already exists
    under "6. 4-Step Booking Wizard Components"; this one must not win there. */
 .addon-preview-box .addon-price {
     color: var(--primary-text);
