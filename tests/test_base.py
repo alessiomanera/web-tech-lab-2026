@@ -32,7 +32,7 @@ class BaseTestCase(unittest.TestCase):
         self.client = self.app.test_client()
 
         # Every state-changing request needs a CSRF token. `raw_post` is the
-        # untouched client method — tests that exercise the CSRF guard itself
+        # untouched client method. Tests that exercise the CSRF guard itself
         # use it directly; `self.client.post` is wrapped below so the other
         # ~24 call sites keep reading as ordinary requests, exactly as a real
         # browser behaves once it has rendered a page.

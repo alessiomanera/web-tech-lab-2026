@@ -113,7 +113,7 @@ class AuthTestCase(BaseTestCase):
     # CSRF protection
     #
     # These use `self.raw_post` (the unwrapped test client) so the request
-    # arrives without a token — which is exactly what a cross-site forgery
+    # arrives without a token, which is exactly what a cross-site forgery
     # looks like, since another origin can make the browser send our session
     # cookie but cannot read the token out of our HTML.
     # ------------------------------------------------------------------
