@@ -33,7 +33,8 @@ This project is a full-stack web application that does both. It presents a curat
 ### Prerequisites
 
 - Python 3.10 or newer
-- Git
+- Git — only needed if cloning; if you already have this project as a folder (e.g. unzipped from a Moodle submission), skip Git and start at "Create and activate a virtual environment" below, from inside that folder.
+- An internet connection (to install dependencies, and optionally to reach the Gemini API).
 
 ### Setup
 
@@ -44,23 +45,42 @@ cd web-tech-lab-2026
 # Create and activate a virtual environment
 python -m venv venv
 # Windows (PowerShell):   .\venv\Scripts\Activate.ps1
+#   -> if PowerShell refuses with "running scripts is disabled on this system",
+#      run this first, then retry the line above:
+#      Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # Windows (cmd):          .\venv\Scripts\activate.bat
 # macOS / Linux:          source venv/bin/activate
+# Your prompt should now start with "(venv)" - that confirms it worked.
 
-pip install -r requirements.txt
+pip install -r requirements.txt   # installs 3 packages: Flask, python-dotenv, google-generativeai
 
 # Copy the environment template
 cp .env.example .env        # Windows: copy .env.example .env
 
-python seed.py              # create and populate the database
-python app.py               # start the development server
+python seed.py               # create and populate the database - look for
+                              # "Database successfully seeded..." to confirm it worked
+python app.py                 # start the development server - look for
+                               # "Running on http://127.0.0.1:5000"
 ```
 
-Then open `http://127.0.0.1:5000/`.
+Then open `http://127.0.0.1:5000/` in a browser. If that port is already taken by something else on your machine ("Address already in use" — common on macOS, where AirPlay Receiver defaults to port 5000), either free port 5000 or start the app on another one: `python -c "from app import create_app; create_app().run(port=5001)"`, then open `http://127.0.0.1:5001/` instead.
+
+### The two `.env` settings
+
+`.env` (copied from `.env.example` above) holds two settings — worth being clear on both before assuming something is broken:
+
+- **`FLASK_SECRET_KEY`** — signs login session cookies. **You do not need to change this to run or evaluate the project.** The placeholder value works fine locally; it only matters for a real internet-facing deployment, which this isn't.
+- **`GEMINI_API_KEY`** — recommended for full evaluation, see below. Unlike the secret key, this one *does* change what you'll see if you leave it as the placeholder.
 
 ### Gemini API key — recommended for full evaluation
 
-The AI Cultural Concierge (Module 4) is the project's core feature, and it runs on the Google Gemini API. **To evaluate it properly, set a key:** get a free one from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes) and put it in `.env` as `GEMINI_API_KEY` (model defaults to `gemini-flash-lite-latest`, overridable via `GEMINI_MODEL`). With a key, the concierge does RAG grounding on the live catalog and extracts a persistent taste profile from the conversation.
+The AI Cultural Concierge (Module 4) is the project's core feature, and it runs on the Google Gemini API. **To evaluate it properly, set a key:**
+
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey) and sign in with any Google account.
+2. Click **Create API key**.
+3. Copy the key, and paste it into `.env` as `GEMINI_API_KEY=` (replacing `your_gemini_api_key_here`). Takes about 2 minutes, no credit card required.
+
+Model defaults to `gemini-flash-lite-latest`, overridable via `GEMINI_MODEL`. With a key, the concierge does RAG grounding on the live catalog and extracts a persistent taste profile from the conversation.
 
 **Without a key the app still starts and every other module works**, but the concierge drops to a labelled *offline demo mode*: a deterministic keyword matcher that returns one templated recommendation card and performs **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. The fallback is a deliberate resilience feature (network/quota safety net), not a substitute for the real concierge.
 
