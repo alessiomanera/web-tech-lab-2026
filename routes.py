@@ -335,7 +335,9 @@ def concierge():
         "SELECT * FROM users WHERE id = ?", (session['user_id'],)
     ).fetchone()
 
-    return render_template('guide.html', user=user)
+    taste_items = _parse_taste_profile(user['preferences'] if user else '')
+
+    return render_template('guide.html', user=user, taste_items=taste_items)
 
 
 # Backward compatibility route
@@ -557,6 +559,8 @@ CRITICAL INSTRUCTIONS:
    [RECOMMEND: id=<ID>, title="<TITLE>", city="<CITY>", price=<PRICE>]
    For example: [RECOMMEND: id=1, title="Uffizi VIP Masterpieces Tour", city="Florence", price=65.00]
 3. Keep recommendations concise, vivid, and helpful (2-3 short paragraphs max).
+   Use plain prose. For emphasis use **bold** or *italic* only — no headings,
+   bullet lists, tables, or code blocks; the chat renders only those two.
 4. At the very end of your response, if the user revealed new tastes, preferences, group details, or favorite cities, provide an updated Markdown Taste Profile starting exactly with the delimiter:
 ---TASTE_PROFILE---
 ### Cultural Taste Profile
