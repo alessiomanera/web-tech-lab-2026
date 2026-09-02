@@ -551,8 +551,12 @@ CRITICAL INSTRUCTIONS:
 - **Favorite Cities:** <cities>
 """
 
-    model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
-    candidate_models = [model_name, "gemini-2.5-flash", "gemini-flash-latest"]
+    # "-latest" aliases track Google's current release, so a pinned id cannot
+    # go stale underneath us the way gemini-2.5-flash did. Both fallbacks are
+    # verified reachable; the list is de-duplicated so an explicit GEMINI_MODEL
+    # equal to one of them is not retried twice.
+    model_name = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
+    candidate_models = [model_name, "gemini-flash-lite-latest", "gemini-3.6-flash"]
     candidate_models = list(dict.fromkeys(candidate_models))
 
     last_error = None
