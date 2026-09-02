@@ -105,7 +105,9 @@ main {
 
 .grid-auto {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    /* min() lets the track shrink below its 320px ideal on very narrow
+       screens instead of forcing the page to scroll sideways (WCAG 1.4.10). */
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
     gap: 3rem; /* Increased whitespace between cards */
 }
 
@@ -155,7 +157,7 @@ nav {
 
 .logo .logo-accent {
     background: var(--surface-color);
-    color: var(--primary-color);
+    color: var(--primary-text);
     padding: 0.45rem 0.65rem;
     border-left: 2px solid var(--border-color);
 }
@@ -194,22 +196,22 @@ nav {
 .nav-link:hover, .nav-link:focus {
     background: var(--surface-subtle);
     border: 2px solid var(--border-color);
-    color: var(--primary-hover);
+    color: var(--primary-text);
     box-shadow: 2px 2px 0px 0px var(--border-color);
     outline: none;
 }
 
 .nav-link.nav-ai-link {
-    color: var(--accent-color);
+    color: var(--accent-text);
 }
 
 .nav-link.nav-ai-link:hover {
-    color: var(--accent-color);
+    color: var(--accent-text);
     background: var(--surface-subtle);
 }
 
 .nav-link.nav-ai-link .ai-sparkle {
-    color: var(--accent-yellow);
+    color: var(--accent-yellow-text);
     text-shadow: 1px 1px 0px var(--border-color);
     font-size: 1rem;
 }
@@ -300,12 +302,12 @@ nav {
 
 .nav-cta-blue {
     background: var(--accent-color);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 
 .nav-cta-blue:hover {
     background: var(--accent-hover);
-    color: #FFFFFF !important;
+    color: var(--on-accent) !important;
 }
 
 .nav-logout {

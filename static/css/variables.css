@@ -34,7 +34,17 @@
     --error-color: #FF6B6B;
     --error-bg: #FFEBEB;
     --review-bg: #EBF4FF;
-    
+
+    /* Text-on-ground variants of the accent colours.
+       The fills above stay vivid — these are the darkened versions used
+       wherever an accent is applied to TEXT sitting on the page background,
+       so the text still clears WCAG AA contrast. Text placed ON one of the
+       vivid fills uses --on-accent instead. */
+    --primary-text: #B5342A;        /* Coral, darkened for text — 6.02:1 on white */
+    --accent-text: #1B6AB8;         /* Sky blue, darkened for text — 5.53:1 on white */
+    --accent-yellow-text: #8A6212;  /* Bold yellow, darkened for text — 5.47:1 on white */
+    --on-accent: #000000;           /* Text sitting on a coral/blue/yellow fill */
+
     /* Neo-Brutalist Metrics */
     --border-width: 3px;
     --box-shadow-hard: 4px 4px 0px 0px var(--border-color);
@@ -84,7 +94,15 @@
     --error-color: #FF6B6B;
     --error-bg: #2E1212;
     --review-bg: #14243B;
-    
+
+    /* On the dark canvas the vivid accents already clear AA as text, so the
+       text variants stay at full saturation. --on-accent does not flip: the
+       fills themselves are identical in both themes. */
+    --primary-text: #FF6B6B;        /* 6.14:1 on the dark card surface */
+    --accent-text: #74B9FF;         /* 8.22:1 on the dark card surface */
+    --accent-yellow-text: #FFD23F;  /* 11.80:1 on the dark card surface */
+    --on-accent: #000000;
+
     /* Neo-Brutalist Hard White Shadows */
     --box-shadow-hard: 4px 4px 0px 0px #FFFFFF;
     --box-shadow-hard-sm: 2px 2px 0px 0px #FFFFFF;
