@@ -58,7 +58,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
 - [x] **Accessibility & Performance Standards**
-  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text and buttons).
+  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text). Re-verified 2026-09-02 by measuring rendered colours against composited backgrounds across every page in both themes: 0 failing pairs.
   - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).
 
 ---
@@ -97,7 +97,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
   - [x] Populate SQLite database with **Top 12 Curated Italian Cultural Experiences** across 6 major art cities (Florence, Rome, Venice, Milan, Turin, Naples).
-  - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
+  - [x] Seed 12 baseline cultural institutions (one per curated experience) and a sample user account with an initialized Markdown Taste Profile.
 
 ---
 
@@ -154,17 +154,38 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Render the branded custom 404 page for missing experiences via `abort(404)` instead of plain text.
   - [x] Make booking codes collision-safe: 6-character suffix with retry on the `UNIQUE` constraint.
   - [x] Honour a safe relative `?next=` redirect after login; reject absolute/off-site targets (open-redirect protection).
-  - [x] Correct the Gemini model identifier to `gemini-2.5-flash`; log the local-fallback path instead of silently swallowing the exception.
+  - [x] Correct the Gemini model identifier; log the local-fallback path instead of silently swallowing the exception. (Superseded 2026-09-02: `gemini-2.5-flash` was retired by Google and began returning `404 — no longer available to new users`. The default is now the `gemini-flash-lite-latest` alias, with `gemini-3.6-flash` as a verified fallback.)
   - [x] Reframe the AI Concierge: the Gemini RAG path is the core feature (requires `GEMINI_API_KEY`); the keyword-matching fallback is a labelled resilience safety net that does no RAG and no taste-profile updates. `/api/chat` now returns an `offline` flag and the concierge view shows a yellow banner when the fallback is active. Docs (README, project report) updated to match.
   - [x] Replace the last deprecated `datetime.utcnow()` (in `seed.py`) with timezone-aware `datetime.now(timezone.utc)`.
+
+- [x] **Final Pre-Submission Audit (2026-09-02)** — a full re-verification against the live code, a throwaway clone, a real browser, and a live Gemini key.
+  - [x] **Gemini model:** `gemini-2.5-flash` was retired by Google mid-project and returns `404 — no longer available to new users`; it is still listed by `list_models()`, so only a real `generateContent` call exposes it. The default is now `gemini-flash-lite-latest` with `gemini-3.6-flash` as a measured-working fallback. (The previously-hardcoded `gemini-flash-latest` fallback was also found unusable — two consecutive `504 Deadline expired` after ~300 s.)
+  - [x] **Server-side pricing integrity:** `create_booking()` trusted the add-on prices sent in the request, so a crafted `POST /api/book` could confirm a €62.00 booking for €2.00. Add-ons are now re-resolved against the experience's own catalog entry; two regression tests cover it.
+  - [x] **Responsive:** fixed a dead `@media (max-width: 900px)` rule for `.profile-layout` (placed above the base rule, so it lost on source order) and the intrinsic `min-width` floors that overflowed the concierge and the card grids on narrow phones.
+  - [x] **Contrast:** introduced darkened text variants of the accent colours (`--primary-text`, `--accent-text`, `--accent-yellow-text`) and `--on-accent` for text on a coloured fill. Rendered-pixel audit went from 25 failing pairs in light mode and 15 in dark to **0 in both**.
+  - [x] **Keyboard:** booking time slots were non-focusable `<div>`s; they are now `<button>` elements with `aria-pressed` and a matching focus ring.
+  - [x] **Booking wizard:** clicking an add-on's `<label>` toggled the checkbox twice and cancelled itself out, so the add-on never applied.
+  - [x] **Error handling:** `app.run(debug=True)` was unconditional, and Flask's debugger replaces the registered error handlers — so the branded `500.html` never rendered. Debug is now opt-in via `FLASK_DEBUG=1`.
+  - [x] Removed three dead references (an unused `flash` import, an unused `MagicMock` import, and a `WTF_CSRF_ENABLED` test-config key for a library the project does not depend on).
+  - [x] Confirmed clean: 100% parameterized SQL across all 30 call sites, Jinja2 autoescaping intact, client-side escaping probed with a live XSS payload, complete `@login_required` coverage, the `?next=` open-redirect guard, no secrets in any commit, and a fresh clone that runs from `README.md` verbatim.
+
+- [x] **Audit Follow-Up: the deferred findings, closed (2026-09-02)** — the seven items the audit had parked as "acceptable, but be ready to explain".
+  - [x] **CSRF protection**, implemented directly rather than by adding Flask-WTF, so the mechanism stays legible in the codebase: a per-session token from `secrets.token_urlsafe(32)`, compared with `secrets.compare_digest`, carried as a hidden `csrf_token` field on the HTML forms and an `X-CSRFToken` header on the JSON endpoints, enforced by a single `before_request` hook. The session cookie is now explicitly `HttpOnly` and `SameSite=Lax` as a second layer instead of relying on a browser default. Seven regression tests cover missing, forged and valid tokens on both surfaces.
+  - [x] **Museum foreign keys:** added Musei Vaticani and the Museo Archeologico Nazionale di Napoli as seeded institutions, so all 12 experiences now resolve to their own venue (previously those two borrowed another same-city venue's id). No city mismatches remain and every museum has a bookable experience.
+  - [x] **Taste profile presentation:** the concierge's live memory panel showed raw Markdown (`### …`, `- **Label:**`) while the dashboard showed it parsed. Both now render the same label/value rows — server-side through `_parse_taste_profile()`, client-side through a mirrored `parseTasteProfile()` in `concierge.js`.
+  - [x] **Chat formatting:** the renderer only understood `**bold**`, so the model's `*italic*` and `***bold italic***` leaked literal asterisks into the reply. It now handles all three (longest-delimiter-first, on already-escaped text), and the system instruction asks the model to stay within that subset.
+  - [x] **`.btn-success`:** the booking wizard's confirm button carried a class no stylesheet defined. Defined it against `--success-color`, so the one irreversible step reads differently from every other coral CTA.
+  - [x] **Dead CSS removed:** six unreferenced rules (`.card-clickable`, `.cta-button-yellow`, `.cta-button-blue-sm`, `.text-accent-color`, `.side-card-title`, `.mt-4`, plus `.preserve-lines` once the taste panel stopped needing it) and six unread custom properties. `.sr-only` was kept deliberately as a standard accessibility utility.
+  - [x] **`_current_user(db)`:** collapsed the session-user lookup that was repeated identically in four route handlers.
+
 - [x] **Cross-Device & Responsive Usability Testing**
-  - [x] Validate responsive layout on desktop and tablet viewports; fixed the profile dashboard to stack to one column below 900px. Narrow-phone layouts are usable but lightly tested (recorded in the project report's Known Limitations).
-  - [x] Verify keyboard navigation and screen-reader accessibility.
+  - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages — no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
+  - [x] Verify keyboard navigation and screen-reader accessibility. Booking time slots are real `<button>` elements with `aria-pressed`, reachable and operable by keyboard (they were non-focusable `<div>`s until 2026-09-02).
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
   - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
-  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
-  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
+  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 12 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity — every experience now resolves to its own venue, with no city mismatches (the Vatican and MANN packages previously borrowed another same-city venue's id; Musei Vaticani and the Museo Archeologico Nazionale di Napoli were added as seeded institutions 11 and 12).
 
 ---
 
@@ -178,10 +199,6 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Align implementation details with technical evaluation criteria.
   - [x] Document technical architecture, SQL parameterization, RAG grounding, and Neubrutalism design rationale.
   - [x] **High-Contrast Light/Dark Theme System (shipped in `e5c499f`):** canonical Neubrutalist palette (Coral Red `#FF6B6B`, Sky Blue `#74B9FF`, Bold Yellow `#FFD23F`, Soft Green `#88D498`) with a header toggle, `localStorage` persistence, SVG sun/moon icons, and an anti-FOUC bootstrap script in `<head>`.
-  - [x] Document potential future enhancements:
-    - [ ] **Digital Pass Enhancements:** Dynamic QR-code ticket rendering and `.ics` calendar sync integration.
-    - [ ] **Multi-turn Concierge:** send a running conversation history to Gemini (currently single-turn; only the persisted taste profile carries context).
-    - [ ] **Extended RAG grounding:** ground the concierge on `museums` and `exhibitions`, not only the `experiences` catalog.
 - [ ] **Moodle Submission Packaging**
   - [ ] Clean temporary files, caches (`__pycache__`, `.pytest_cache`), and non-essential folders prior to bundling.
   - [ ] Package final archive (`.zip`) containing the source code, SQLite database seed, and documentation document as requested in the project guide.

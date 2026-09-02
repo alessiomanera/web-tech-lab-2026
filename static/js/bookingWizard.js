@@ -111,14 +111,22 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="addon-choice-row">
                     <input type="checkbox" id="addon-${idx}" class="addon-checkbox">
-                    <label for="addon-${idx}" class="addon-label">${addon.name}</label>
+                    <label for="addon-${idx}" class="addon-label"></label>
                 </div>
                 <span class="addon-price">+€${parseFloat(addon.price).toFixed(2)}</span>
             `;
+            // Set as text, never interpolated into the markup above: an add-on
+            // name is data, and data must never be able to become markup.
+            card.querySelector('.addon-label').textContent = addon.name;
 
             const checkbox = card.querySelector('input[type="checkbox"]');
             
             card.addEventListener('click', (e) => {
+                // A click on the <label> is already forwarded to the checkbox by
+                // the browser, which fires a second click on the checkbox itself.
+                // Toggling here as well would undo it, so let that one do the work.
+                if (e.target.closest('label')) return;
+
                 if (e.target !== checkbox) {
                     checkbox.checked = !checkbox.checked;
                 }
@@ -176,8 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Time Slot Selection
     timeSlots.forEach(pill => {
         pill.addEventListener('click', () => {
-            timeSlots.forEach(p => p.classList.remove('active'));
+            timeSlots.forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-pressed', 'false');
+            });
             pill.classList.add('active');
+            pill.setAttribute('aria-pressed', 'true');
             state.timeSlot = pill.getAttribute('data-slot');
         });
     });

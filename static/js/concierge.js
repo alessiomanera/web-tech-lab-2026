@@ -19,11 +19,62 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
-/** Applies **bold** and newline formatting to text that is ALREADY escaped. */
+/**
+ * Renders the small subset of Markdown the model actually emits, on text that
+ * is ALREADY escaped. Order matters: the three-asterisk form has to be consumed
+ * before the two-asterisk form, which has to be consumed before the single —
+ * otherwise `***Benvenuto!***` matches the `**` rule first and leaves a stray
+ * asterisk behind. Anything the model emits that is not handled here stays
+ * visible as literal text rather than being trusted as markup.
+ */
 function formatEscapedText(escaped) {
     return escaped
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
         .replace(/\n/g, '<br>');
+}
+
+/**
+ * Parses a Markdown Cultural Taste Profile into label/value pairs.
+ * Mirrors `_parse_taste_profile()` in routes.py so the profile reads the same
+ * whether the server rendered it or the chat refreshed it in place.
+ */
+function parseTasteProfile(raw) {
+    if (!raw) return [];
+    const items = [];
+    raw.split('\n').forEach(rawLine => {
+        let line = rawLine.trim();
+        if (!line || line.startsWith('#')) return;
+        if (line.startsWith('-')) line = line.replace(/^[-\s]+/, '').trim();
+        if (line.includes('**')) {
+            const parts = line.split('**');
+            if (parts.length >= 3) {
+                items.push({
+                    label: parts[1].replace(/:+$/, '').trim(),
+                    value: parts[2].replace(/^:+/, '').trim()
+                });
+                return;
+            }
+        }
+        items.push({ label: null, value: line });
+    });
+    return items;
+}
+
+/** Builds the taste-profile panel markup, escaping every value. */
+function renderTasteProfile(raw) {
+    const items = parseTasteProfile(raw);
+    if (!items.length) {
+        return '<p class="italic-secondary-m-0">Start chatting with the Concierge to automatically build your Cultural Taste Profile!</p>';
+    }
+    const rows = items.map(item => {
+        const label = item.label
+            ? `<span class="taste-label">${escapeHtml(item.label)}</span>`
+            : '';
+        return `<li class="taste-item">${label}<span class="taste-value">${escapeHtml(item.value)}</span></li>`;
+    }).join('');
+    return `<ul class="taste-profile-list">${rows}</ul>`;
 }
 
 /** Builds a bookable experience card from a parsed [RECOMMEND: ...] tag. */
@@ -86,8 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await ApiService.resetMemory();
                 if (res.ok) {
-                    memoryBox.innerHTML =
-                        '<p class="italic-secondary-m-0">Taste profile reset. Chat to rebuild!</p>';
+                    memoryBox.innerHTML = renderTasteProfile(null);
                 }
             } catch (e) {
                 alert('Error resetting profile.');
@@ -135,8 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 appendMessage('model', 'Concierge AI', renderConciergeReply(data.response));
                 if (data.updated_profile) {
-                    memoryBox.textContent = data.updated_profile;
-                    memoryBox.classList.add('preserve-lines');
+                    memoryBox.innerHTML = renderTasteProfile(data.updated_profile);
                 }
             } else {
                 appendMessage('model', 'Concierge AI',

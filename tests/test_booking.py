@@ -75,6 +75,73 @@ class BookingTestCase(BaseTestCase):
             self.assertEqual(ticket['total_price'], 226.0)
             self.assertEqual(ticket['status'], 'Confirmed')
 
+    def test_api_book_ignores_client_supplied_addon_prices(self):
+        """POST /api/book prices add-ons from the catalog, never from the request payload."""
+        future_date = (datetime.now().date() + timedelta(days=7)).strftime('%Y-%m-%d')
+        payload = {
+            'experience_id': 1,
+            'visit_date': future_date,
+            'time_slot': '09:30 - 11:00',
+            'guests_count': 2,
+            # A crafted payload: the real docent add-on is €40, and a negative
+            # price would drive the total below the base fare if it were trusted.
+            'selected_addons': [
+                {'id': 'docent', 'name': 'Free Private Art Historian', 'price': -100.0}
+            ]
+        }
+        response = self.client.post(
+            '/api/book',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # (base €65 + catalog docent €40) * 2 guests = €210.00, not €-70.00
+        self.assertEqual(response.get_json()['total_price'], '€210.00')
+
+        with self.app.app_context():
+            db = database.get_db()
+            ticket = db.execute(
+                "SELECT * FROM tickets WHERE booking_code = ?",
+                (response.get_json()['booking_code'],)
+            ).fetchone()
+            self.assertEqual(ticket['total_price'], 210.0)
+            # The stored add-on carries the catalog name and price, not the payload's.
+            stored = json.loads(ticket['selected_addons_json'])
+            self.assertEqual(stored, [{'id': 'docent', 'name': 'Private Art Historian', 'price': 40.0}])
+
+    def test_api_book_drops_unknown_addons(self):
+        """POST /api/book discards add-ons that the chosen experience does not offer."""
+        future_date = (datetime.now().date() + timedelta(days=7)).strftime('%Y-%m-%d')
+        payload = {
+            'experience_id': 1,
+            'visit_date': future_date,
+            'time_slot': '09:30 - 11:00',
+            'guests_count': 1,
+            'selected_addons': [
+                {'id': 'vr', 'name': 'VR Gladiator Reconstruction', 'price': 15.0},
+                {'id': 'not-a-real-addon', 'name': 'Helicopter Transfer', 'price': 500.0}
+            ]
+        }
+        response = self.client.post(
+            '/api/book',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # 'vr' belongs to experience 2, not experience 1, so neither add-on applies:
+        # the total is the bare base price of €65.
+        self.assertEqual(response.get_json()['total_price'], '€65.00')
+
+        with self.app.app_context():
+            db = database.get_db()
+            ticket = db.execute(
+                "SELECT * FROM tickets WHERE booking_code = ?",
+                (response.get_json()['booking_code'],)
+            ).fetchone()
+            self.assertEqual(json.loads(ticket['selected_addons_json']), [])
+
     def test_api_book_past_date_rejected(self):
         """POST /api/book rejects visit dates in the past."""
         past_date = (datetime.now().date() - timedelta(days=1)).strftime('%Y-%m-%d')

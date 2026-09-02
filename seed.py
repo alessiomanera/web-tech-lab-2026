@@ -84,6 +84,14 @@ def seed_db():
              "Milan's landmark public gallery of classical art, boasting masterpieces by Caravaggio, Hayez, Mantegna, and Raphael.",
              "Via Brera 28, 20121 Milan", "Milan",
              "/static/images/museums/museum-10-brera.jpg"),
+            ("Musei Vaticani",
+             "Seven kilometres of papal galleries gathered over five centuries, culminating in Raphael's Rooms and Michelangelo's Sistine Chapel ceiling.",
+             "Viale Vaticano, 00165 Vatican City (Rome)", "Rome",
+             "/static/images/museums/museum-11-vatican.jpg"),
+            ("Museo Archeologico Nazionale di Napoli",
+             "One of the world's foremost collections of classical antiquity, holding the Farnese marbles and the mosaics and frescoes lifted from Pompeii and Herculaneum.",
+             "Piazza Museo 19, 80135 Naples", "Naples",
+             "/static/images/museums/museum-12-mann.jpg"),
         ]
 
         db.executemany(
@@ -228,7 +236,7 @@ def seed_db():
              "Francesco Hayez's The Kiss, Andrea Mantegna's Dead Christ, Raphael's Marriage of the Virgin, Caravaggio's Supper at Emmaus.",
              "/static/images/experiences/exp-10-milan-pinacoteca-brera.jpg"),
             # 11. Rome - Vatican Museums
-            (2, "Vatican Museums, Raphael Rooms & Sistine Chapel",
+            (11, "Vatican Museums, Raphael Rooms & Sistine Chapel",
              "Journey across 7 kilometers of papal galleries culminating in Michelangelo's breathtaking Sistine Chapel ceiling.",
              "Rome", "High Renaissance & Papal Splendor", 180, 35.0, "World Phenomenon", 0,
              json.dumps(["Skip-the-Line Vatican Galleries Admission",
@@ -240,7 +248,7 @@ def seed_db():
              "Sistine Chapel ceiling, Raphael's School of Athens, Laocoön and His Sons, Bramante spiral staircase.",
              "/static/images/experiences/exp-11-rome-vatican-sistine.jpg"),
             # 12. Naples - MANN
-            (6, "National Archaeological Museum & The Farnese Marbles",
+            (12, "National Archaeological Museum & The Farnese Marbles",
              "Encounter the monumental Farnese Hercules, Alexander Mosaic from Pompeii, and secret Roman erotic artifacts.",
              "Naples", "Ancient Archaeology", 120, 20.0, "Antiquity Epic", 0,
              json.dumps(["Full MANN Museum Entry",
