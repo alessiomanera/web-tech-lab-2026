@@ -51,6 +51,17 @@ def _safe_int(value):
         return None
 
 
+def _current_user(db):
+    """
+    Returns the logged-in user's row, or None if the id in the session no
+    longer exists. Only reached from @login_required views, so session
+    ['user_id'] is always set by the time this runs.
+    """
+    return db.execute(
+        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
+    ).fetchone()
+
+
 def _lookup_experience_by_id(db, raw_id):
     """Resolves a raw (possibly missing/non-numeric) experience id to a dict, or None."""
     exp_id = _safe_int(raw_id)
@@ -277,9 +288,7 @@ def booking():
     rows = db.execute("SELECT * FROM experiences").fetchall()
     all_experiences = [_exp_row_to_dict(row) for row in rows]
 
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     selected_exp = None
     ticket = None
@@ -331,9 +340,7 @@ def concierge():
     Loads the user's live Markdown Cultural Taste Profile from SQLite.
     """
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     taste_items = _parse_taste_profile(user['preferences'] if user else '')
 
@@ -379,9 +386,7 @@ def profile():
     past visit history, review submission forms, and the live Cultural Taste Profile.
     """
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     bookings = db.execute(
         """SELECT t.*, e.title AS experience_title, e.city AS experience_city,
@@ -619,9 +624,7 @@ def api_chat():
         return jsonify({'error': 'Please enter a message.'}), 400
 
     db = get_db()
-    user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session['user_id'],)
-    ).fetchone()
+    user = _current_user(db)
 
     all_exp_rows = db.execute("SELECT * FROM experiences").fetchall()
     all_experiences = [_exp_row_to_dict(row) for row in all_exp_rows]
