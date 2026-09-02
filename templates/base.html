@@ -52,7 +52,10 @@
                 </button>
                 {% if session.get('user_id') %}
                 <a href="{{ url_for('main.profile') }}" class="nav-cta nav-cta-blue">My Account</a>
-                <a href="{{ url_for('auth.logout') }}" class="nav-link nav-logout">Logout</a>
+                <form method="post" action="{{ url_for('auth.logout') }}" class="nav-logout-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="nav-link nav-logout">Logout</button>
+                </form>
                 {% else %}
                 <a href="{{ url_for('auth.login') }}" class="nav-cta nav-cta-yellow">Sign In / Join &rarr;</a>
                 {% endif %}

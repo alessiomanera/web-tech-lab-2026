@@ -144,5 +144,9 @@ class BaseTestCase(unittest.TestCase):
         }, follow_redirects=True)
 
     def logout(self):
-        """Helper to log out the current session."""
-        return self.client.get('/logout', follow_redirects=True)
+        """Helper to log out the current session.
+
+        POST, because /logout is a state change and is CSRF-guarded like every
+        other one. self.client.post attaches the token automatically.
+        """
+        return self.client.post('/logout', follow_redirects=True)
