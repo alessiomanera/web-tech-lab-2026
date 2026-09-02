@@ -11,10 +11,8 @@
     --bg-color: #FFFFFF; /* Pure White Canvas */
     --surface-color: #FFFFFF; /* Pure White Card Surface */
     --surface-subtle: #FFFDF5; /* Canonical Neubrutalist Off-white */
-    --surface-inset: #F4F0EA;
     --text-primary: #000000; /* Solid Black */
     --text-secondary: #222222; /* Dark Grey */
-    --text-muted: #555555;
     --border-color: #000000; /* Solid Black 3px */
     
     /* Canonical Secondary Colors (neubrutalism.com) */
@@ -29,8 +27,7 @@
     
     /* Canonical Utility Accents */
     --success-color: #88D498; /* Canonical Soft Green */
-    --accent-orange: #FFA552; /* Canonical Orange */
-    --accent-lavender: #B8A9FA; /* Canonical Lavender */
+    --success-hover: #6FC182;
     --error-color: #FF6B6B;
     --error-bg: #FFEBEB;
     --review-bg: #EBF4FF;
@@ -48,7 +45,6 @@
     /* Neo-Brutalist Metrics */
     --border-width: 3px;
     --box-shadow-hard: 4px 4px 0px 0px var(--border-color);
-    --box-shadow-hard-sm: 2px 2px 0px 0px var(--border-color);
     --box-shadow-hard-lg: 6px 6px 0px 0px var(--border-color);
     
     /* Typography */
@@ -56,7 +52,6 @@
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     
     --border-radius: 0px;
-    --border-radius-lg: 0px;
     --transition-speed: 0.15s;
     --max-width: 1200px;
 
@@ -71,10 +66,8 @@
     --bg-color: #121212; /* Deep Obsidian Canvas */
     --surface-color: #1C1C1C; /* Dark Card Surface */
     --surface-subtle: #242424; /* Dark Container */
-    --surface-inset: #2E2E2E;
     --text-primary: #FFFFFF; /* Crisp Solid White */
     --text-secondary: #CCCCCC; /* Clear Legible Grey */
-    --text-muted: #999999;
     --border-color: #FFFFFF; /* Solid White 3px */
     
     /* Canonical Secondary Colors (neubrutalism.com) */
@@ -89,8 +82,7 @@
     
     /* Canonical Utility Accents */
     --success-color: #88D498; /* Canonical Soft Green */
-    --accent-orange: #FFA552; /* Canonical Orange */
-    --accent-lavender: #B8A9FA; /* Canonical Lavender */
+    --success-hover: #6FC182;
     --error-color: #FF6B6B;
     --error-bg: #2E1212;
     --review-bg: #14243B;
@@ -105,7 +97,6 @@
 
     /* Neo-Brutalist Hard White Shadows */
     --box-shadow-hard: 4px 4px 0px 0px #FFFFFF;
-    --box-shadow-hard-sm: 2px 2px 0px 0px #FFFFFF;
     --box-shadow-hard-lg: 6px 6px 0px 0px #FFFFFF;
 
     /* Dark-mode cursors: arrow stays the default, hand only for interactive elements */
