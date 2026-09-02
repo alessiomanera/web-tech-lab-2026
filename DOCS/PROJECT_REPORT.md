@@ -169,6 +169,7 @@ Honest scope boundaries of the delivered system:
 - **Session-scoped CSRF tokens.** The token lives in the signed session cookie and lasts as long as the session, rather than rotating per form. That is the standard trade-off for a server-rendered app of this size; per-request rotation would break the back button and concurrent tabs without meaningfully raising the bar here.
 - **The concierge is single-turn.** No running conversation history is sent to Gemini; continuity between messages is carried only by the persisted Cultural Taste Profile. A true multi-turn history buffer is future work.
 - **RAG grounding covers the `experiences` table only** — the 12 bookable packages. It does not ground on `museums` or `exhibitions`, and does not know venue logistics such as street addresses, general opening hours, or physical accessibility.
+- **`exhibitions` is schema-only.** The table exists in `schema.sql`, is populated by `seed.py`, and enforces a foreign key to `museums`, but no route or template currently reads from it — it is prepared for, not yet wired into, a future "current exhibitions" feature.
 - **No payment integration.** Booking issues a digital pass and a booking code; no money changes hands.
 - **No capacity or inventory model.** Time slots never sell out; there is no per-slot seat count.
 - **Not a production deployment.** SQLite and the Flask development server are appropriate for the assignment and local evaluation, not for production traffic.
