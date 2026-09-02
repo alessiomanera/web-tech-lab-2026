@@ -80,7 +80,7 @@ You may also register a fresh account at `/register`.
 
 ## 3. Contributions and Roles
 
-This is a **single-person group** (Group-11). Alessio Manera has **end-to-end ownership of the entire project** — every line of application code, every template, the database schema, the test suite, and all documentation were designed and written from scratch by the sole author. There are no other people involved.
+This is a **single-person group** (Group-11). Every decision behind this project — the competitor research, the architecture and technology choices (including moving off Flask-SQLAlchemy to raw `sqlite3`), the Neubrutalism design system, the test suite, the documentation — was made and owned by the sole author, Alessio Manera. There are no other people involved.
 
 For clarity, the work breaks down by workstream as follows, all performed by the same person:
 
@@ -119,7 +119,7 @@ Parameterized SQL  ( ? placeholders only — no string interpolation anywhere )
   └─►  jsonify(...)             →  JSON response   (/api/* routes consumed by fetch)
 ```
 
-- **No ORM.** All persistence is raw `sqlite3` with parameterized queries — a deliberate choice, both to keep the data layer transparent and to match the course's emphasis on understanding SQL directly.
+- **No ORM.** All persistence is raw `sqlite3` with parameterized queries — a deliberate choice to keep the data layer transparent and auditable, and consistent with the database pattern demonstrated in the course's own `week_5_database_exercise` (raw `sqlite3`, `Row` factory, hand-written SQL, Werkzeug hashing).
 - **Blueprints** separate authentication (`auth_bp`) from the core application (`main_bp`).
 - **Sessions** are Flask's signed cookies; `@login_required` gates the booking wizard, concierge, and profile.
 - **Error handling** is centralised: `abort(404)` and unhandled errors render branded `400.html` / `404.html` / `500.html` pages.
