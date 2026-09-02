@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         availableAddons: [],
         selectedAddons: [],
         visitDate: '',
-        timeSlot: '09:30 - 11:00',
+        timeSlot: '', // set below from whichever pill the server rendered as active
         guestsCount: 1,
         totalPrice: 0.0
     };
@@ -37,6 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const guestsSelect = document.getElementById('guests-count');
     const timeSlots = document.querySelectorAll('.time-slot-pill');
     const errorMsg = document.getElementById('booking-error-msg');
+
+    // The list of valid slots lives server-side (routes.py VALID_TIME_SLOTS);
+    // read the one the template marked active instead of hardcoding a copy here.
+    const initialActiveSlot = document.querySelector('.time-slot-pill.active') || timeSlots[0];
+    if (initialActiveSlot) {
+        state.timeSlot = initialActiveSlot.getAttribute('data-slot');
+    }
 
     // Setup Date Picker Bounds (Today to +90 Days)
     if (dateInput) {
