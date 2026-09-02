@@ -111,7 +111,10 @@
                 <label class="form-label">3. Dedicated Time Slot</label>
                 <div class="time-slot-grid" id="time-slots-container">
                     {% for slot in time_slots %}
-                    <div class="time-slot-pill{% if loop.first %} active{% endif %}" data-slot="{{ slot }}">{{ slot }}</div>
+                    <button type="button"
+                            class="time-slot-pill{% if loop.first %} active{% endif %}"
+                            data-slot="{{ slot }}"
+                            aria-pressed="{{ 'true' if loop.first else 'false' }}">{{ slot }}</button>
                     {% endfor %}
                 </div>
             </div>
@@ -219,5 +222,8 @@
     </form>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/bookingWizard.js') }}" defer></script>
 {% endblock %}

@@ -119,6 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkbox = card.querySelector('input[type="checkbox"]');
             
             card.addEventListener('click', (e) => {
+                // A click on the <label> is already forwarded to the checkbox by
+                // the browser, which fires a second click on the checkbox itself.
+                // Toggling here as well would undo it, so let that one do the work.
+                if (e.target.closest('label')) return;
+
                 if (e.target !== checkbox) {
                     checkbox.checked = !checkbox.checked;
                 }
@@ -176,8 +181,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Time Slot Selection
     timeSlots.forEach(pill => {
         pill.addEventListener('click', () => {
-            timeSlots.forEach(p => p.classList.remove('active'));
+            timeSlots.forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-pressed', 'false');
+            });
             pill.classList.add('active');
+            pill.setAttribute('aria-pressed', 'true');
             state.timeSlot = pill.getAttribute('data-slot');
         });
     });
