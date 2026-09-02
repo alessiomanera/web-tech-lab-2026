@@ -18,7 +18,7 @@ A full-stack web application designed for discovering and booking tickets to mus
 - **Frontend:** HTML5 (semantic markup, Jinja2 template inheritance), Vanilla CSS3 (custom Neubrutalist design system loaded directly without build tools), Vanilla JavaScript (ES6+ for asynchronous `fetch` requests and dynamic UI state machines).
 - **Backend:** Python 3 with the Flask framework (modular Blueprint architecture: `routes.py`, `auth.py`).
 - **Database & Storage:** Raw SQLite3 using parameterized queries (Python standard library `sqlite3`), no ORM helper libraries (`database.py`, `schema.sql`).
-- **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-2.5-flash`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
+- **AI Engine (Module 4, core feature):** Google Gemini API (`gemini-flash-lite-latest`, configurable via `GEMINI_MODEL`) via the official `google-generativeai` SDK, implementing Retrieval-Augmented Generation (RAG) over the `experiences` SQLite catalog with persistent taste-profile extraction. Requires `GEMINI_API_KEY`. A deterministic keyword-matching fallback (no RAG, no profile updates) keeps the app usable without a key or during an API outage — a labelled safety net, not an equivalent path.
 
 ---
 
@@ -37,7 +37,7 @@ The user interface strictly adheres to the **Neubrutalism** design philosophy (i
 - **Typography:** Strictly `Inter` (sans-serif) across all elements, with heavy font weights (800/900) for section headings and balanced typographic text-wrapping.
 - **Tactile Micro-interactions:** Mechanical button press effect (`transform: translate(4px, 4px)` with shadow collapse on click/active).
 - **Theme:** Dual high-contrast Light and Dark mode, toggled from the header and persisted in `localStorage`. An inline bootstrap script in `<head>` applies the stored (or system-preferred) theme before first paint to eliminate flash-of-unstyled-content.
-- **Accessibility:** Strict WCAG AA contrast compliance across all interactive elements (with AAA on body text) and zero Cumulative Layout Shift (CLS).
+- **Accessibility:** WCAG AA contrast across every rendered text/background pair in both themes (verified by measuring computed colours against composited backgrounds on all pages, not by inspecting the stylesheet); AAA on body text. Accent colours have separate darkened variants (`--primary-text`, `--accent-text`, `--accent-yellow-text`) for text on the page ground, while text on a coloured fill is black (`--on-accent`). No horizontal scrolling at 320px (WCAG 1.4.10 Reflow), and zero Cumulative Layout Shift (CLS).
 
 ---
 
@@ -142,7 +142,7 @@ web-tech-lab-2026/
      cp .env.example .env
      ```
    - Set `FLASK_SECRET_KEY` in `.env`.
-   - **Recommended for full evaluation:** set `GEMINI_API_KEY`. The AI Cultural Concierge (Module 4) is the project's core feature and runs on the Google Gemini API. Get a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes). With a key, the concierge performs RAG grounding on the live catalog and extracts a persistent taste profile from the conversation. The default model is `gemini-2.5-flash` (`GEMINI_MODEL`).
+   - **Recommended for full evaluation:** set `GEMINI_API_KEY`. The AI Cultural Concierge (Module 4) is the project's core feature and runs on the Google Gemini API. Get a free key from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes). With a key, the concierge performs RAG grounding on the live catalog and extracts a persistent taste profile from the conversation. The default model is `gemini-flash-lite-latest` (`GEMINI_MODEL`); if it is unavailable the client falls back to `gemini-3.6-flash` before dropping to offline mode.
 
    > **No key = offline demo mode.** The app still starts and every other module works, but the concierge drops to a deterministic keyword-matching mode: it returns a single templated recommendation card and does **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. This fallback is a deliberate network/quota safety net, not a substitute for the real concierge — evaluate with a key set.
 
@@ -174,7 +174,7 @@ web-tech-lab-2026/
 The project includes an automated test suite implemented using Python's standard library `unittest` module, running against isolated temporary SQLite databases:
 
 ```bash
-# Run all 52 unit and integration tests with verbose output
+# Run all 54 unit and integration tests with verbose output
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
