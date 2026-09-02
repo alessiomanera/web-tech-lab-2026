@@ -111,10 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="addon-choice-row">
                     <input type="checkbox" id="addon-${idx}" class="addon-checkbox">
-                    <label for="addon-${idx}" class="addon-label">${addon.name}</label>
+                    <label for="addon-${idx}" class="addon-label"></label>
                 </div>
                 <span class="addon-price">+€${parseFloat(addon.price).toFixed(2)}</span>
             `;
+            // Set as text, never interpolated into the markup above: an add-on
+            // name is data, and data must never be able to become markup.
+            card.querySelector('.addon-label').textContent = addon.name;
 
             const checkbox = card.querySelector('input[type="checkbox"]');
             
