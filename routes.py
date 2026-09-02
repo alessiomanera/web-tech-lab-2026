@@ -13,7 +13,7 @@ import json
 import sqlite3
 import logging
 from datetime import datetime, timezone
-from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, abort
 from auth import login_required
 from database import get_db
 
