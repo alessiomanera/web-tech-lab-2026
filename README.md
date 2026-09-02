@@ -174,13 +174,13 @@ web-tech-lab-2026/
 The project includes an automated test suite implemented using Python's standard library `unittest` module, running against isolated temporary SQLite databases:
 
 ```bash
-# Run all 54 unit and integration tests with verbose output
+# Run all 61 unit and integration tests with verbose output
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
 ### Test Coverage Highlights
 - **`test_database.py`:** Verifies `PRAGMA foreign_keys = ON`, unique constraints on email/booking codes, and cascading deletions.
-- **`test_auth.py`:** Tests registration, Werkzeug PBKDF2 password hashing, login, session clearance on logout, and `@login_required` redirects.
+- **`test_auth.py`:** Tests registration, Werkzeug PBKDF2 password hashing, login, session clearance on logout, `@login_required` redirects, and CSRF protection (a POST with a missing or forged token is rejected on both the HTML forms and the JSON API, while GET requests are untouched).
 - **`test_catalog.py`:** Tests multi-filtering by city/theme, search query keywords, detail pages, and the branded custom 404 page for missing experiences.
 - **`test_auth.py` (redirects):** Also tests that a safe relative `?next=` target is honoured after login while an absolute off-site target is rejected (open-redirect protection).
 - **`test_booking.py`:** Tests 4-step wizard rendering, date bounds (+90 days), time-slot verification, guest count bounds (1-6), and pricing calculations with add-ons.

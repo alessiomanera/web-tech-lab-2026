@@ -97,7 +97,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Table `tickets`: `id`, `booking_code`, `user_id`, `experience_id`, `visit_date`, `time_slot`, `guests_count`, `selected_addons_json`, `total_price`, `status`, `feedback_rating`, `feedback_text`.
 - [x] **Database Seeding (`seed.py`)**
   - [x] Populate SQLite database with **Top 12 Curated Italian Cultural Experiences** across 6 major art cities (Florence, Rome, Venice, Milan, Turin, Naples).
-  - [x] Seed 10 baseline cultural institutions and sample user account with initialized Markdown Taste Profile.
+  - [x] Seed 12 baseline cultural institutions (one per curated experience) and a sample user account with an initialized Markdown Taste Profile.
 
 ---
 
@@ -169,14 +169,23 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Removed three dead references (an unused `flash` import, an unused `MagicMock` import, and a `WTF_CSRF_ENABLED` test-config key for a library the project does not depend on).
   - [x] Confirmed clean: 100% parameterized SQL across all 33 call sites, Jinja2 autoescaping intact, client-side escaping probed with a live XSS payload, complete `@login_required` coverage, the `?next=` open-redirect guard, no secrets in any commit, and a fresh clone that runs from `README.md` verbatim.
 
+- [x] **Audit Follow-Up: the deferred findings, closed (2026-09-02)** — the seven items the audit had parked as "acceptable, but be ready to explain".
+  - [x] **CSRF protection**, implemented directly rather than by adding Flask-WTF, so the mechanism stays legible in the codebase: a per-session token from `secrets.token_urlsafe(32)`, compared with `secrets.compare_digest`, carried as a hidden `csrf_token` field on the HTML forms and an `X-CSRFToken` header on the JSON endpoints, enforced by a single `before_request` hook. The session cookie is now explicitly `HttpOnly` and `SameSite=Lax` as a second layer instead of relying on a browser default. Seven regression tests cover missing, forged and valid tokens on both surfaces.
+  - [x] **Museum foreign keys:** added Musei Vaticani and the Museo Archeologico Nazionale di Napoli as seeded institutions, so all 12 experiences now resolve to their own venue (previously those two borrowed another same-city venue's id). No city mismatches remain and every museum has a bookable experience.
+  - [x] **Taste profile presentation:** the concierge's live memory panel showed raw Markdown (`### …`, `- **Label:**`) while the dashboard showed it parsed. Both now render the same label/value rows — server-side through `_parse_taste_profile()`, client-side through a mirrored `parseTasteProfile()` in `concierge.js`.
+  - [x] **Chat formatting:** the renderer only understood `**bold**`, so the model's `*italic*` and `***bold italic***` leaked literal asterisks into the reply. It now handles all three (longest-delimiter-first, on already-escaped text), and the system instruction asks the model to stay within that subset.
+  - [x] **`.btn-success`:** the booking wizard's confirm button carried a class no stylesheet defined. Defined it against `--success-color`, so the one irreversible step reads differently from every other coral CTA.
+  - [x] **Dead CSS removed:** six unreferenced rules (`.card-clickable`, `.cta-button-yellow`, `.cta-button-blue-sm`, `.text-accent-color`, `.side-card-title`, `.mt-4`, plus `.preserve-lines` once the taste panel stopped needing it) and six unread custom properties. `.sr-only` was kept deliberately as a standard accessibility utility.
+  - [x] **`_current_user(db)`:** collapsed the session-user lookup that was repeated identically in four route handlers.
+
 - [x] **Cross-Device & Responsive Usability Testing**
   - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages — no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
   - [x] Verify keyboard navigation and screen-reader accessibility. Booking time slots are real `<button>` elements with `aria-pressed`, reachable and operable by keyboard (they were non-focusable `<div>`s until 2026-09-02).
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
   - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
-  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
-  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, and highlight tags. Note: there are 12 packages across 10 seeded institutions, so the Vatican and MANN experiences carry the foreign key of another venue in the same city rather than their own.
+  - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 12 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity — every experience now resolves to its own venue, with no city mismatches (the Vatican and MANN packages previously borrowed another same-city venue's id; Musei Vaticani and the Museo Archeologico Nazionale di Napoli were added as seeded institutions 11 and 12).
 
 ---
 
