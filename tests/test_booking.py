@@ -160,6 +160,65 @@ class BookingTestCase(BaseTestCase):
         data = response.get_json()
         self.assertIn('Visit date cannot be in the past', data['error'])
 
+    def test_api_book_date_beyond_window_rejected(self):
+        """POST /api/book rejects a visit date past the 90-day booking window.
+
+        The date picker caps itself at +90 days, but that is a browser
+        convenience: a request can reach the API without it, so the bound has
+        to hold server-side too.
+        """
+        far_future = (datetime.now().date() + timedelta(days=91)).strftime('%Y-%m-%d')
+        payload = {
+            'experience_id': 1,
+            'visit_date': far_future,
+            'time_slot': '09:30 - 11:00',
+            'guests_count': 1
+        }
+        response = self.client.post(
+            '/api/book',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('90', response.get_json()['error'])
+
+    def test_api_book_accepts_last_day_of_window(self):
+        """The 90th day is still bookable: the bound is inclusive, not off by one."""
+        edge = (datetime.now().date() + timedelta(days=90)).strftime('%Y-%m-%d')
+        payload = {
+            'experience_id': 1,
+            'visit_date': edge,
+            'time_slot': '09:30 - 11:00',
+            'guests_count': 1
+        }
+        response = self.client.post(
+            '/api/book',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_api_book_fractional_guest_count_rejected(self):
+        """A JSON float guest count is rejected, not silently truncated.
+
+        int(1.9) is 1, so without an explicit check the booking would quietly
+        succeed for a different party size than the one requested.
+        """
+        future_date = (datetime.now().date() + timedelta(days=7)).strftime('%Y-%m-%d')
+        payload = {
+            'experience_id': 1,
+            'visit_date': future_date,
+            'time_slot': '09:30 - 11:00',
+            'guests_count': 1.9
+        }
+        response = self.client.post(
+            '/api/book',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('whole number', response.get_json()['error'])
+
     def test_api_book_invalid_guest_count(self):
         """POST /api/book rejects guest counts below 1 or above 6."""
         future_date = (datetime.now().date() + timedelta(days=7)).strftime('%Y-%m-%d')
