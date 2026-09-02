@@ -12,7 +12,7 @@ import string
 import json
 import sqlite3
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, abort
 from auth import login_required
 from database import get_db
@@ -22,6 +22,12 @@ main_bp = Blueprint('main', __name__)
 # Single source of truth for bookable time slots, validated here and
 # only place `booking()` reads them from before handing them to the template.
 VALID_TIME_SLOTS = ['09:30 - 11:00', '11:30 - 13:00', '14:30 - 16:00', '16:30 - 18:00']
+
+# How far ahead a visit may be booked. The date picker in bookingWizard.js
+# applies the same bound as a `max` attribute, but that is a convenience for
+# the browser, not a control: the server has to enforce it too, because a
+# request can reach /api/book without going through the picker at all.
+MAX_BOOKING_DAYS_AHEAD = 90
 
 
 def generate_booking_code():
@@ -91,6 +97,11 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
     if not exp_id or not visit_date_str or not time_slot:
         return None, 'Please select an experience, visit date, and time slot.'
 
+    # A JSON body can carry a real float, and int(1.9) truncates to 1 rather
+    # than failing, so reject a fractional count instead of silently rounding
+    # it. A fractional *string* already fails in int() below.
+    if isinstance(guests_count, float) and not guests_count.is_integer():
+        return None, 'Guest count must be a whole number.'
     try:
         guests_count = int(guests_count)
         if guests_count < 1 or guests_count > 6:
@@ -104,8 +115,14 @@ def create_booking(db, user_id, exp_id, visit_date_str, time_slot, guests_count=
 
     try:
         visit_date = datetime.strptime(visit_date_str, '%Y-%m-%d').date()
-        if visit_date < datetime.now().date():
+        today = datetime.now().date()
+        if visit_date < today:
             return None, 'Visit date cannot be in the past.'
+        if visit_date > today + timedelta(days=MAX_BOOKING_DAYS_AHEAD):
+            return None, (
+                f'Visit date cannot be more than {MAX_BOOKING_DAYS_AHEAD} '
+                'days in the future.'
+            )
     except (ValueError, TypeError):
         return None, 'Invalid date format. Expected YYYY-MM-DD.'
 

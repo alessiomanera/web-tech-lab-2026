@@ -315,6 +315,19 @@ nav {
     color: var(--text-secondary);
 }
 
+/* Logout posts instead of following a link, so it is a <button> in a form.
+   These reset the browser's button defaults so it matches the nav links. */
+.nav-logout-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+button.nav-link {
+    background: none;
+    font-family: inherit;
+    line-height: inherit;
+}
+
 /* Footer */
 footer {
     border-top: var(--border-width) solid var(--border-color);
