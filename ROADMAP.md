@@ -58,7 +58,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Style UI components: Neubrutalist cards, badges, inputs, alerts, navigation bars (`static/css/components.css`).
   - [x] Create helper classes and utilities (`static/css/utilities.css`).
 - [x] **Accessibility & Performance Standards**
-  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text and buttons).
+  - [x] Ensure WCAG AA contrast ratio compliance across all text and interactive elements (with AAA compliance on solid black body text). Re-verified 2026-09-02 by measuring rendered colours against composited backgrounds across every page in both themes: 0 failing pairs.
   - [x] Set explicit dimensions / aspect-ratios on images to guarantee zero Cumulative Layout Shift (CLS).
 
 ---
@@ -154,17 +154,29 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Render the branded custom 404 page for missing experiences via `abort(404)` instead of plain text.
   - [x] Make booking codes collision-safe: 6-character suffix with retry on the `UNIQUE` constraint.
   - [x] Honour a safe relative `?next=` redirect after login; reject absolute/off-site targets (open-redirect protection).
-  - [x] Correct the Gemini model identifier to `gemini-2.5-flash`; log the local-fallback path instead of silently swallowing the exception.
+  - [x] Correct the Gemini model identifier; log the local-fallback path instead of silently swallowing the exception. (Superseded 2026-09-02: `gemini-2.5-flash` was retired by Google and began returning `404 — no longer available to new users`. The default is now the `gemini-flash-lite-latest` alias, with `gemini-3.6-flash` as a verified fallback.)
   - [x] Reframe the AI Concierge: the Gemini RAG path is the core feature (requires `GEMINI_API_KEY`); the keyword-matching fallback is a labelled resilience safety net that does no RAG and no taste-profile updates. `/api/chat` now returns an `offline` flag and the concierge view shows a yellow banner when the fallback is active. Docs (README, project report) updated to match.
   - [x] Replace the last deprecated `datetime.utcnow()` (in `seed.py`) with timezone-aware `datetime.now(timezone.utc)`.
+
+- [x] **Final Pre-Submission Audit (2026-09-02)** — a full re-verification against the live code, a throwaway clone, a real browser, and a live Gemini key.
+  - [x] **Gemini model:** `gemini-2.5-flash` was retired by Google mid-project and returns `404 — no longer available to new users`; it is still listed by `list_models()`, so only a real `generateContent` call exposes it. The default is now `gemini-flash-lite-latest` with `gemini-3.6-flash` as a measured-working fallback. (The previously-hardcoded `gemini-flash-latest` fallback was also found unusable — two consecutive `504 Deadline expired` after ~300 s.)
+  - [x] **Server-side pricing integrity:** `create_booking()` trusted the add-on prices sent in the request, so a crafted `POST /api/book` could confirm a €62.00 booking for €2.00. Add-ons are now re-resolved against the experience's own catalog entry; two regression tests cover it.
+  - [x] **Responsive:** fixed a dead `@media (max-width: 900px)` rule for `.profile-layout` (placed above the base rule, so it lost on source order) and the intrinsic `min-width` floors that overflowed the concierge and the card grids on narrow phones.
+  - [x] **Contrast:** introduced darkened text variants of the accent colours (`--primary-text`, `--accent-text`, `--accent-yellow-text`) and `--on-accent` for text on a coloured fill. Rendered-pixel audit went from 25 failing pairs in light mode and 15 in dark to **0 in both**.
+  - [x] **Keyboard:** booking time slots were non-focusable `<div>`s; they are now `<button>` elements with `aria-pressed` and a matching focus ring.
+  - [x] **Booking wizard:** clicking an add-on's `<label>` toggled the checkbox twice and cancelled itself out, so the add-on never applied.
+  - [x] **Error handling:** `app.run(debug=True)` was unconditional, and Flask's debugger replaces the registered error handlers — so the branded `500.html` never rendered. Debug is now opt-in via `FLASK_DEBUG=1`.
+  - [x] Removed three dead references (an unused `flash` import, an unused `MagicMock` import, and a `WTF_CSRF_ENABLED` test-config key for a library the project does not depend on).
+  - [x] Confirmed clean: 100% parameterized SQL across all 33 call sites, Jinja2 autoescaping intact, client-side escaping probed with a live XSS payload, complete `@login_required` coverage, the `?next=` open-redirect guard, no secrets in any commit, and a fresh clone that runs from `README.md` verbatim.
+
 - [x] **Cross-Device & Responsive Usability Testing**
-  - [x] Validate responsive layout on desktop and tablet viewports; fixed the profile dashboard to stack to one column below 900px. Narrow-phone layouts are usable but lightly tested (recorded in the project report's Known Limitations).
-  - [x] Verify keyboard navigation and screen-reader accessibility.
+  - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages — no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
+  - [x] Verify keyboard navigation and screen-reader accessibility. Booking time slots are real `<button>` elements with `aria-pressed`, reachable and operable by keyboard (they were non-focusable `<div>`s until 2026-09-02).
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
   - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
   - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 10 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
-  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity.
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, and highlight tags. Note: there are 12 packages across 10 seeded institutions, so the Vatican and MANN experiences carry the foreign key of another venue in the same city rather than their own.
 
 ---
 

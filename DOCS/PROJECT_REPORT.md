@@ -60,7 +60,7 @@ Then open `http://127.0.0.1:5000/`.
 
 ### Gemini API key — recommended for full evaluation
 
-The AI Cultural Concierge (Module 4) is the project's core feature, and it runs on the Google Gemini API. **To evaluate it properly, set a key:** get a free one from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes) and put it in `.env` as `GEMINI_API_KEY` (model defaults to `gemini-2.5-flash`, overridable via `GEMINI_MODEL`). With a key, the concierge does RAG grounding on the live catalog and extracts a persistent taste profile from the conversation.
+The AI Cultural Concierge (Module 4) is the project's core feature, and it runs on the Google Gemini API. **To evaluate it properly, set a key:** get a free one from [Google AI Studio](https://aistudio.google.com/app/apikey) (~2 minutes) and put it in `.env` as `GEMINI_API_KEY` (model defaults to `gemini-flash-lite-latest`, overridable via `GEMINI_MODEL`). With a key, the concierge does RAG grounding on the live catalog and extracts a persistent taste profile from the conversation.
 
 **Without a key the app still starts and every other module works**, but the concierge drops to a labelled *offline demo mode*: a deterministic keyword matcher that returns one templated recommendation card and performs **no** RAG grounding and **no** taste-profile updates. The concierge view shows a banner when this mode is active. The fallback is a deliberate resilience feature (network/quota safety net), not a substitute for the real concierge.
 
@@ -90,7 +90,7 @@ For clarity, the work breaks down by workstream as follows, all performed by the
 | **Backend & REST API** | `app.py` (application factory, 400/404/500 handlers); `routes.py` (page routes + `/api/book`, `/api/chat`, `/api/feedback`, `/api/profile/reset-memory`); `auth.py` (registration, login, logout, `@login_required`, safe `next` redirect handling). 100% parameterized SQL throughout. |
 | **AI / RAG integration** | `_call_gemini_concierge()` in `routes.py`: RAG prompt construction grounded on the live catalog, the `[RECOMMEND: …]` in-band protocol, Markdown taste-profile extraction and persistence, and the local heuristic fallback matcher. |
 | **Frontend & design system** | 13 Jinja2 templates extending `base.html`; the vanilla Neubrutalist CSS system (`variables.css`, `layout.css`, `components.css`, `utilities.css`); vanilla ES6 modules (`main.js`, `api.js`, `ui.js`, `bookingWizard.js`, `concierge.js`, `profile.js`); the anti-FOUC theme bootstrap and the light/dark toggle. |
-| **QA & test suite** | `tests/` — 52 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
+| **QA & test suite** | `tests/` — 54 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
 | **Documentation** | `README.md`, `DOCS/1-Page_Project_Proposal.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `LICENSE`, and this report. |
 
 Because there is no team to divide work across, the grading dimension of *collaboration and group structure* is satisfied here by demonstrating **complete, legible, individual authorship** of a coherent full-stack system, with a development history (30+ commits) that evidences incremental work.
@@ -132,14 +132,14 @@ Parameterized SQL  ( ? placeholders only — no string interpolation anywhere )
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-**52 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
+**54 tests, all passing.** They run at integration level (real Flask test client, real SQLite) against an isolated temporary database created and destroyed per test.
 
 | Module | What it proves |
 | :--- | :--- |
 | `test_database.py` | `PRAGMA foreign_keys = ON` is active per connection; `UNIQUE` constraints on email and booking code; `ON DELETE CASCADE` / `SET NULL` behave as declared. |
 | `test_auth.py` | Registration, Werkzeug PBKDF2 hashing (password never stored in clear), login success/failure, session cleared on logout, `@login_required` redirects, and safe vs. rejected `?next=` redirect targets (open-redirect protection). |
 | `test_catalog.py` | City / theme / keyword filtering produce the correct subset; detail pages render; a missing experience id renders the branded custom 404 page. |
-| `test_booking.py` | 4-step wizard rendering, visit-date bounds, time-slot validation, guest-count bounds (1–6), and add-on pricing arithmetic. |
+| `test_booking.py` | 4-step wizard rendering, visit-date bounds, time-slot validation, guest-count bounds (1–6), add-on pricing arithmetic, and that add-on prices are taken from the catalog rather than the request payload. |
 | `test_concierge.py` | Grounded Gemini RAG (mocked) parses `[RECOMMEND: …]` tags and persists the extracted taste profile; the offline heuristic fallback matches by city and by theme; empty messages are rejected; a stored taste profile containing markup is escaped, never rendered as HTML. |
 | `test_feedback.py` | Ratings persist; reviews are gated to the owning user (404 otherwise); non-numeric ratings return 400 (not 500); ratings outside 1–5 are rejected. |
 | `test_errors.py` | Custom `400.html` / `404.html` / `500.html` pages render with the correct status codes; the profile dashboard renders. |
@@ -156,6 +156,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 | **Server-side output escaping** | Jinja2 autoescaping on all templates. The one former `\|safe` filter on user-controlled taste-profile text was removed and replaced with plain interpolation plus a CSS `white-space: pre-line` class. |
 | **Client-side output escaping** | `concierge.js` escapes every HTML-significant character in user chat input, model output, and the stored taste profile before it reaches the DOM (`escapeHtml`; taste profile written via `textContent`, not `innerHTML`). This closes a reflected/stored XSS vector in the chat renderer. |
 | **Open-redirect protection** | The post-login `?next=` target is accepted only if it is a same-site relative path; absolute URLs and protocol-relative `//` targets are discarded and the user is sent to the home page. |
+| **Server-side pricing integrity** | A booking request may only name *which* add-ons it wants. `create_booking()` re-reads each add-on's name and price from the chosen experience's own catalog entry, drops unknown ids and collapses duplicates, so a crafted payload cannot invent an add-on or discount the total. Covered by two regression tests. |
 | **Booking-code collisions** | Booking codes are `EXP-2026-` + 6 random alphanumerics on a `UNIQUE` column; insertion retries on the rare `IntegrityError` instead of surfacing a 500. |
 
 ---
@@ -169,6 +170,6 @@ Honest scope boundaries of the delivered system:
 - **No payment integration.** Booking issues a digital pass and a booking code; no money changes hands.
 - **No capacity or inventory model.** Time slots never sell out; there is no per-slot seat count.
 - **Not a production deployment.** SQLite and the Flask development server are appropriate for the assignment and local evaluation, not for production traffic.
-- **Responsive coverage** is targeted at desktop and tablet; narrow-phone layouts are usable but lightly tested.
+- **Responsive coverage** is verified at 320, 375, 768 and 1440 px across every page (no horizontal overflow at any width), but the layout is designed desktop-first; a phone gets a correct stacked layout rather than a purpose-built mobile experience.
 
 Planned work: QR-code rendering on digital passes, `.ics` calendar export for booked slots, a multi-turn conversation buffer for the concierge, grounding extended to museums and exhibitions, and a real seat-capacity model.
