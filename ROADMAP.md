@@ -6,9 +6,9 @@ This document serves as the master source of truth and historical tracking timel
 
 ## Phase 1: Foundation, Academic Guidelines & Planning
 - [x] **Review Academic Requirements & Evaluation Criteria**
-  - [x] Analyze the official course project guide (`AY2025_2026_project_guide.pdf`, distributed on Moodle) — 30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge.
+  - [x] Analyze the official course project guide (`AY2025_2026_project_guide.pdf`, distributed on Moodle), 30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge.
   - [x] Confirm single-person group structure (Group-11 created by Professor Yucel; solo work declared 25 Jun 2026).
-  - [x] Identify the guide's recommended technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask) and choose the rest — SQLite, no ORM, Google Gemini — ourselves, since the guide leaves the data layer and any extra integrations to the student.
+  - [x] Identify the guide's recommended technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask) and choose the rest (SQLite, no ORM, Google Gemini) ourselves, since the guide leaves the data layer and any extra integrations to the student.
 
 ### Confirmed Academic Milestones (Sep 11, 2026 exam session)
 
@@ -16,7 +16,7 @@ This document serves as the master source of truth and historical tracking timel
 | :--- | :--- | :--- |
 | Group members declared | [x] Done | Group-11 created by professor (25 Jun 2026). |
 | 1-page proposal submitted on Moodle | [x] Done | Uploaded 24 Aug 2026 (`PROJECT_PROPOSAL.pdf`). |
-| Professor proposal feedback | [x] Received | 22 Aug 2026 — approved, **no revisions requested**. |
+| Professor proposal feedback | [x] Received | 22 Aug 2026, approved, **no revisions requested**. |
 | Exam registration / booking | [x] Confirmed | Booked for Sep 11, 2026. |
 | **Project archive on Moodle** | [ ] **Due Sep 4, 23:55 (guide) / 23:59 (professor email)** | Target: well before Sep 4. |
 | Written exam | [ ] Sep 11, 10:00 (~40 min) | 5 multiple-choice + 3 open-ended; **scope = lecture slides**. |
@@ -40,7 +40,7 @@ This document serves as the master source of truth and historical tracking timel
 - [x] **Submit 1-Page Proposal to Professor on Moodle**
   - [x] Generate clean A4 PDF from `DOCS/1-Page_Project_Proposal.md` (`PROJECT_PROPOSAL.pdf`, emailed 19 Aug 2026).
   - [x] Submit on Moodle before the proposal deadline (uploaded 24 Aug 2026).
-  - [x] Review professor feedback — approved 22 Aug 2026 with **no revision requests**; no adjustments required.
+  - [x] Review professor feedback, approved 22 Aug 2026 with **no revision requests**; no adjustments required.
 
 ---
 
@@ -133,7 +133,7 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Add comprehensive docstrings and inline comments across all functions and route handlers.
   - [x] Ensure consistent code formatting and PEP 8 compliance for backend Python files.
 - [x] **Automated Test Suite Scaffold & Execution**
-  - [x] Built comprehensive automated test suite using Python standard library `unittest` — **61 tests**, grown from the original 52 by the CSRF enforcement and server-side pricing-integrity regression tests added in the 2026-09-02 audit.
+  - [x] Built comprehensive automated test suite using Python standard library `unittest`, **61 tests**, grown from the original 52 by the CSRF enforcement and server-side pricing-integrity regression tests added in the 2026-09-02 audit.
   - [x] Isolated test databases with full foreign key constraint checks (`test_database.py`).
   - [x] Authentication and PBKDF2 hashing verification (`test_auth.py`).
   - [x] Catalog search and multi-filtering tests (`test_catalog.py`).
@@ -154,38 +154,38 @@ This document serves as the master source of truth and historical tracking timel
   - [x] Render the branded custom 404 page for missing experiences via `abort(404)` instead of plain text.
   - [x] Make booking codes collision-safe: 6-character suffix with retry on the `UNIQUE` constraint.
   - [x] Honour a safe relative `?next=` redirect after login; reject absolute/off-site targets (open-redirect protection).
-  - [x] Correct the Gemini model identifier; log the local-fallback path instead of silently swallowing the exception. (Superseded 2026-09-02: `gemini-2.5-flash` was retired by Google and began returning `404 — no longer available to new users`. The default is now the `gemini-flash-lite-latest` alias, with `gemini-3.6-flash` as a verified fallback.)
+  - [x] Correct the Gemini model identifier; log the local-fallback path instead of silently swallowing the exception. (Superseded 2026-09-02: `gemini-2.5-flash` was retired by Google and began returning `404, no longer available to new users`. The default is now the `gemini-flash-lite-latest` alias, with `gemini-3.6-flash` as a verified fallback.)
   - [x] Reframe the AI Concierge: the Gemini RAG path is the core feature (requires `GEMINI_API_KEY`); the keyword-matching fallback is a labelled resilience safety net that does no RAG and no taste-profile updates. `/api/chat` now returns an `offline` flag and the concierge view shows a yellow banner when the fallback is active. Docs (README, project report) updated to match.
   - [x] Replace the last deprecated `datetime.utcnow()` (in `seed.py`) with timezone-aware `datetime.now(timezone.utc)`.
 
-- [x] **Final Pre-Submission Audit (2026-09-02)** — a full re-verification against the live code, a throwaway clone, a real browser, and a live Gemini key.
-  - [x] **Gemini model:** `gemini-2.5-flash` was retired by Google mid-project and returns `404 — no longer available to new users`; it is still listed by `list_models()`, so only a real `generateContent` call exposes it. The default is now `gemini-flash-lite-latest` with `gemini-3.6-flash` as a measured-working fallback. (The previously-hardcoded `gemini-flash-latest` fallback was also found unusable — two consecutive `504 Deadline expired` after ~300 s.)
+- [x] **Final Pre-Submission Audit (2026-09-02):** a full re-verification against the live code, a throwaway clone, a real browser, and a live Gemini key.
+  - [x] **Gemini model:** `gemini-2.5-flash` was retired by Google mid-project and returns `404, no longer available to new users`; it is still listed by `list_models()`, so only a real `generateContent` call exposes it. The default is now `gemini-flash-lite-latest` with `gemini-3.6-flash` as a measured-working fallback. (The previously-hardcoded `gemini-flash-latest` fallback was also found unusable: two consecutive `504 Deadline expired` after ~300 s.)
   - [x] **Server-side pricing integrity:** `create_booking()` trusted the add-on prices sent in the request, so a crafted `POST /api/book` could confirm a €62.00 booking for €2.00. Add-ons are now re-resolved against the experience's own catalog entry; two regression tests cover it.
   - [x] **Responsive:** fixed a dead `@media (max-width: 900px)` rule for `.profile-layout` (placed above the base rule, so it lost on source order) and the intrinsic `min-width` floors that overflowed the concierge and the card grids on narrow phones.
   - [x] **Contrast:** introduced darkened text variants of the accent colours (`--primary-text`, `--accent-text`, `--accent-yellow-text`) and `--on-accent` for text on a coloured fill. Rendered-pixel audit went from 25 failing pairs in light mode and 15 in dark to **0 in both**.
   - [x] **Keyboard:** booking time slots were non-focusable `<div>`s; they are now `<button>` elements with `aria-pressed` and a matching focus ring.
   - [x] **Booking wizard:** clicking an add-on's `<label>` toggled the checkbox twice and cancelled itself out, so the add-on never applied.
-  - [x] **Error handling:** `app.run(debug=True)` was unconditional, and Flask's debugger replaces the registered error handlers — so the branded `500.html` never rendered. Debug is now opt-in via `FLASK_DEBUG=1`.
+  - [x] **Error handling:** `app.run(debug=True)` was unconditional, and Flask's debugger replaces the registered error handlers, which meant the branded `500.html` never rendered. Debug is now opt-in via `FLASK_DEBUG=1`.
   - [x] Removed three dead references (an unused `flash` import, an unused `MagicMock` import, and a `WTF_CSRF_ENABLED` test-config key for a library the project does not depend on).
   - [x] Confirmed clean: 100% parameterized SQL across all 30 call sites, Jinja2 autoescaping intact, client-side escaping probed with a live XSS payload, complete `@login_required` coverage, the `?next=` open-redirect guard, no secrets in any commit, and a fresh clone that runs from `README.md` verbatim.
 
-- [x] **Audit Follow-Up: the deferred findings, closed (2026-09-02)** — the seven items the audit had parked as "acceptable, but be ready to explain".
+- [x] **Audit Follow-Up: the deferred findings, closed (2026-09-02)** covers the seven items the audit had parked as "acceptable, but be ready to explain".
   - [x] **CSRF protection**, implemented directly rather than by adding Flask-WTF, so the mechanism stays legible in the codebase: a per-session token from `secrets.token_urlsafe(32)`, compared with `secrets.compare_digest`, carried as a hidden `csrf_token` field on the HTML forms and an `X-CSRFToken` header on the JSON endpoints, enforced by a single `before_request` hook. The session cookie is now explicitly `HttpOnly` and `SameSite=Lax` as a second layer instead of relying on a browser default. Seven regression tests cover missing, forged and valid tokens on both surfaces.
   - [x] **Museum foreign keys:** added Musei Vaticani and the Museo Archeologico Nazionale di Napoli as seeded institutions, so all 12 experiences now resolve to their own venue (previously those two borrowed another same-city venue's id). No city mismatches remain and every museum has a bookable experience.
-  - [x] **Taste profile presentation:** the concierge's live memory panel showed raw Markdown (`### …`, `- **Label:**`) while the dashboard showed it parsed. Both now render the same label/value rows — server-side through `_parse_taste_profile()`, client-side through a mirrored `parseTasteProfile()` in `concierge.js`.
+  - [x] **Taste profile presentation:** the concierge's live memory panel showed raw Markdown (`### …`, `- **Label:**`) while the dashboard showed it parsed. Both now render the same label/value rows, server-side through `_parse_taste_profile()`, client-side through a mirrored `parseTasteProfile()` in `concierge.js`.
   - [x] **Chat formatting:** the renderer only understood `**bold**`, so the model's `*italic*` and `***bold italic***` leaked literal asterisks into the reply. It now handles all three (longest-delimiter-first, on already-escaped text), and the system instruction asks the model to stay within that subset.
   - [x] **`.btn-success`:** the booking wizard's confirm button carried a class no stylesheet defined. Defined it against `--success-color`, so the one irreversible step reads differently from every other coral CTA.
   - [x] **Dead CSS removed:** six unreferenced rules (`.card-clickable`, `.cta-button-yellow`, `.cta-button-blue-sm`, `.text-accent-color`, `.side-card-title`, `.mt-4`, plus `.preserve-lines` once the taste panel stopped needing it) and six unread custom properties. `.sr-only` was kept deliberately as a standard accessibility utility.
   - [x] **`_current_user(db)`:** collapsed the session-user lookup that was repeated identically in four route handlers.
 
 - [x] **Cross-Device & Responsive Usability Testing**
-  - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages — no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
+  - [x] Validate responsive layout at 320 / 375 / 768 / 1440px across all seven pages; no horizontal overflow at any width. The profile dashboard stacks to one column below 900px (the media query was initially placed above the base `.profile-layout` rule and lost on source order; corrected 2026-09-02).
   - [x] Verify keyboard navigation and screen-reader accessibility. Booking time slots are real `<button>` elements with `aria-pressed`, reachable and operable by keyboard (they were non-focusable `<div>`s until 2026-09-02).
   - [x] Verify zero visual regressions or layout shifts during dynamic interactions.
 - [x] **Experience Catalog & Asset Fidelity Audit (1-by-1 Insertion Check)**
   - [x] Individually inspect each of the 12 cultural experience entries in `seed.py` and the SQLite database.
   - [x] Replace any mismatched or generic placeholder imagery with verified, authentic local stock photos across all 12 museums and 12 experiences (`/static/images/museums/` and `/static/images/experiences/`).
-  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity — every experience now resolves to its own venue, with no city mismatches (the Vatican and MANN packages previously borrowed another same-city venue's id; Musei Vaticani and the Museo Archeologico Nazionale di Napoli were added as seeded institutions 11 and 12).
+  - [x] Cross-check all 12 experiences for accurate city landmarks, durations, transparent pricing, highlight tags, and museum foreign key integrity. Every experience now resolves to its own venue, with no city mismatches (the Vatican and MANN packages previously borrowed another same-city venue's id; Musei Vaticani and the Museo Archeologico Nazionale di Napoli were added as seeded institutions 11 and 12).
 
 ---
 

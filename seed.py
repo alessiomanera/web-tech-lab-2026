@@ -296,7 +296,7 @@ def seed_db():
         # Sample Demo User with an initial Markdown Taste Profile
         demo_prefs = """### Cultural Taste Profile
 - **Primary Interests:** Renaissance Art, Roman Archaeology, Sculpture
-- **Visit Pacing:** Moderate (1.5 – 2 hours per site)
+- **Visit Pacing:** Moderate (1.5 to 2 hours per site)
 - **Group Style:** Traveling solo or with a partner
 - **Preferred Perks:** Audio guides, skip-the-line priority access
 - **Favorite Cities:** Florence, Rome, Venice"""

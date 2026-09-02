@@ -26,7 +26,7 @@ def csrf_token():
     Registered as a Jinja global so every page can embed it. The token lives in
     the signed session cookie: another origin's page can make the browser SEND
     our cookie, but the same-origin policy stops it READING the token out of
-    our HTML — which is exactly what makes the comparison meaningful.
+    our HTML, which is exactly what makes the comparison meaningful.
     """
     if '_csrf_token' not in session:
         session['_csrf_token'] = secrets.token_urlsafe(32)
