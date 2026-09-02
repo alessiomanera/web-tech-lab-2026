@@ -1458,10 +1458,6 @@
     margin-bottom: 0.75rem;
 }
 
-.mb-2rem {
-    margin-bottom: 2rem;
-}
-
 .font-md {
     font-size: 0.95rem;
 }
@@ -1484,7 +1480,9 @@
     font-size: 0.95rem;
 }
 
-.addon-price {
+/* Scoped to this section only — a bare `.addon-price` rule already exists
+   under "6. 4-Step Booking Wizard Components"; this one must not win there. */
+.addon-preview-box .addon-price {
     color: var(--primary-hover);
     font-weight: 800;
     font-size: 0.9rem;
