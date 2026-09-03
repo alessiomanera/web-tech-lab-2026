@@ -8,7 +8,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
-    // State Management (adapted from salone-nene state pattern)
+    // State Management for the multi-step booking wizard
     // -------------------------------------------------------------------------
     const state = {
         currentStep: 1,
