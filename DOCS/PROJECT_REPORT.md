@@ -3,7 +3,7 @@
 **Project:** Museum Ticketing & AI Cultural Guide  
 **Author:** Alessio Manera (Student ID: 905639)  
 **Group:** Group-11 (single-person group)  
-**Course:** Lab of Web Technologies (AY 2025/26), Prof. Zeynep Yucel, Ca' Foscari University of Venice  
+**Course:** Lab of Web Technologies (AY 2025/26), Ca' Foscari University of Venice  
 **Submission date:** September 4, 2026  
 **Repository:** `https://github.com/alessiomanera/web-tech-lab-2026`
 

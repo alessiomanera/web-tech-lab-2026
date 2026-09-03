@@ -7,7 +7,7 @@ This document serves as the master source of truth and historical tracking timel
 ## Phase 1: Foundation, Academic Guidelines & Planning
 - [x] **Review Academic Requirements & Evaluation Criteria**
   - [x] Analyze the official course project guide (`AY2025_2026_project_guide.pdf`, distributed on Moodle), 30+1 grading rubric: Code Quality, Innovation, UX/UI, Deployment, Collaboration, Presentation, Course Knowledge.
-  - [x] Confirm single-person group structure (Group-11 created by Professor Yucel; solo work declared 25 Jun 2026).
+  - [x] Confirm single-person group structure (Group-11 confirmed; solo work declared 25 Jun 2026).
   - [x] Identify the guide's recommended technology stack (HTML5, Vanilla CSS, Vanilla JavaScript, Python 3 / Flask) and choose the rest (SQLite, no ORM, Google Gemini) ourselves, since the guide leaves the data layer and any extra integrations to the student.
 
 ### Confirmed Academic Milestones (Sep 11, 2026 exam session)
