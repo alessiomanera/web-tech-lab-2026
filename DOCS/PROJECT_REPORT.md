@@ -3,7 +3,7 @@
 **Project:** Museum Ticketing & AI Cultural Guide  
 **Author:** Alessio Manera (Student ID: 905639)  
 **Group:** Group-11 (single-person group)  
-**Course:** Lab of Web Technologies (AY 2025/26), Prof. Zeynep Yucel, Ca' Foscari University of Venice  
+**Course:** Lab of Web Technologies (AY 2025/26), Ca' Foscari University of Venice  
 **Submission date:** September 4, 2026  
 **Repository:** `https://github.com/alessiomanera/web-tech-lab-2026`
 
@@ -35,7 +35,7 @@ I built a full-stack web application that does both. It presents a curated catal
 ### Prerequisites
 
 - Python 3.10 or newer
-- Git, only needed if cloning. If you already have this project as a folder (for example, unzipped from a Moodle submission), skip Git and start at "Create and activate a virtual environment" below, from inside that folder.
+- Git, only needed if cloning. If the project is already available as an extracted directory (for example, unzipped from a Moodle submission), Git is not required and setup starts directly at "Create and activate a virtual environment" below.
 - An internet connection, to install dependencies and optionally to reach the Gemini API.
 
 ### Setup
@@ -52,7 +52,7 @@ python -m venv venv
 #      Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # Windows (cmd):          .\venv\Scripts\activate.bat
 # macOS / Linux:          source venv/bin/activate
-# Your prompt should now start with "(venv)". That confirms it worked.
+# The terminal prompt will display the "(venv)" prefix, confirming activation.
 
 pip install -r requirements.txt   # installs 3 packages: Flask, python-dotenv, google-generativeai
 
@@ -65,14 +65,14 @@ python app.py                 # start the development server; look for
                                # "Running on http://127.0.0.1:5000"
 ```
 
-Then open `http://127.0.0.1:5000/` in a browser. If that port is already taken on your machine ("Address already in use", common on macOS where AirPlay Receiver defaults to port 5000), either free port 5000 or start the app on another one with `python -c "from app import create_app; create_app().run(port=5001)"`, then open `http://127.0.0.1:5001/` instead.
+Then open `http://127.0.0.1:5000/` in a browser. If port 5000 is already in use ("Address already in use", common on macOS where AirPlay Receiver defaults to port 5000), port 5000 can be freed or the application can be started on an alternate port with `python -c "from app import create_app; create_app().run(port=5001)"`, then open `http://127.0.0.1:5001/` instead.
 
 ### The two `.env` settings
 
 `.env` (copied from `.env.example` above) holds two settings. Both are worth understanding before assuming something is broken:
 
-- **`FLASK_SECRET_KEY`** signs login session cookies. You do not need to change it to run or evaluate the project: the placeholder works fine locally, and it only matters for a real internet-facing deployment, which this is not.
-- **`GEMINI_API_KEY`** is recommended for full evaluation, as described below. Unlike the secret key, this one does change what you see if you leave the placeholder in place.
+- **`FLASK_SECRET_KEY`** signs login session cookies. There is no need to change it to run or evaluate the project: the default placeholder works out of the box locally, and customization is only relevant for an internet-facing deployment, which this is not.
+- **`GEMINI_API_KEY`** is recommended for full evaluation, as described below. Unlike the secret key, leaving the placeholder in place activates the labelled offline fallback mode.
 
 ### Gemini API key, recommended for full evaluation
 
@@ -94,7 +94,7 @@ Without a key the app still starts and every other module works, but the concier
 | :--- | :--- |
 | `alessio@example.com` | `password123` |
 
-You may also register a fresh account at `/register`.
+A fresh account can also be registered directly at `/register`.
 
 > **Warning:** `seed.py` drops and recreates every table. Any accounts or bookings created since the last seed are permanently deleted. Run it once on first setup, or whenever a clean demo state is wanted.
 
@@ -115,7 +115,7 @@ For clarity, here is how the work breaks down by workstream, all of it carried o
 | **QA and test suite** | `tests/`: 65 `unittest` integration tests against isolated temporary SQLite databases, covering database constraints, authentication, catalog filtering, booking arithmetic, concierge RAG and fallback, the feedback loop and its validation, and the custom error pages. |
 | **Documentation** | `README.md`, `DOCS/1-Page_Project_Proposal.md`, `DOCS/Competitor_Analysis.md`, `ROADMAP.md`, `LICENSE`, and this report. |
 
-With no team to divide work across, I have addressed the *collaboration and group structure* dimension by making individual authorship complete and legible: every workstream above maps to concrete files, and the development history of more than 75 commits shows the work happening incrementally rather than arriving in one drop.
+As a solo developer, I made every workstream and architectural choice individually traceable: each area above maps to concrete source files, and an incremental git history of over 75 commits documents the implementation step by step.
 
 ---
 
@@ -141,7 +141,7 @@ Parameterized SQL  ( ? placeholders only, no string interpolation anywhere )
   └─>  jsonify(...)             ->  JSON response   (/api/* routes consumed by fetch)
 ```
 
-- **No ORM.** All persistence is raw `sqlite3` with parameterized queries. I chose this to keep the data layer transparent and auditable, and because it matches the database pattern demonstrated in the course's own `week_5_database_exercise`: raw `sqlite3`, `Row` factory, hand-written SQL, and Werkzeug hashing.
+- **No Object-Relational Mapping (ORM).** All persistence is raw `sqlite3` with parameterized queries. I chose this to keep the data layer transparent and auditable, and because it matches the database pattern demonstrated in the course's own `week_5_database_exercise`: raw `sqlite3`, `Row` factory, hand-written SQL, and Werkzeug hashing.
 - **Blueprints** separate authentication (`auth_bp`) from the core application (`main_bp`).
 - **Sessions** use Flask's signed cookies, and `@login_required` gates the booking wizard, concierge, and profile.
 - **Error handling** is centralised: `abort(404)` and unhandled errors render branded `400.html`, `404.html`, and `500.html` pages.
